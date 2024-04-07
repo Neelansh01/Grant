@@ -73,11 +73,11 @@
         <ul class="d-flex align-items-center">
 
         <!-- <li><a href="{//{URL::to('/')}}" class="nav-item desktop me-3 {//{ Route::currentRouteName() == 'home' ? 'active' : '' }}">Home</a></li> -->
-        <li><a href="https://techiefolk.com/grantize/public/whyus" class="nav-item desktop me-3 ">Why Grantize</a></li>
-        <li><a href="https://techiefolk.com/grantize/public/plans" class="nav-item desktop me-3 ">Plans</a></li>
+        <li><a href="{{ url_for('grantizewhyus') }}" class="nav-item desktop me-3 ">Why Grantize</a></li>
+        <li><a href="{{ url_for('grantizeplans') }}" class="nav-item desktop me-3 ">Plans</a></li>
         
         <li>
-            <a href="https://techiefolk.com/grantize/public/sponsor/grants" class="nav-item desktop me-3 ">Grants List</a>
+            <a href="{{ url_for('grantizegrants') }}" class="nav-item desktop me-3 ">Grants List</a>
         </li>
         
         <li class="nav-item dropdown2 desktop me-3">
@@ -92,9 +92,9 @@
             </ul>
                     </li>
         
-        <li><a href="https://techiefolk.com/grantize/public/sponsors" class="nav-item desktop me-3 ">Sponsors</a></li>
-        <li><a href="https://techiefolk.com/grantize/public/blogs" class="nav-item desktop me-3 ">Blog</a></li>
-        <li><a href="https://techiefolk.com/grantize/public/faqs" class="nav-item desktop me-3 ">Help</a></li>
+        <li><a href="{{ url_for('grantizesponsors') }}" class="nav-item desktop me-3 ">Sponsors</a></li>
+        <li><a href="{{ url_for('grantizeblogs') }}" class="nav-item desktop me-3 ">Blog</a></li>
+        <li><a href="{{ url_for('grantizehelp') }}" class="nav-item desktop me-3 ">Help</a></li>
     
 
             
