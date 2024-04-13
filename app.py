@@ -50,6 +50,42 @@ def termsnconditions():
 def grantizegrants():
     return render_template('grantize/grants/grants.html')
 
+@app.route('/logingrantizeresdash', methods =["GET", "POST"])
+def logingrantizeresdash():
+    return render_template('grantize/dashboard/dashboard.html')
+
+@app.route('/grantizeprofile')
+def grantizeprofile():
+    return render_template('grantize/dashboard/profile.html')
+
+@app.route('/grantizerefreq')
+def grantizerefreq():
+    return render_template('grantize/dashboard/refrequest.html')
+
+@app.route('/grantizebrowsegrants')
+def grantizebrowsegrants():
+    return render_template('grantize/dashboard/browsegrants.html')
+
+@app.route('/grantizesearchquery')
+def grantizesearchquery():
+    return render_template('grantize/dashboard/searchquery.html')
+
+@app.route('/grantizefavquery')
+def grantizefavquery():
+    return render_template('grantize/dashboard/favquery.html')
+
+@app.route('/grantizesavedquery')
+def grantizesavedquery():
+    return render_template('grantize/dashboard/savedquery.html')
+
+@app.route('/grantizesharedbyme')
+def grantizesharedbyme():
+    return render_template('grantize/dashboard/sharedbyme.html')
+
+@app.route('/grantizesharedwithme')
+def grantizesharedwithme():
+    return render_template('grantize/dashboard/sharedwithme.html')
+
 
 
 

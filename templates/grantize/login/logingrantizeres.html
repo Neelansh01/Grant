@@ -127,7 +127,7 @@
           
       
       
-        <form action="https://techiefolk.com/grantize/public/researcher/authenticate" method="POST" id="loginForm">
+        <form action="{{ url_for('logingrantizeresdash') }}" method="POST" id="loginForm">
           <input type="hidden" name="_token" value="pd1hDJJSLwcU3VaoiwnCiw8IEcn7bj0RiAo1cSzp" autocomplete="off">
           <h3>Researcher Login</h3>
           <div id="login-response-div">
@@ -222,26 +222,33 @@
  
 
 <!-- Bootstrap CSS -->
-<script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/popper.min.js"></script>
-<script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/bootstrap.min.js"></script>
+<!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/popper.min.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/popper.min.js')}}"></script>
+<!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/bootstrap.min.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/bootstrap.min.js')}}"></script>
 <!-- Bootstrap datepicker -->
-<script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap-datepicker/bootstrap-datepicker.min.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/bootstrap-datepicker.min.js')}}"></script>
 <!-- Bootstrap dataTables -->
 <!-- <script src="/assets/thirdparty/jquery-dataTables/jquery.dataTables.min.js"></script>
 <script src="/assets/thirdparty/jquery-dataTables/dataTables.bootstrap5.min.js"></script> -->
 
 <!-- ckeditor -->
 <!-- <script src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js"></script> -->
-<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<!-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/ckeditor.js')}}"></script>
 <!-- Select2 -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/select2.full.min.js')}}"></script>
 <!-- Jquery validation -->
-<script src="https://techiefolk.com/grantize/public/assets/thirdparty/jquery/jquery.validate.min.js"></script>
+<!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/jquery/jquery.validate.min.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/jquery.validate.min.js')}}"></script>
 <!-- Slick slider -->
-<script src="https://techiefolk.com/grantize/public/assets/thirdparty/slick/slick.js" type="text/javascript" charset="utf-8"></script>
-
+<!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/slick/slick.js" type="text/javascript" charset="utf-8"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/slick.js')}}"></script>
 <!-- Template Main JS File -->
-<script src="https://techiefolk.com/grantize/public/assets/js/main.js"></script>
+<!-- <script src="https://techiefolk.com/grantize/public/assets/js/main.js"></script> -->
+<script src="{{url_for('static', filename='js/grantize/page1/main.js')}}"></script>
 <script type="text/javascript">
 
 	$.ajaxSetup({
