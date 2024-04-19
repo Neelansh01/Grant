@@ -212,6 +212,20 @@ def grantizeviewgrants():
 
 @app.route('/grantizesearchquery')
 def grantizesearchquery():
+    global sqlconnection
+    user = 1
+    try:
+        title_query = request.form['tquery']
+        mycursor = sqlconnection.cursor()
+        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE title CONTAINS %s"
+        values = (title_query,)
+        mycursor.execute(sql, values)
+        result = mycursor.fetchall()
+        print(result[:1])
+        return render_template('grantize/dashboard/searchquery.html', grants=result)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/dashboard/searchquery.html')
     return render_template('grantize/dashboard/searchquery.html')
 
 @app.route('/grantizefavquery')

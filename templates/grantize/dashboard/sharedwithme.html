@@ -307,21 +307,51 @@
     <div class="row">
     <div class="col-12 col-xl-12 mt-2">
 
-                <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
-            <div class="card-body profile-organization-outer">
-                <div class="profile-organization">
-                    <h3>No data found</h3>
+      <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+        {% for gs in grants %}
+        <div class="card-body profile-organization-outer">
+            <div class="profile-organization">
+                <div class="profile-organization-img-div">
+                    <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/AIA%20-%20Logo%20-%20White.png" class="profile-organization-img" alt="">
+                </div> 
+                
+                <div class="profile-organization-info-div">
+                    <div class="row">
+                        <div class="col-12 col-lg-10">
+                            <form action="{{ url_for('grantizeviewgrants') }}" method="POST">
+                                <input type="hidden" name="grantid" value="{{gs[0]}}" autocomplete="off">
+                                <button style="background: none; border: none; padding: 0; color: blue; text-decoration: underline; cursor: pointer;">
+                                    <h3 style="margin: 0;">{{ gs[1] }}</h3>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-12 col-lg-2">
+                            <div class="btn-group float-end" role="group" aria-label="">
+                                <a href="javascript:favoriteItem(2)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite2" title="Favorite"><i class="bi bi-star"></i></a>
+                                <a href="javascript:saveItem(2)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save2" title="Saved"><i class="bi bi-save"></i></a>
+                                <a href="javascript:shareItem(2)" class="btn btn-sm btn-outline-primary                                            share" id="share2" title="Share"><i class="bi bi-share"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-lg-12 mb-1">
+                            <h4><b>Grants type</b> :  {{gs[2]}}</h4>
+                        </div>
+                        <div class="col-12 col-lg-12 mb-1">
+                            <h4><b>Subjects</b> :  {{gs[3]}}</h4>
+                        </div>
+                    </div> 
+                </div>
+                <div class="row">
+                    <div class="col-12 col-lg-12" style="padding-right:30px;">
+                        <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                    </div>
                 </div>
             </div>
+          </div>
+          {% endfor %}
         </div>
-                <div class="row">
-            <div class="col-12 col-xl-12 mt-2">
-                
-            </div>
-        </div>
-
-    </div>
-</div> 
 </section>
 
 </main>
