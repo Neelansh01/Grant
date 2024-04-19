@@ -216,15 +216,61 @@ def grantizesearchquery():
 
 @app.route('/grantizefavquery')
 def grantizefavquery():
-    return render_template('grantize/dashboard/favquery.html')
+    global sqlconnection
+    user = 1
+    try:
+        mycursor = sqlconnection.cursor()
+        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE userid = %s"
+        values = (user,)
+        mycursor.execute(sql, values)
+        reqids = mycursor.fetchall()
+        format_strings = ','.join(['%s'] * len(reqids))
+        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
+        result = mycursor.fetchall()
+        print(result[:1])
+        return render_template('grantize/dashboard/favquery.html', grants=result)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/dashboard/favquery.html')
 
 @app.route('/grantizesavedquery')
 def grantizesavedquery():
-    return render_template('grantize/dashboard/savedquery.html')
+    global sqlconnection
+    user = 1
+    try:
+        mycursor = sqlconnection.cursor()
+        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE userid = %s"
+        values = (user,)
+        mycursor.execute(sql, values)
+        reqids = mycursor.fetchall()
+        format_strings = ','.join(['%s'] * len(reqids))
+        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
+        result = mycursor.fetchall()
+        print(result[:1])
+        return render_template('grantize/dashboard/savedquery.html', grants=result)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/dashboard/savedquery.html')
+    
 
 @app.route('/grantizesharedbyme')
 def grantizesharedbyme():
-    return render_template('grantize/dashboard/sharedbyme.html')
+    global sqlconnection
+    user = 1
+    try:
+        mycursor = sqlconnection.cursor()
+        sql = "SELECT id,title,grants_type,subjects FROM gshared WHERE userid = %s"
+        values = (user,)
+        mycursor.execute(sql, values)
+        reqids = mycursor.fetchall()
+        format_strings = ','.join(['%s'] * len(reqids))
+        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
+        result = mycursor.fetchall()
+        print(result[:1])
+        return render_template('grantize/dashboard/sharedbyme.html', grants=result)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/dashboard/sharedbyme.html')
 
 @app.route('/grantizesharedwithme')
 def grantizesharedwithme():
