@@ -5,8 +5,8 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <meta name="_token" content="pd1hDJJSLwcU3VaoiwnCiw8IEcn7bj0RiAo1cSzp">
+    <title>Grant detail</title>
+    <meta name="_token" content="Vl96v6wYcFl5XgBkRZvB1qvC37e2mEz8SJV6532i">
 
     <!-- Favicons -->
     <link href="static/images/favicon_grantize.png" rel="icon">
@@ -101,7 +101,7 @@
         </ul>
     </nav>
 
-        <a href="{{ url_for('logingrantizeoptions') }}" class="login-btn scrollto"><span class="d-none d-md-inline"></span>Login</a>
+        <a href="https://techiefolk.com/grantize/public/login" class="login-btn scrollto"><span class="d-none d-md-inline"></span>Login</a>
     
   </div>
 </header>
@@ -114,50 +114,195 @@
 
 
 
-
-<!-- ======= Login Section ======= -->
-<section id="login" class="login">
+<div class="pagetitle" style="padding-top:30px;">
   <div class="container">
-  <div id="login-div">
-    <div class="row justify-content-center">
-
-      <div class="col-lg-6 details">
-
-          
-          
-      
-      
-        <form action="{{ url_for('logingrantizeresdash') }}" method="POST" id="loginForm">
-          <input type="hidden" name="_tokenresearcher" value="pd1hDJJSLwcU3VaoiwnCiw8IEcn7bj0RiAo1cSzp" autocomplete="off">
-          <h3>Researcher Login</h3>
-          <div id="login-response-div">
-          </div>
-
-          <div class="form-floating mb-3 mt-4">
-            <input type="text" name="user_name" id="user_name" value="" class="form-control  " placeholder="Username">
-            <label for="floatingInput">Username</label>
-
-            
-          </div>
-          <div class="form-floating mb-3">
-            <input type="password" name="pass_word" id="password" class="form-control   " placeholder="Password">
-            <label for="floatingPassword">Password</label>
-          </div>
-          <button type="submit" name="login" id="login-submit" class="loginmodal-submit submit-button btn btn-lg btn-primary w-100 mb-4">Login</button>
-
-          <div class="row justify-content-center">
-            <div class="col-lg-12">
-              <a class="float-end signup-a" href="{{ url_for('createusergrantize') }}">Create an Account</a>
-            </div>
-          </div>
-
-        </form>
+      <div class="row">
+      <div class="col-12 col-sm-4 col-md-3 order-lg-2 ps-0 pe-0">
+        <a href="" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
+      </div>
+      <div class="col-12 col-sm-8 col-md-9 order-lg-1">
+        <h2>Grant detail</h2>
       </div>
     </div>
   </div>
+</div>
+<section class="section" style="padding-top:15px;">
+  <div class="container">
+
+    <div class="row">
+    <div class="col-12 col-xl-12">
+        <div class="card">
+        <div class="card-body">
+            <div class="grants-outer-top">
+                <div class="row">
+                    <div class="col-lg-12">
+                      <h3>
+                        {{title}}                        <a target="_blank" href="{{grant_source_url}}" class="btn btn-sm btn-primary float-end me-1">Apply Grant</a>
+                        <!-- <input type="hidden" value="" id="grant_id">
+                        <button type="button" id="apply_grant" class="btn btn-sm btn-primary float-end me-1">Apply Grant</button> -->
+                      </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="grants-outer-top-bottom">
+                <div class="row">
+                <div class="col-lg-12">
+                    <button type="button" class="btn me-1 btn-sm btn-light"><b>Subjects | </b> 
+                                                {{subjects}}
+                                            </button>
+                </div>
+                </div>
+            </div>
+            <div class="grants-outer">
+                <div class="grants-outer-padding">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row mt-4">
+                        <div class="col-12">
+                            <h6><u><i class="fa fa-info-circle"></i> Limited Grant Info</u></h6>
+                            <p></p>
+                        </div>
+                        </div>
+                        <div class="row mt-4">
+                        <div class="col-12">
+                            <h6><u><i class="fa fa-info-circle"></i> Grant Description</u></h6>
+                            <p>{{description}}</p>
+                        </div>  
+                        </div>                  
+                        <div class="row mt-4">
+                        <div class="col-12">
+                            <h6><u><i class="fa fa-info-circle"></i> Submission Info</u></h6>
+                            <p>{{submission_info}}</p>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-light mr-4"><b>Subject | </b> 
+                                                                    {{submission_info}}
+                                                            </button>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-12">
+                            <tr>
+                                <th>Amount Info</th>
+                                <td>{{submission_info}}</td>
+                            </tr>
+                        </div>
+                        <div class="col-12">
+                            <tr>
+                                <th>Cost Sharing</th>
+                                <td>{{cost_sharing}}</td>
+                            </tr>
+                        </div>
+                        <div class="col-12">
+                            <tr>
+                                <th>Data Management</th>
+                                <td>{{data_management}}</td>
+                            </tr>
+                        </div>
+                        <div class="col-12">
+                            <tr>
+                                <th>Contacts</th>
+                                <td>{{contacts}}</td>
+                            </tr>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4" style="border-left:1px solid #ddd;">
+                        <div class="row">
+                            <div class="col-12">
+                                <h6><u><i class="fa fa-info-circle"></i> Specific Info</u></h6>
+                                <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>Applicant Locations</th>
+                                        <td>{{countries}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Activity Locations</th>
+                                        <td>{{countries}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Citizenships</th>
+                                        <td>{{citizenships}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Grant Type</th>
+                                        <td>{{grants_type}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Applicant Types</th>
+                                        <td>{{applicant_types}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Activity Code</th>
+                                        <td>{{activity_code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Grant Status</th>
+                                        <td>{{grant_status}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Open Date</th>
+                                        <td>{{open_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Intent Due Date</th>
+                                        <td>{{intent_due_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Application Due Date</th>
+                                        <td>{{application_due_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Earliest Start Date</th>
+                                        <td>{{application_due_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Expiration Date</th>
+                                        <td>{{expiration_date}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Currency</th>
+                                        <td>{{currency}}</td>                                                                                  </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount Per Grant Minimum</th>
+                                        <td>{{amount_per_grant_min}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount Per Grant Maximum</th>
+                                        <td>{{amount_per_grant_max}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount Minimum</th>
+                                        <td>{{award_min}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Amount Maximum</th>
+                                        <td>{{award_max}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>CFDA</th>
+                                        <td>{{cfda}}</td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
   </div>
 </section>
-<!-- End Login Section -->
 
 
 </main>
@@ -261,11 +406,11 @@
 
 
 <form action="https://techiefolk.com/grantize/public/researcher/grants" id="filterFormLogin" method="post">
-    <input type="hidden" name="_token" value="pd1hDJJSLwcU3VaoiwnCiw8IEcn7bj0RiAo1cSzp" autocomplete="off">    <input type="hidden" id="grants_status_login" name="grants_status">
+    <input type="hidden" name="_token" value="Vl96v6wYcFl5XgBkRZvB1qvC37e2mEz8SJV6532i" autocomplete="off">    <input type="hidden" id="grants_status_login" name="grants_status">
 </form>
 
 <form action="https://techiefolk.com/grantize/public/grants" id="filterFormLogout" method="post">
-    <input type="hidden" name="_token" value="pd1hDJJSLwcU3VaoiwnCiw8IEcn7bj0RiAo1cSzp" autocomplete="off">    <input type="hidden" id="grants_status_logout" name="grants_status">
+    <input type="hidden" name="_token" value="Vl96v6wYcFl5XgBkRZvB1qvC37e2mEz8SJV6532i" autocomplete="off">    <input type="hidden" id="grants_status_logout" name="grants_status">
 </form>
 <script type="text/javascript">
 
@@ -288,10 +433,27 @@
 </script>
 
 
-
 <script type="text/javascript">
-</script>
+  
+  /* $('#apply_grant').on('click', function(){
+    var id = $('#grant_id').val();
+    $.ajax({
+        type:"POST",
+        url:"grants/apply_grant",
+        data: {id: id},
+        success:function(data){
+            data = JSON.parse(data);
 
+            if(data[0] == 'create'){
+              alert("Grant apply");
+            }else{
+              alert("Grant already apply");
+            }  
+        }
+    });
+  }); */
+
+</script>
 
 
 </body>

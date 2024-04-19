@@ -412,52 +412,462 @@
     <div class="row">
         <div class="col-12 col-xl-12 mt-2">
 
-                <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
-                    {% for gs in grants %}
-                    <div class="card-body profile-organization-outer">
-                        <div class="profile-organization">
-                            <div class="profile-organization-img-div">
-                                <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/AIA%20-%20Logo%20-%20White.png" class="profile-organization-img" alt="">
-                            </div> 
-                            
-                            <div class="profile-organization-info-div">
-                                <div class="row">
-                                    <div class="col-12 col-lg-10">
-                                        <form action="{{ url_for('grantizeviewgrants') }}" method="POST">
-                                            <input type="hidden" name="grantid" value="{{gs[0]}}" autocomplete="off">
-                                            <button style="background: none; border: none; padding: 0; color: blue; text-decoration: underline; cursor: pointer;">
-                                                <h3 style="margin: 0;">{{ gs[1] }}</h3>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div class="col-12 col-lg-2">
-                                        <div class="btn-group float-end" role="group" aria-label="">
-                                            <a href="javascript:favoriteItem(2)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite2" title="Favorite"><i class="bi bi-star"></i></a>
-                                            <a href="javascript:saveItem(2)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save2" title="Saved"><i class="bi bi-save"></i></a>
-                                            <a href="javascript:shareItem(2)" class="btn btn-sm btn-outline-primary                                            share" id="share2" title="Share"><i class="bi bi-share"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-12 col-lg-12 mb-1">
-                                        <h4><b>Grants type</b> :  {{gs[2]}}</h4>
-                                    </div>
-                                    <div class="col-12 col-lg-12 mb-1">
-                                        <h4><b>Subjects</b> :  {{gs[3]}}</h4>
-                                    </div>
-                                </div> 
-                            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/AIA%20-%20Logo%20-%20White.png" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
                             <div class="row">
-                                <div class="col-12 col-lg-12" style="padding-right:30px;">
-                                    <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/2" class=""><h3>Use of the name of the japan foundation as a supporter</h3></a>
                                 </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(2)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite2" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(2)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save2" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(2)" class="btn btn-sm btn-outline-primary                                            share" id="share2" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+                </div>
             </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/acp-logo-horizontal-4c.svg" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/3" class=""><h3>Mini grant for japanese arts &amp; culture</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(3)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite3" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(3)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save3" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(3)" class="btn btn-sm btn-outline-primary                                            share" id="share3" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/logo_en.png" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/4" class=""><h3>Wye valley aonb fund</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(4)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite4" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(4)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save4" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(4)" class="btn btn-sm btn-outline-primary                                            share" id="share4" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/California-Department-of-Health-Care-Services.jpg" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/6" class=""><h3>David tyson memorial fund</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(6)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite6" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(6)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save6" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(6)" class="btn btn-sm btn-outline-primary                                            share" id="share6" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/college-lockup.svg" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/7" class=""><h3>La porte peinte centre pour les arts - artist residency programme</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(7)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite7" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(7)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save7" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(7)" class="btn btn-sm btn-outline-primary                                            share" id="share7" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/SMA-Logo" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/8" class=""><h3>Walter &amp; elise haas fund grant</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(8)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite8" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(8)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save8" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(8)" class="btn btn-sm btn-outline-primary                                            share" id="share8" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/inta_logo.jpg" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/9" class=""><h3>The caesars foundation of floyd county major grants</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(9)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite9" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(9)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save9" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(9)" class="btn btn-sm btn-outline-primary                                            share" id="share9" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/FFSH_Logo-COLOR-01.png?format=1500w" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/10" class=""><h3>The kimmel foundation grants</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(10)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite10" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(10)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save10" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(10)" class="btn btn-sm btn-outline-primary                                            share" id="share10" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+     
+        <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logo_default.png" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/11" class=""><h3>St. croix valley foundation bethany&#039;s butterflies scholarship</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(11)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite11" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(11)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save11" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(11)" class="btn btn-sm btn-outline-primary                                            share" id="share11" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="card section-bg" style="border-radius:0px;border:none;margin-bottom:10px;">
+                <div class="card-body profile-organization-outer">
+                    <div class="profile-organization">
+                        <div class="profile-organization-img-div">
+            <img src="https://arsious.com/sisterlab.com/sisterlab/public/assets/organizations/logos/womendeliver.jpg" class="profile-organization-img" alt="">
+    </div> 
+                        
+                        <div class="profile-organization-info-div">
+                            <div class="row">
+                                <div class="col-12 col-lg-10">
+                                    <a href="https://techiefolk.com/grantize/public/researcher/grants/detail/12" class=""><h3>2023-2024 residential fellow projects curatorial fellowship: newport &amp; china</h3></a>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <div class="btn-group float-end" role="group" aria-label="">
+                                        <a href="javascript:favoriteItem(12)" class="btn btn-sm btn-outline-primary                                            favorite this_active" id="favorite12" title="Favorite"><i class="bi bi-star"></i></a>
+                                        <a href="javascript:saveItem(12)" class="btn btn-sm btn-outline-primary                                            save this_active" id="save12" title="Saved"><i class="bi bi-save"></i></a>
+                                        <a href="javascript:shareItem(12)" class="btn btn-sm btn-outline-primary                                            share" id="share12" title="Share"><i class="bi bi-share"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Grants type</b> :  </h4>
+    </div>
+    <div class="col-12 col-lg-12 mb-1">
+        <h4><b>Subjects</b> :  </h4>
+    </div>
+</div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-12" style="padding-right:30px;">
+                                <a href="" class="btn btn-outline-primary btn-sm float-end"> Apply</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="row">
+                <div class="col-12 col-xl-12 mt-2">
+                    <nav class="d-flex justify-items-center justify-content-between">
+        <div class="d-flex justify-content-between flex-fill d-sm-none">
+            <ul class="pagination">
                 
+                                    <li class="page-item disabled" aria-disabled="true">
+                        <span class="page-link">&laquo; Previous</span>
+                    </li>
+                
+                
+                                    <li class="page-item">
+                        <a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=2" rel="next">Next &raquo;</a>
+                    </li>
+                            </ul>
+        </div>
+
+        <div class="d-none flex-sm-fill d-sm-flex align-items-sm-center justify-content-sm-between">
+            <div>
+                <p class="small text-muted">
+                    Showing
+                    <span class="fw-semibold">1</span>
+                    to
+                    <span class="fw-semibold">10</span>
+                    of
+                    <span class="fw-semibold">1000</span>
+                    results
+                </p>
+            </div>
+
+            <div>
+                <ul class="pagination">
+                    
+                                            <li class="page-item disabled" aria-disabled="true" aria-label="&laquo; Previous">
+                            <span class="page-link" aria-hidden="true">&lsaquo;</span>
+                        </li>
+                    
+                    
+                                            
+                        
+                        
+                                                                                                                        <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=2">2</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=3">3</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=4">4</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=5">5</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=6">6</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=7">7</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=8">8</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=9">9</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=10">10</a></li>
+                                                                                                                                
+                                                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">...</span></li>
+                        
+                        
+                                                                    
+                        
+                        
+                                                                                                                        <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=99">99</a></li>
+                                                                                                                                <li class="page-item"><a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=100">100</a></li>
+                                                                                                        
+                    
+                                            <li class="page-item">
+                            <a class="page-link" href="https://techiefolk.com/grantize/public/researcher/grants?page=2" rel="next" aria-label="Next &raquo;">&rsaquo;</a>
+                        </li>
+                                    </ul>
+            </div>
+        </div>
+    </nav>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </section>
 
 <!-- shareModal Modal -->
