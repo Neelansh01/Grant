@@ -1,10 +1,13 @@
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, session, redirect, url_for, request, render_template
+from datetime import timedelta
 import mysql.connector
 
 
 
  
 app = Flask(__name__)
+app.secret_key = 'Grant####secret***my_hard_to_crack_secret_key'
+app.permanent_session_lifetime = timedelta(hours=3)
 sqlconnection = ""
 
 
@@ -15,6 +18,7 @@ sqlconnection = ""
 
 @app.route('/grantize')
 def grantize():
+    session.clear()
     return render_template('grantize/grantize.html')
 
 @app.route('/logingrantizeoptions')
@@ -134,161 +138,574 @@ def registerresgrantize():
 @app.route('/logingrantizeresdash', methods =["GET", "POST"])
 def logingrantizeresdash():
     global sqlconnection
-    print("ENTER REGISTER FUNCTION")
-    if "_tokenresearcher" in request.form:
-        try:
-            username = request.form['user_name']
-            password = request.form['pass_word']
-        except:
-            print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-            return render_template('grantize/grantize.html')
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT * FROM gmanagerslist WHERE uname = %s AND password = %s"
-        values = (username, password)
-        mycursor.execute(sql, values)
-        result = mycursor.fetchall()
-        if result:
-            print("Match Found..")
-            return render_template('grantize/dashboard/dashboard.html')
+    print("ENTER DASHBOARD FUNCTION")
+    if not session.get("loginnname"):
+        if "_tokenresearcher" in request.form:
+            try:
+                username = request.form['user_name']
+                password = request.form['pass_word']
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/grantize.html')
+            mycursor = sqlconnection.cursor()
+            sql = "SELECT * FROM gmanagerslist WHERE uname = %s AND password = %s"
+            values = (username, password)
+            mycursor.execute(sql, values)
+            result = mycursor.fetchall()
+            if result:
+                print("Match Found..")
+                session["loginnname"] = username
+                session["loginid"] = result[0][0]
+                print(session.get('loginid'))
+                return render_template('grantize/dashboard/dashboard.html')
+            else:
+                print("Match Not Found..")
+                return render_template('grantize/grantize.html')
+        elif "_tokensponsor" in request.form:
+            try:
+                username = request.form['user_name']
+                password = request.form['pass_word']
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/grantize.html')
+            mycursor = sqlconnection.cursor()
+            sql = "SELECT id FROM gsponsorslist WHERE username = %s AND password = %s"
+            values = (username, password)
+            mycursor.execute(sql, values)
+            result = mycursor.fetchall()
+            if result:
+                print("Match Found..")
+                session["loginnname"] = username
+                session["loginid"] = result[0][0]
+                print(session.get('loginid'))
+                return render_template('grantize/dashboard/dashboard.html')
+            else:
+                print("Match Not Found..")
+                return render_template('grantize/grantize.html')
         else:
-            print("Match Not Found..")
             return render_template('grantize/grantize.html')
-    elif "_tokensponsor" in request.form:
-        try:
-            username = request.form['user_name']
-            password = request.form['pass_word']
-        except:
-            print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-            return render_template('grantize/grantize.html')
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT * FROM gsponsorslist WHERE username = %s AND password = %s"
-        values = (username, password)
-        mycursor.execute(sql, values)
-        result = mycursor.fetchall()
-        if result:
-            print("Match Found..")
-            return render_template('grantize/dashboard/dashboard.html')
-        else:
-            print("Match Not Found..")
-            return render_template('grantize/grantize.html')
-    return render_template('grantize/dashboard/dashboard.html')
+    else:
+        return render_template('grantize/dashboard/dashboard.html')
+    
+@app.route('/grantizelogout')
+def grantizelogout():
+    if session.get("loginnname"):
+        session.pop("loginnname")
+        session.pop("loginid")
+        session.clear()
+        return render_template('grantize/grantize.html')
+    else:
+        return render_template('grantize/grantize.html')
 
 @app.route('/grantizeprofile')
 def grantizeprofile():
-    return render_template('grantize/dashboard/profile.html')
+    if session.get("loginnname"):
+        return render_template('grantize/dashboard/profile.html')
+    else:
+        return render_template('grantize/grantize.html')
+
+@app.route('/grantizeprofilesummary')
+def grantizeprofilesummary():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/summary.html')
+    else:
+        return render_template('grantize/grantize.html')
+
+@app.route('/grantizeprofileobjective')
+def grantizeprofileobjective():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/objective.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileresstatement')
+def grantizeprofileresstatement():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/resstatement.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+
+@app.route('/grantizeprofileteachphil')
+def grantizeprofileteachphil():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/teachphilosophy.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileeducation')
+def grantizeprofileeducation():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/education.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilerescredentials')
+def grantizeprofilerescredentials():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/credentials.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileexperience')
+def grantizeprofileexperience():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/experience.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilevolunteer')
+def grantizeprofilevolunteer():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/volunteer.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileawards')
+def grantizeprofileawards():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/awards.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilegrantscontracts')
+def grantizeprofilegrantscontracts():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/grantscontracts.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilepatents')
+def grantizeprofilepatents():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/patents.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourorgres')
+def grantizeprofilejourorgres():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalresearch.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourshortsrep')
+def grantizeprofilejourshortsrep():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalshortreport.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourreviewarts')
+def grantizeprofilejourreviewarts():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalreviewarticles.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourcasestudy')
+def grantizeprofilejourcasestudy():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/resstatement.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourmethodologies')
+def grantizeprofilejourmethodologies():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalmethodologies.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejoureditorials')
+def grantizeprofilejoureditorials():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journaleditorials.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourotherarts')
+def grantizeprofilejourotherarts():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalotherarticles.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilebooks')
+def grantizeprofilebooks():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/books.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilebookchapters')
+def grantizeprofilebookchapters():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/bookchapters.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileartsinnews')
+def grantizeprofileartsinnews():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/articlesinnews.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileotherpubs')
+def grantizeprofileotherpubs():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/otherpublications.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileresprotocols')
+def grantizeprofileresprotocols():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/researchprotocols.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileiacucprotocols')
+def grantizeprofileiacucprotocols():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/iacucprotoocols.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileclinicalprotocols')
+def grantizeprofileclinicalprotocols():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/clinicalprotocols.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileconferences')
+def grantizeprofileconferences():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/conferences.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilesymposia')
+def grantizeprofilesymposia():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/symposia.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileworkshops')
+def grantizeprofileworkshops():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/workshops.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileseminars')
+def grantizeprofileseminars():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/seminars.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileprofmembers')
+def grantizeprofileprofmembers():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/professionalmemberships.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileteachingex')
+def grantizeprofileteachingex():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/teachingexperiences.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilesupermentor')
+def grantizeprofilesupermentor():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/supervisionmentoring.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilejourreviewses')
+def grantizeprofilejourreviewses():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/journalreviewAES.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilegrantreviewservices')
+def grantizeprofilegrantreviewservices():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/grantsreviewS.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilecommactivities')
+def grantizeprofilecommactivities():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/committeeactivity.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilehobbies')
+def grantizeprofilehobbies():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/hobbies.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilelangprof')
+def grantizeprofilelangprof():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/langprof.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofileotheractivities')
+def grantizeprofileotheractivities():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/otheractivities.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+@app.route('/grantizeprofilereferences')
+def grantizeprofilereferences():
+    if session.get("loginnname"):
+        return render_template('grantize/profile/references.html')
+    else:
+        return render_template('grantize/grantize.html')
+    
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/grantizerefreq')
 def grantizerefreq():
-    return render_template('grantize/dashboard/refrequest.html')
+    return redirect(url_for('grantize'))
 
-@app.route('/grantizebrowsegrants')
+@app.route('/grantizebrowsegrants', methods =["GET", "POST"])
 def grantizebrowsegrants():
     global sqlconnection
-    try:
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT id,title,grants_type,subjects FROM ggrants"
-        mycursor.execute(sql)
-        result = mycursor.fetchall()
-        print(result[:1])
-        return render_template('grantize/dashboard/browsegrants.html', grants=result)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/dashboard.html')
+    if session.get("loginnname"):
+        try:
+            mycursor = sqlconnection.cursor()
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+            mycursor.execute(sql)
+            result = mycursor.fetchall()
+            print(result[:1])
+            return render_template('grantize/dashboard/browsegrants.html', grants=result)
+        except:
+            print("Database Connection Not Working!!")
+            return render_template('grantize/dashboard/dashboard.html')
+    else:
+        return render_template('grantize/grantize.html')
     
 @app.route('/grantizeviewgrants', methods =["GET", "POST"])
 def grantizeviewgrants():
     global sqlconnection
-    grantid = request.form['grantid']
-    print("--------")
-    print(grantid)
-    mycursor = sqlconnection.cursor()
-    sql = "SELECT id,title,subjects,description,submission_info,amount_info,cost_sharing,data_management,contacts,countries,citizenships,grants_type,applicant_types,activity_code,grant_status,open_date,intent_due_date,application_due_date,earliest_start_date,expiration_date,currency,amount_per_grant_min,amount_per_grant_max,award_min,award_max,cfda,grant_source_url FROM ggrants WHERE id = %s"
-    values = (grantid,)
-    mycursor.execute(sql, values)
-    result = mycursor.fetchall()
-    print(result[0])
-    id,title,subjects,description,submission_info,amount_info,cost_sharing,data_management,contacts,countries,citizenships,grants_type,applicant_types,activity_code,grant_status,open_date,intent_due_date,application_due_date,earliest_start_date,expiration_date,currency,amount_per_grant_min,amount_per_grant_max,award_min,award_max,cfda,grant_source_url = result[0]
-    return render_template('grantize/dashboard/viewgrants.html', id=id, title=title, subjects=subjects, description=description, submission_info=submission_info, amount_info=amount_info, cost_sharing=cost_sharing, data_management=data_management, contacts=contacts, countries=countries, citizenships=citizenships, grants_type=grants_type, applicant_types=applicant_types, activity_code=activity_code, grant_status=grant_status, open_date=open_date, intent_due_date=intent_due_date, application_due_date=application_due_date, earliest_start_date=earliest_start_date, expiration_date=expiration_date, currency=currency, amount_per_grant_min=amount_per_grant_min, amount_per_grant_max=amount_per_grant_max, award_min=award_min, award_max=award_max, cfda=cfda, grant_source_url=grant_source_url)
+    if session.get("loginnname"):
+        grantid = request.form['grantid']
+        print("--------")
+        print(grantid)
+        mycursor = sqlconnection.cursor()
+        sql = "SELECT id,title,subjects,description,submission_info,amount_info,cost_sharing,data_management,contacts,countries,citizenships,grants_type,applicant_types,activity_code,grant_status,open_date,intent_due_date,application_due_date,earliest_start_date,expiration_date,currency,amount_per_grant_min,amount_per_grant_max,award_min,award_max,cfda,grant_source_url FROM ggrants WHERE id = %s"
+        values = (grantid,)
+        mycursor.execute(sql, values)
+        result = mycursor.fetchall()
+        print(result[0])
+        id,title,subjects,description,submission_info,amount_info,cost_sharing,data_management,contacts,countries,citizenships,grants_type,applicant_types,activity_code,grant_status,open_date,intent_due_date,application_due_date,earliest_start_date,expiration_date,currency,amount_per_grant_min,amount_per_grant_max,award_min,award_max,cfda,grant_source_url = result[0]
+        return render_template('grantize/dashboard/viewgrants.html', id=id, title=title, subjects=subjects, description=description, submission_info=submission_info, amount_info=amount_info, cost_sharing=cost_sharing, data_management=data_management, contacts=contacts, countries=countries, citizenships=citizenships, grants_type=grants_type, applicant_types=applicant_types, activity_code=activity_code, grant_status=grant_status, open_date=open_date, intent_due_date=intent_due_date, application_due_date=application_due_date, earliest_start_date=earliest_start_date, expiration_date=expiration_date, currency=currency, amount_per_grant_min=amount_per_grant_min, amount_per_grant_max=amount_per_grant_max, award_min=award_min, award_max=award_max, cfda=cfda, grant_source_url=grant_source_url)
+    else:
+        return render_template('grantize/grantize.html')
 
-@app.route('/grantizesearchquery')
+@app.route('/grantizesearchquery', methods =["GET", "POST"])
 def grantizesearchquery():
     global sqlconnection
-    user = 1
-    try:
-        title_query = request.form['tquery']
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE title CONTAINS %s"
-        values = (title_query,)
-        mycursor.execute(sql, values)
-        result = mycursor.fetchall()
-        print(result[:1])
-        return render_template('grantize/dashboard/searchquery.html', grants=result)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/searchquery.html')
-    return render_template('grantize/dashboard/searchquery.html')
+    if session.get("loginnname"):
+        user = session.get('loginid')
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/searchquery.html', grants=result)
+            except:
+                print("Database Connection Not Working!!")
+                return render_template('grantize/dashboard/searchquery.html')
+        else:
+            return render_template('grantize/dashboard/searchquery.html')
+    else:
+        return render_template('grantize/grantize.html')
 
-@app.route('/grantizefavquery')
+@app.route('/grantizefavquery', methods =["GET", "POST"])
 def grantizefavquery():
     global sqlconnection
-    user = 1
-    try:
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE userid = %s"
-        values = (user,)
-        mycursor.execute(sql, values)
-        reqids = mycursor.fetchall()
-        format_strings = ','.join(['%s'] * len(reqids))
-        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
-        result = mycursor.fetchall()
-        print(result[:1])
-        return render_template('grantize/dashboard/favquery.html', grants=result)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/favquery.html')
+    if session.get("loginnname"):
+        user = session.get('loginid')
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                print("_-------------")
+                print(title_query)
+                print("_-------------")
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gfavs s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
+                print("_-------------")
+                print(sql)
+                print("_-------------")
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/favquery.html', grants=result)
+            except:
+                print("Database Connection Not Working -- 1!!")
+                return render_template('grantize/dashboard/favquery.html')
+        else:
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT grantid FROM gfavs WHERE userid = %s"
+                values = (user,)
+                mycursor.execute(sql, values)
+                reqids = mycursor.fetchall()
+                format_strings = ",".join([str(r[0]) for r in reqids])
+                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/favquery.html', grants=result)
+            except:
+                print("Database Connection Not Working -- 2!!")
+                return render_template('grantize/dashboard/favquery.html')
+    else:
+        return render_template('grantize/grantize.html')
 
-@app.route('/grantizesavedquery')
+@app.route('/grantizesavedquery', methods =["GET", "POST"])
 def grantizesavedquery():
     global sqlconnection
-    user = 1
-    try:
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT id,title,grants_type,subjects FROM gsaved WHERE userid = %s"
-        values = (user,)
-        mycursor.execute(sql, values)
-        reqids = mycursor.fetchall()
-        format_strings = ','.join(['%s'] * len(reqids))
-        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
-        result = mycursor.fetchall()
-        print(result[:1])
-        return render_template('grantize/dashboard/savedquery.html', grants=result)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/savedquery.html')
+    if session.get("loginnname"):
+        user = session.get('loginid')
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsaved s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/savedquery.html', grants=result)
+            except:
+                print("Database Connection Not Working - 1!!")
+                return render_template('grantize/dashboard/savedquery.html')
+        else:
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT grantid FROM gsaved WHERE userid = %s"
+                values = (user,)
+                mycursor.execute(sql, values)
+                reqids = mycursor.fetchall()
+                format_strings = ",".join([str(r[0]) for r in reqids])
+                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/savedquery.html', grants=result)
+            except:
+                print("Database Connection Not Working -- 2!!")
+                return render_template('grantize/dashboard/savedquery.html')
+    else:
+        return render_template('grantize/grantize.html')
     
 
-@app.route('/grantizesharedbyme')
+@app.route('/grantizesharedbyme', methods =["GET", "POST"])
 def grantizesharedbyme():
     global sqlconnection
-    user = 1
-    try:
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT id,title,grants_type,subjects FROM gshared WHERE userid = %s"
-        values = (user,)
-        mycursor.execute(sql, values)
-        reqids = mycursor.fetchall()
-        format_strings = ','.join(['%s'] * len(reqids))
-        mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings,tuple(reqids))
-        result = mycursor.fetchall()
-        print(result[:1])
-        return render_template('grantize/dashboard/sharedbyme.html', grants=result)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/sharedbyme.html')
+    if session.get("loginnname"):
+        user = session.get('loginid')
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gshared s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedbyme.html', grants=result)
+            except:
+                print("Database Connection Not Working!!")
+                return render_template('grantize/dashboard/sharedbyme.html')
+        else:
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT grantid FROM gshared WHERE userid = %s"
+                values = (user,)
+                mycursor.execute(sql, values)
+                reqids = mycursor.fetchall()
+                format_strings = ",".join([str(r[0]) for r in reqids])
+                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedbyme.html', grants=result)
+            except:
+                print("Database Connection Not Working!!")
+                return render_template('grantize/dashboard/sharedbyme.html')
+    else:
+        return render_template('grantize/grantize.html')
 
-@app.route('/grantizesharedwithme')
+@app.route('/grantizesharedwithme', methods =["GET", "POST"])
 def grantizesharedwithme():
-    return render_template('grantize/dashboard/sharedwithme.html')
+    global sqlconnection
+    if session.get("loginnname"):
+        user = session.get('loginid')
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsharedwith s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedwithme.html', grants=result)
+            except:
+                print("Database Connection Not Working!!")
+                return render_template('grantize/dashboard/sharedwithme.html')
+        else:
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "SELECT grantid FROM gsharedwith WHERE userid = %s"
+                values = (user,)
+                mycursor.execute(sql, values)
+                reqids = mycursor.fetchall()
+                format_strings = ",".join([str(r[0]) for r in reqids])
+                print("-------")
+                print(format_strings)
+                print("-------")
+                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                result = mycursor.fetchall()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedwithme.html', grants=result)
+            except:
+                print("Database Connection Not Working!!")
+                return render_template('grantize/dashboard/sharedwithme.html')
+    else:
+        return render_template('grantize/grantize.html')
 
 
 
