@@ -1,7 +1,10 @@
-from flask import Flask, session, redirect, url_for, request, render_template
+from flask import Flask, session, redirect, url_for, request, render_template, jsonify, send_file
 from datetime import timedelta
 import mysql.connector
-
+import base64
+from io import BytesIO
+import mimetypes
+from werkzeug.utils import secure_filename
 
 
  
@@ -239,14 +242,162 @@ def grantizeprofileeducation():
         return render_template('grantize/profile/education.html')
     else:
         return render_template('grantize/grantize.html')
-    
-@app.route('/grantizeprofilerescredentials')
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'pdf', 'docx'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def cred_read_table(user):
+    global sqlconnection
+    # SQL query to get all files and other data with condition "WHERE 1=1"
+    mycursor = sqlconnection.cursor()
+    query = "SELECT description, organization, filename FROM gcredentials WHERE userid = "+str(user)
+    mycursor.execute(query)
+    rows = mycursor.fetchall()
+    documents = []
+    # Prepare each row with base64 encoding for the file
+    for row in rows:
+        documents.append({
+            'description': row[0],
+            'organization': row[1],
+            'filename' : row[2],
+        })
+    mycursor.close()
+    return documents
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    global sqlconnection
+    cursor = sqlconnection.cursor()
+    try:
+        # Prepare a query to fetch the file data by name
+        query = "SELECT filename, filecontent FROM gcredentials WHERE filename = %s"
+        cursor.execute(query, (filename,))
+        file_data = cursor.fetchone()
+        if file_data is None:
+            return jsonify({'error': 'File not found'}), 404
+
+        # Secure the filename to prevent path traversal attacks
+        filename = secure_filename(file_data[0])
+
+        # Guess the MIME type of the file based on its extension
+        mime_type, _ = mimetypes.guess_type(filename)
+        if mime_type is None:
+            mime_type = 'application/octet-stream'  # Fallback to binary type if MIME type is undetectable
+
+        # Send the file data as an attachment
+        file_stream = BytesIO(file_data[1])
+        return send_file(
+            file_stream,
+            mimetype=mime_type,
+            as_attachment=True,
+            download_name=filename
+        )
+    except mysql.connector.Error as err:
+        print("Error: ", err)
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+
+def prmission_show_me(except_persons, user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor()
+        sql = "UPDATE gcredentials SET showme = '"+except_persons+"' WHERE userid = "+str(user)
+        mycursor.execute(sql)
+        sqlconnection.commit()
+        mycursor.close()
+    except:
+        print("Database Operation Failed!!")
+
+def prmission_hide_designation(multiselect, user):
+    global sqlconnection
+    try:
+        except_persons = ",".join(multiselect)
+        mycursor = sqlconnection.cursor()
+        sql = "UPDATE gcredentials SET hidedesignation = '"+except_persons+"' WHERE userid = "+str(user)
+        mycursor.execute(sql)
+        sqlconnection.commit()
+        mycursor.close()
+
+    except:
+        print("Database Operation Failed!!")
+
+def prmission_hide_individuals(except_persons, user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor()
+        sql = "UPDATE gcredentials SET hideindividuals = '"+except_persons+"' WHERE userid = "+str(user)
+        mycursor.execute(sql)
+        sqlconnection.commit()
+        mycursor.close()
+    except:
+        print("Database Operation Failed!!")
+
+@app.route('/grantizeprofilerescredentials', methods =["GET", "POST"])
 def grantizeprofilerescredentials():
     if session.get("loginnname"):
-        return render_template('grantize/profile/credentials.html')
+        user = session.get('loginid')
+        if "addcredtrans" in request.form:
+            try:
+                credname, credorg, credfiles, credfilename = None, None, None, None
+                if 'name' in request.form:
+                    credname = request.form['name']
+                if 'organization' in request.form:
+                    credorg = request.form['organization']
+                if 'filecred' in request.files and request.files['filecred'].filename != '' and allowed_file(request.files['filecred'].filename):
+                    credfiles = request.files['filecred']
+                    file_content = credfiles.read()
+                    credfilename = secure_filename(credfiles.filename)
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/credentials.html')
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "INSERT INTO gcredentials (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
+                values = (user, credname, credorg, credfilename, file_content)
+                mycursor.execute(sql, values)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("DATBASE FAILURE!!")
+                return render_template('grantize/profile/credentials.html')
+            ## Code to Read
+            documents = cred_read_table(user)
+            return render_template('grantize/profile/credentials.html', documents=documents)
+        if "permissions" in request.form:
+            try:
+                if request.form.get("public"):
+                    except_persons = request.form['except_persons']
+                    prmission_show_me(except_persons, user)
+                if request.form.get("designation"):
+                    except_persons = request.form.getlist('designations')
+                    prmission_hide_designation(except_persons, user)
+                if request.form.get("person"):
+                    except_persons = request.form['except_invidividuals']
+                    prmission_hide_individuals(except_persons, user)
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/credentials.html')
+            try:
+                mycursor = sqlconnection.cursor()
+                sql = "INSERT INTO gcredentials (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
+                values = (user, credname, credorg, credfilename, file_content)
+                mycursor.execute(sql, values)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("DATBASE FAILURE!!")
+                return render_template('grantize/profile/credentials.html')
+            ## Code to Read
+            documents = cred_read_table(user)
+            return render_template('grantize/profile/credentials.html', documents=documents)
+        else:
+            documents = cred_read_table(user)
+            return render_template('grantize/profile/credentials.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
-    
+
 @app.route('/grantizeprofileexperience')
 def grantizeprofileexperience():
     if session.get("loginnname"):
