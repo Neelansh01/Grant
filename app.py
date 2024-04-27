@@ -251,7 +251,7 @@ def cred_read_table(user):
     global sqlconnection
     # SQL query to get all files and other data with condition "WHERE 1=1"
     mycursor = sqlconnection.cursor()
-    query = "SELECT description, organization, filename FROM gcredentials WHERE userid = "+str(user)
+    query = "SELECT description, organization, filename, id FROM gcredentials WHERE userid = "+str(user)
     mycursor.execute(query)
     rows = mycursor.fetchall()
     documents = []
@@ -261,6 +261,7 @@ def cred_read_table(user):
             'description': row[0],
             'organization': row[1],
             'filename' : row[2],
+            'id' : row[3]
         })
     mycursor.close()
     return documents
@@ -299,7 +300,7 @@ def download_file(filename):
     finally:
         cursor.close()
 
-def prmission_show_me(main_table, mapper_table, except_persons, user):
+def prmission_show_me(main_table, except_persons, user):
     global sqlconnection
     try:
         mycursor = sqlconnection.cursor()
@@ -310,7 +311,7 @@ def prmission_show_me(main_table, mapper_table, except_persons, user):
     except:
         print("Database Operation Failed!!")
 
-def prmission_hide_designation(main_table, mapper_table, multiselect, user):
+def prmission_hide_designation(main_table, multiselect, user):
     global sqlconnection
     try:
         except_persons = ",".join(multiselect)
@@ -323,7 +324,7 @@ def prmission_hide_designation(main_table, mapper_table, multiselect, user):
     except:
         print("Database Operation Failed!!")
 
-def prmission_hide_individuals(main_table, mapper_table, except_persons, user):
+def prmission_hide_individuals(main_table, except_persons, user):
     global sqlconnection
     try:
         mycursor = sqlconnection.cursor()
@@ -365,17 +366,61 @@ def grantizeprofilerescredentials():
             ## Code to Read
             documents = cred_read_table(user)
             return render_template('grantize/profile/credentials.html', documents=documents)
+        if "editform" in request.form:
+            try:
+                cred_id = request.form['credid']
+                updates = []
+                values = []
+
+                # Check each field and add to the update statement if present
+                if 'name' in request.form and request.form['name']:
+                    updates.append("description = %s")
+                    values.append(request.form['name'])
+
+                if 'organization' in request.form and request.form['organization']:
+                    updates.append("organization = %s")
+                    values.append(request.form['organization'])
+
+                # Handle file upload
+                if 'changefile' in request.files and request.files['changefile'].filename != '' and allowed_file(request.files['changefile'].filename):
+                    credfile = request.files['changefile']
+                    file_content = credfile.read()
+                    credfilename = secure_filename(credfile.filename)
+                    updates.append("filename = %s")
+                    values.append(credfilename)
+                    updates.append("filecontent = %s")
+                    values.append(file_content)
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/credentials.html')
+            try:
+                if updates:
+                    sql = f"UPDATE gcredentials SET {', '.join(updates)} WHERE id = %s"
+                    print(sql)
+                    print(cred_id)
+                    print(updates)
+                    values.append(cred_id)
+                    mycursor = sqlconnection.cursor()
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+            except:
+                print("DATBASE FAILURE!!")
+                return render_template('grantize/profile/credentials.html')
+            ## Code to Read
+            documents = cred_read_table(user)
+            return render_template('grantize/profile/credentials.html', documents=documents)
         if "permissions" in request.form:
             try:
                 if request.form.get("public"):
                     except_persons = request.form['except_persons']
-                    prmission_show_me(except_persons, user)
+                    prmission_show_me('gcredentials',except_persons, user)
                 if request.form.get("designation"):
                     except_persons = request.form.getlist('designations')
-                    prmission_hide_designation(except_persons, user)
+                    prmission_hide_designation('gcredentials', except_persons, user)
                 if request.form.get("person"):
                     except_persons = request.form['except_invidividuals']
-                    prmission_hide_individuals(except_persons, user)
+                    prmission_hide_individuals('gcredentials', except_persons, user)
             except:
                 print("REGISTER USER VARIABLES COULD NOT BE READ!!")
                 return render_template('grantize/profile/credentials.html')
@@ -388,6 +433,20 @@ def grantizeprofilerescredentials():
                 mycursor.close()
             except:
                 print("DATBASE FAILURE!!")
+                return render_template('grantize/profile/credentials.html')
+            ## Code to Read
+            documents = cred_read_table(user)
+            return render_template('grantize/profile/credentials.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['document_id']
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gcredentials WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
                 return render_template('grantize/profile/credentials.html')
             ## Code to Read
             documents = cred_read_table(user)
