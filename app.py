@@ -299,23 +299,23 @@ def download_file(filename):
     finally:
         cursor.close()
 
-def prmission_show_me(except_persons, user):
+def prmission_show_me(main_table, mapper_table, except_persons, user):
     global sqlconnection
     try:
         mycursor = sqlconnection.cursor()
-        sql = "UPDATE gcredentials SET showme = '"+except_persons+"' WHERE userid = "+str(user)
+        sql = "UPDATE "+main_table+" SET showme = '"+except_persons+"' WHERE userid = "+str(user)
         mycursor.execute(sql)
         sqlconnection.commit()
         mycursor.close()
     except:
         print("Database Operation Failed!!")
 
-def prmission_hide_designation(multiselect, user):
+def prmission_hide_designation(main_table, mapper_table, multiselect, user):
     global sqlconnection
     try:
         except_persons = ",".join(multiselect)
         mycursor = sqlconnection.cursor()
-        sql = "UPDATE gcredentials SET hidedesignation = '"+except_persons+"' WHERE userid = "+str(user)
+        sql = "UPDATE "+main_table+" SET hidedesignation = '"+except_persons+"' WHERE userid = "+str(user)
         mycursor.execute(sql)
         sqlconnection.commit()
         mycursor.close()
@@ -323,11 +323,11 @@ def prmission_hide_designation(multiselect, user):
     except:
         print("Database Operation Failed!!")
 
-def prmission_hide_individuals(except_persons, user):
+def prmission_hide_individuals(main_table, mapper_table, except_persons, user):
     global sqlconnection
     try:
         mycursor = sqlconnection.cursor()
-        sql = "UPDATE gcredentials SET hideindividuals = '"+except_persons+"' WHERE userid = "+str(user)
+        sql = "UPDATE "+main_table+" SET hideindividuals = '"+except_persons+"' WHERE userid = "+str(user)
         mycursor.execute(sql)
         sqlconnection.commit()
         mycursor.close()
