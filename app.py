@@ -1050,31 +1050,704 @@ def grantizeprofileawards():
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofilegrantscontracts')
+def grants_read_table(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get all columns except 'id' and 'userid' from ggrants
+        query = """
+        SELECT id, title, project_number, total_funding, url, start_date, end_date, principal_investigators,
+               investigators, funding_org, funding_dept, awardee_org, awardee_dept, project_terms, 
+               abstract, abstract_keywords
+        FROM ggrantscontracts
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries for easy handling in the template
+        grants = []
+        for row in rows:
+            grants.append(row)
+            
+        mycursor.close()
+        return grants
+    except Exception as e:
+        print("Error fetching grants from database:", str(e))
+        return []
+
+@app.route('/grantizeprofilegrantscontracts', methods =["GET", "POST"])
 def grantizeprofilegrantscontracts():
+    global sqlconnection
     if session.get("loginnname"):
-        return render_template('grantize/profile/grantscontracts.html')
+        user = session.get('loginid')
+        if "creategrant" in request.form:
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                title = get_form_data_or_none('title')
+                project_number = get_form_data_or_none('name')
+                total_funding = get_form_data_or_none('type')
+                url = get_form_data_or_none('url')
+                start_date = get_form_data_or_none('start_date')
+                end_date = get_form_data_or_none('end_date')
+                principal_investigators = get_form_data_or_none('authors')
+                investigators = get_form_data_or_none('co_authors')
+                funding_org = get_form_data_or_none('sponsor')
+                funding_dept = get_form_data_or_none('sponsor_department')
+                awardee_org = get_form_data_or_none('organization')
+                awardee_dept = get_form_data_or_none('department')
+                project_terms = request.form.getlist('keywords')  # Handle multiple select inputs
+                abstract = get_form_data_or_none('description')
+                abstract_keywords = get_form_data_or_none('keyword_abstract')
+
+                # Format dates
+                if start_date:
+                    start_date = datetime.strptime(start_date, '%m-%d-%Y').date()
+                if end_date:
+                    end_date = datetime.strptime(end_date, '%m-%d-%Y').date()
+
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO ggrantscontracts
+                (userid, title, project_number, total_funding, url, start_date, end_date, 
+                principal_investigators, investigators, funding_org, funding_dept, 
+                awardee_org, awardee_dept, project_terms, abstract, abstract_keywords)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, title, project_number, total_funding, url, start_date, end_date, 
+                        principal_investigators, investigators, funding_org, funding_dept, 
+                        awardee_org, awardee_dept, ','.join(project_terms), abstract, abstract_keywords]
+                for i in range(len(values)):
+                    if values[i] == None:
+                        values[i] = ""
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Grant contract added successfully!', 'success')
+            except Exception as e:
+                flash(f'Failed to add grant contract due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = grants_read_table(user)
+            return render_template('grantize/profile/grantscontracts.html', documents = documents)
+        if "editsection" in request.form:
+            try:
+                print("_________________EDIT STEP 0__________________")
+                grant_id = request.form['grant_id']  # Ensure you have a hidden input in your form with the name 'document_id'
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'name': 'project_number',
+                    'type': 'total_funding',
+                    'url': 'url',
+                    'start_date': ('start_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'end_date': ('end_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'authors': 'principal_investigators',
+                    'co_authors': 'investigators',
+                    'sponsor': 'funding_org',
+                    'sponsor_department': '	funding_dept',
+                    'organization': 'awardee_org',
+                    'department': 'awardee_dept',
+                    'keywords': 'project_terms',
+                    'abstract': 'abstract',
+                    'keyword_abstract': 'abstract_keywords'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_info in form_to_db_map.items():
+                    db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        # Apply transformation function if provided
+                        values.append(transform(form_data) if transform else form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                if updates:
+                    update_sql = ", ".join(updates)
+                    sql = f"UPDATE ggrantscontracts SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(grant_id)
+                    print(values)
+                    mycursor = sqlconnection.cursor()
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    flash('Grant details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+
+                print("_________________EDIT STEP 2__________________")
+
+            except Exception as e:
+                flash(f'Failed to update grant details due to an error: {e}', 'error')
+                return render_template('error_template.html'), 500
+            documents = grants_read_table(user)
+            return render_template('grantize/profile/grantscontracts.html', documents = documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM ggrantscontracts WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/grantscontracts.html')
+            ## Code to Read
+            documents = grants_read_table(user)
+            return render_template('grantize/profile/grantscontracts.html', documents = documents)
+        else:
+            documents = grants_read_table(user)
+            return render_template('grantize/profile/grantscontracts.html', documents = documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofilepatents')
+def patents_read_table(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get all columns except 'id' and 'userid' from ggrants
+        query = """
+        SELECT id, title, project_number, total_funding, url, start_date, end_date, principal_investigators,
+               investigators, funding_org, funding_dept, awardee_org, awardee_dept, project_terms, 
+               abstract, abstract_keywords
+        FROM gpatents
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries for easy handling in the template
+        grants = []
+        for row in rows:
+            grants.append(row)
+            
+        mycursor.close()
+        return grants
+    except Exception as e:
+        print("Error fetching grants from database:", str(e))
+        return []
+
+@app.route('/grantizeprofilepatents', methods =["GET", "POST"])
 def grantizeprofilepatents():
     if session.get("loginnname"):
-        return render_template('grantize/profile/patents.html')
+        user = session.get('loginid')
+        if "creategrant" in request.form:
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                title = get_form_data_or_none('title')
+                project_number = get_form_data_or_none('name')
+                total_funding = get_form_data_or_none('type')
+                url = get_form_data_or_none('url')
+                start_date = get_form_data_or_none('start_date')
+                end_date = get_form_data_or_none('end_date')
+                principal_investigators = get_form_data_or_none('authors')
+                investigators = get_form_data_or_none('co_authors')
+                funding_org = get_form_data_or_none('sponsor')
+                funding_dept = get_form_data_or_none('sponsor_department')
+                awardee_org = get_form_data_or_none('organization')
+                awardee_dept = get_form_data_or_none('department')
+                project_terms = request.form.getlist('keywords')  # Handle multiple select inputs
+                abstract = get_form_data_or_none('description')
+                abstract_keywords = get_form_data_or_none('keyword_abstract')
+
+                # Format dates
+                if start_date:
+                    start_date = datetime.strptime(start_date, '%m-%d-%Y').date()
+                if end_date:
+                    end_date = datetime.strptime(end_date, '%m-%d-%Y').date()
+
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gpatents
+                (userid, title, project_number, total_funding, url, start_date, end_date, 
+                principal_investigators, investigators, funding_org, funding_dept, 
+                awardee_org, awardee_dept, project_terms, abstract, abstract_keywords)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, title, project_number, total_funding, url, start_date, end_date, 
+                        principal_investigators, investigators, funding_org, funding_dept, 
+                        awardee_org, awardee_dept, ','.join(project_terms), abstract, abstract_keywords]
+                for i in range(len(values)):
+                    if values[i] == None:
+                        values[i] = ""
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Grant contract added successfully!', 'success')
+            except Exception as e:
+                flash(f'Failed to add grant contract due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = patents_read_table(user)
+            return render_template('grantize/profile/patents.html', documents = documents)
+        if "editsection" in request.form:
+            try:
+                print("_________________EDIT STEP 0__________________")
+                grant_id = request.form['grant_id']  # Ensure you have a hidden input in your form with the name 'document_id'
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'name': 'project_number',
+                    'type': 'total_funding',
+                    'url': 'url',
+                    'start_date': ('start_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'end_date': ('end_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'authors': 'principal_investigators',
+                    'co_authors': 'investigators',
+                    'sponsor': 'funding_org',
+                    'sponsor_department': '	funding_dept',
+                    'organization': 'awardee_org',
+                    'department': 'awardee_dept',
+                    'keywords': 'project_terms',
+                    'abstract': 'abstract',
+                    'keyword_abstract': 'abstract_keywords'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_info in form_to_db_map.items():
+                    db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        # Apply transformation function if provided
+                        values.append(transform(form_data) if transform else form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                if updates:
+                    update_sql = ", ".join(updates)
+                    sql = f"UPDATE gpatents SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(grant_id)
+                    print(values)
+                    mycursor = sqlconnection.cursor()
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    flash('Grant details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+
+                print("_________________EDIT STEP 2__________________")
+
+            except Exception as e:
+                flash(f'Failed to update grant details due to an error: {e}', 'error')
+                return render_template('error_template.html'), 500
+            documents = patents_read_table(user)
+            return render_template('grantize/profile/patents.html', documents = documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gpatents WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/patents.html')
+            ## Code to Read
+            documents = patents_read_table(user)
+            return render_template('grantize/profile/patents.html', documents = documents)
+        else:
+            documents = patents_read_table(user)
+            return render_template('grantize/profile/patents.html', documents = documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofilejourorgres')
+def journalres_read_table(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the journals table that are used in the INSERT query
+        query = """
+        SELECT id, publication_status, publisher, journal, year, volume, issue, page, title, url, doi,
+               organization, department, authors, co_authors, corresponding_authors, keywords,
+               abstract, abstract_keywords, techniques, instruments, softwares, soft_skills
+        FROM gjournals
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        documents = []
+        for row in rows:
+            documents.append(row)
+        
+        mycursor.close()
+        return documents
+    except Exception as e:
+        print("Error fetching documents from database:", str(e))
+        return []
+
+
+
+@app.route('/grantizeprofilejourorgres', methods =["GET", "POST"])
 def grantizeprofilejourorgres():
     if session.get("loginnname"):
-        return render_template('grantize/profile/journalresearch.html')
+        user = session.get('loginid')
+        if "createjourres" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                publication_status = get_form_data_or_none('publication_status')
+                publisher = get_form_data_or_none('publisher')
+                journal = get_form_data_or_none('journal')
+                year = get_form_data_or_none('year')
+                volume = get_form_data_or_none('volume')
+                issue = get_form_data_or_none('issue')
+                page = get_form_data_or_none('page')
+                title = get_form_data_or_none('title')
+                url = get_form_data_or_none('url')
+                doi = get_form_data_or_none('doi')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                keywords = get_form_data_or_none('keywords')
+                abstract = get_form_data_or_none('abstract')
+                abstract_keywords = get_form_data_or_none('keyword_abstract')
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                soft_skills = get_form_data_or_none('soft_skills')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gjournals
+                (userid, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                techniques, instruments, softwares, soft_skills)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                        department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                        techniques, instruments, softwares, soft_skills]
+                
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print(values)
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Journal information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add journal information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = journalres_read_table(user)
+            return render_template('grantize/profile/journalresearch.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                journal_id = request.form['journal_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'publication_status': 'publication_status',
+                    'publisher': 'publisher',
+                    'journal': 'journal',
+                    'year': 'year',
+                    'volume': 'volume',
+                    'issue': 'issue',
+                    'page': 'page',
+                    'title': 'title',
+                    'url': 'url',
+                    'doi': 'doi',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'keywords': 'keywords',
+                    'abstract': 'abstract',
+                    'abstract_keywords': 'abstract_keywords',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'soft_skills': 'soft_skills'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gjournals SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(journal_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Journal details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update journal details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = journalres_read_table(user)
+            return render_template('grantize/profile/journalresearch.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gjournals WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/journalresearch.html')
+            ## Code to Read
+            documents = journalres_read_table(user)
+            return render_template('grantize/profile/journalresearch.html', documents = documents)
+        else:
+            documents = journalres_read_table(user)
+            print(documents)
+            return render_template('grantize/profile/journalresearch.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
-    
-@app.route('/grantizeprofilejourshortsrep')
+
+def shorts_read_table(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the journals table that are used in the INSERT query
+        query = """
+        SELECT id, publication_status, publisher, journal, year, volume, issue, page, title, url, doi,
+               organization, department, authors, co_authors, corresponding_authors, keywords,
+               abstract, abstract_keywords, techniques, instruments, softwares, soft_skills
+        FROM gshorts
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        documents = []
+        for row in rows:
+            documents.append(row)
+        
+        mycursor.close()
+        return documents
+    except Exception as e:
+        print("Error fetching documents from database:", str(e))
+        return []
+
+@app.route('/grantizeprofilejourshortsrep', methods =["GET", "POST"])
 def grantizeprofilejourshortsrep():
     if session.get("loginnname"):
-        return render_template('grantize/profile/journalshortreport.html')
+        user = session.get('loginid')
+        if "createjourshorts" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                publication_status = get_form_data_or_none('publication_status')
+                publisher = get_form_data_or_none('publisher')
+                journal = get_form_data_or_none('journal')
+                year = get_form_data_or_none('year')
+                volume = get_form_data_or_none('volume')
+                issue = get_form_data_or_none('issue')
+                page = get_form_data_or_none('page')
+                title = get_form_data_or_none('title')
+                url = get_form_data_or_none('url')
+                doi = get_form_data_or_none('doi')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                keywords = get_form_data_or_none('keywords')
+                abstract = get_form_data_or_none('abstract')
+                abstract_keywords = get_form_data_or_none('keyword_abstract')
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                soft_skills = get_form_data_or_none('soft_skills')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gshorts
+                (userid, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                techniques, instruments, softwares, soft_skills)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                        department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                        techniques, instruments, softwares, soft_skills]
+                
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print(values)
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Journal information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add journal information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = shorts_read_table(user)
+            return render_template('grantize/profile/journalshortreport.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                journal_id = request.form['journal_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'publication_status': 'publication_status',
+                    'publisher': 'publisher',
+                    'journal': 'journal',
+                    'year': 'year',
+                    'volume': 'volume',
+                    'issue': 'issue',
+                    'page': 'page',
+                    'title': 'title',
+                    'url': 'url',
+                    'doi': 'doi',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'keywords': 'keywords',
+                    'abstract': 'abstract',
+                    'abstract_keywords': 'abstract_keywords',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'soft_skills': 'soft_skills'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gshorts SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(journal_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Journal details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update journal details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = shorts_read_table(user)
+            return render_template('grantize/profile/journalshortreport.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gshorts WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/journalshortreport.html')
+            ## Code to Read
+            documents = shorts_read_table(user)
+            return render_template('grantize/profile/journalshortreport.html', documents = documents)
+        else:
+            documents = shorts_read_table(user)
+            print(documents)
+            return render_template('grantize/profile/journalshortreport.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
