@@ -1750,11 +1750,184 @@ def grantizeprofilejourshortsrep():
             return render_template('grantize/profile/journalshortreport.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
-    
-@app.route('/grantizeprofilejourreviewarts')
+
+def articles_read_table(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the journals table that are used in the INSERT query
+        query = """
+        SELECT id, publication_status, publisher, journal, year, volume, issue, page, title, url, doi,
+               organization, department, authors, co_authors, corresponding_authors, keywords,
+               abstract, abstract_keywords, techniques, instruments, softwares, soft_skills
+        FROM garticles
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        documents = []
+        for row in rows:
+            documents.append(row)
+        
+        mycursor.close()
+        return documents
+    except Exception as e:
+        print("Error fetching documents from database:", str(e))
+        return []  
+
+@app.route('/grantizeprofilejourreviewarts', methods =["GET", "POST"])
 def grantizeprofilejourreviewarts():
     if session.get("loginnname"):
-        return render_template('grantize/profile/journalreviewarticles.html')
+        user = session.get('loginid')
+        if "createjourshorts" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                publication_status = get_form_data_or_none('publication_status')
+                publisher = get_form_data_or_none('publisher')
+                journal = get_form_data_or_none('journal')
+                year = get_form_data_or_none('year')
+                volume = get_form_data_or_none('volume')
+                issue = get_form_data_or_none('issue')
+                page = get_form_data_or_none('page')
+                title = get_form_data_or_none('title')
+                url = get_form_data_or_none('url')
+                doi = get_form_data_or_none('doi')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                keywords = get_form_data_or_none('keywords')
+                abstract = get_form_data_or_none('abstract')
+                abstract_keywords = get_form_data_or_none('keyword_abstract')
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                soft_skills = get_form_data_or_none('soft_skills')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO garticles
+                (userid, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                techniques, instruments, softwares, soft_skills)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, publication_status, publisher, journal, year, volume, issue, page, title, url, doi, organization, 
+                        department, authors, co_authors, corresponding_authors, keywords, abstract, abstract_keywords, 
+                        techniques, instruments, softwares, soft_skills]
+                
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print(values)
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Journal information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add journal information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = articles_read_table(user)
+            return render_template('grantize/profile/journalreviewarticles.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                journal_id = request.form['journal_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'publication_status': 'publication_status',
+                    'publisher': 'publisher',
+                    'journal': 'journal',
+                    'year': 'year',
+                    'volume': 'volume',
+                    'issue': 'issue',
+                    'page': 'page',
+                    'title': 'title',
+                    'url': 'url',
+                    'doi': 'doi',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'keywords': 'keywords',
+                    'abstract': 'abstract',
+                    'abstract_keywords': 'abstract_keywords',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'soft_skills': 'soft_skills'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE garticles SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(journal_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Journal details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update journal details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = articles_read_table(user)
+            return render_template('grantize/profile/journalreviewarticles.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM garticles WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/journalreviewarticles.html')
+            ## Code to Read
+            documents = articles_read_table(user)
+            return render_template('grantize/profile/journalreviewarticles.html', documents = documents)
+        else:
+            documents = articles_read_table(user)
+            print(documents)
+            return render_template('grantize/profile/journalreviewarticles.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
