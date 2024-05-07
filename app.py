@@ -6,6 +6,7 @@ from io import BytesIO
 from datetime import datetime
 import mimetypes
 from werkzeug.utils import secure_filename
+import os
 
 
  
@@ -267,14 +268,14 @@ def cred_read_table(user):
     mycursor.close()
     return documents
 
-@app.route('/download/<filename>')
-def download_file(filename):
+@app.route('/download/<doc_id>')
+def download_file(doc_id):
     global sqlconnection
     cursor = sqlconnection.cursor()
     try:
         # Prepare a query to fetch the file data by name
-        query = "SELECT filename, filecontent FROM gcredentials WHERE filename = %s"
-        cursor.execute(query, (filename,))
+        query = "SELECT filename, filecontent FROM gcredentials WHERE id = %s"
+        cursor.execute(query, (doc_id,))
         file_data = cursor.fetchone()
         if file_data is None:
             return jsonify({'error': 'File not found'}), 404
@@ -405,33 +406,6 @@ def grantizeprofilerescredentials():
                     mycursor.execute(sql, tuple(values))
                     sqlconnection.commit()
                     mycursor.close()
-            except:
-                print("DATBASE FAILURE!!")
-                return render_template('grantize/profile/credentials.html')
-            ## Code to Read
-            documents = cred_read_table(user)
-            return render_template('grantize/profile/credentials.html', documents=documents)
-        if "permissions" in request.form:
-            try:
-                if request.form.get("public"):
-                    except_persons = request.form['except_persons']
-                    prmission_show_me('gcredentials',except_persons, user)
-                if request.form.get("designation"):
-                    except_persons = request.form.getlist('designations')
-                    prmission_hide_designation('gcredentials', except_persons, user)
-                if request.form.get("person"):
-                    except_persons = request.form['except_invidividuals']
-                    prmission_hide_individuals('gcredentials', except_persons, user)
-            except:
-                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-                return render_template('grantize/profile/credentials.html')
-            try:
-                mycursor = sqlconnection.cursor()
-                sql = "INSERT INTO gcredentials (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
-                values = (user, credname, credorg, credfilename, file_content)
-                mycursor.execute(sql, values)
-                sqlconnection.commit()
-                mycursor.close()
             except:
                 print("DATBASE FAILURE!!")
                 return render_template('grantize/profile/credentials.html')
@@ -616,33 +590,6 @@ def grantizeprofileexperience():
             ## Code to Read
             documents = work_experience_read_table(user)
             return render_template('grantize/profile/experience.html', documents = documents)
-        if "permissions" in request.form:
-            try:
-                if request.form.get("public"):
-                    except_persons = request.form['except_persons']
-                    prmission_show_me('gcredentials',except_persons, user)
-                if request.form.get("designation"):
-                    except_persons = request.form.getlist('designations')
-                    prmission_hide_designation('gcredentials', except_persons, user)
-                if request.form.get("person"):
-                    except_persons = request.form['except_invidividuals']
-                    prmission_hide_individuals('gcredentials', except_persons, user)
-            except:
-                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-                return render_template('grantize/profile/credentials.html')
-            try:
-                mycursor = sqlconnection.cursor()
-                sql = "INSERT INTO gcredentials (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
-                values = (user, credname, credorg, credfilename, file_content)
-                mycursor.execute(sql, values)
-                sqlconnection.commit()
-                mycursor.close()
-            except:
-                print("DATBASE FAILURE!!")
-                return render_template('grantize/profile/credentials.html')
-            ## Code to Read
-            documents = cred_read_table(user)
-            return render_template('grantize/profile/credentials.html', documents=documents)
         if "delete" in request.form:
             try:
                 id_to_delete = request.form['id']
@@ -824,33 +771,6 @@ def grantizeprofilevolunteer():
             ## Code to Read
             documents = volunteer_read_table(user)
             return render_template('grantize/profile/volunteer.html', documents = documents)
-        if "permissions" in request.form:
-            try:
-                if request.form.get("public"):
-                    except_persons = request.form['except_persons']
-                    prmission_show_me('gcredentials',except_persons, user)
-                if request.form.get("designation"):
-                    except_persons = request.form.getlist('designations')
-                    prmission_hide_designation('gcredentials', except_persons, user)
-                if request.form.get("person"):
-                    except_persons = request.form['except_invidividuals']
-                    prmission_hide_individuals('gcredentials', except_persons, user)
-            except:
-                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-                return render_template('grantize/profile/volunteer.html')
-            try:
-                mycursor = sqlconnection.cursor()
-                sql = "INSERT INTO gvolunteer (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
-                values = (user, credname, credorg, credfilename, file_content)
-                mycursor.execute(sql, values)
-                sqlconnection.commit()
-                mycursor.close()
-            except:
-                print("DATBASE FAILURE!!")
-                return render_template('grantize/profile/volunteer.html')
-            ## Code to Read
-            documents = volunteer_read_table(user)
-            return render_template('grantize/profile/volunteer.html', documents=documents)
         if "delete" in request.form:
             try:
                 id_to_delete = request.form['id']
@@ -997,33 +917,6 @@ def grantizeprofileawards():
                 flash(f'Failed to update award due to an error: {e}', 'error')
                 return render_template('error_template.html'), 500
             ## Code to Read updated data
-            documents = awards_read_table(user)
-            return render_template('grantize/profile/awards.html', documents=documents)
-        if "permissions" in request.form:
-            try:
-                if request.form.get("public"):
-                    except_persons = request.form['except_persons']
-                    prmission_show_me('gcredentials',except_persons, user)
-                if request.form.get("designation"):
-                    except_persons = request.form.getlist('designations')
-                    prmission_hide_designation('gcredentials', except_persons, user)
-                if request.form.get("person"):
-                    except_persons = request.form['except_invidividuals']
-                    prmission_hide_individuals('gcredentials', except_persons, user)
-            except:
-                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-                return render_template('grantize/profile/awards.html')
-            try:
-                mycursor = sqlconnection.cursor()
-                sql = "INSERT INTO gvolunteer (userid, description, organization, filename, filecontent) VALUES (%s, %s, %s, %s, %s)"
-                values = (user, credname, credorg, credfilename, file_content)
-                mycursor.execute(sql, values)
-                sqlconnection.commit()
-                mycursor.close()
-            except:
-                print("DATBASE FAILURE!!")
-                return render_template('grantize/profile/awards.html')
-            ## Code to Read
             documents = awards_read_table(user)
             return render_template('grantize/profile/awards.html', documents=documents)
         if "delete" in request.form:
@@ -3002,7 +2895,7 @@ def grantizeprofileotherpubs():
         if "editsection" in request.form:
             print("_________________EDIT STEP 0__________________")
             try:
-                article_id = request.form['article_id']  # This should be a hidden input in your form for the article's ID
+                publication_id = request.form.get('publication_id', '')  # ID from the hidden input in the form
                 updates = []
                 values = []
 
@@ -3013,9 +2906,9 @@ def grantizeprofileotherpubs():
                 # Define the mapping from form fields to database columns
                 form_to_db_map = {
                     'title': 'title',
-                    'publisher': 'publisher',
-                    'date': 'date',
                     'url': 'url',
+                    'authors': 'first_author',
+                    'keywords': 'keywords',
                     'abstract': 'abstract',
                     'keyword_abstract': 'keyword_abstract'
                 }
@@ -3033,20 +2926,20 @@ def grantizeprofileotherpubs():
                 if updates:
                     update_sql = ", ".join(updates)
                     print("_________________EDIT STEP 2__________________")
-                    sql = f"UPDATE articlesinnews SET {update_sql} WHERE id = %s"
+                    sql = f"UPDATE gotherpubs SET {update_sql} WHERE id = %s"
                     print(sql)
-                    values.append(article_id)
+                    values.append(publication_id)
                     mycursor = sqlconnection.cursor()
                     print(values)
                     mycursor.execute(sql, tuple(values))
                     sqlconnection.commit()
                     mycursor.close()
                     print("_________________EDIT STEP 3__________________")
-                    flash('Article details updated successfully!', 'success')
+                    flash('Publication details updated successfully!', 'success')
                 else:
                     flash('No changes to update.', 'info')
             except Exception as e:
-                flash(f'Failed to update article details due to an error: {str(e)}', 'error')
+                flash(f'Failed to update publication details due to an error: {str(e)}', 'error')
                 return render_template('error_template.html'), 500
             documents = read_publications(user)
             return render_template('grantize/profile/otherpublications.html', documents=documents)
@@ -3057,7 +2950,7 @@ def grantizeprofileotherpubs():
                 print(id_to_delete)
                 print("--------------")
                 mycursor = sqlconnection.cursor()
-                sql = "DELETE FROM articlesinnews WHERE id = "+str(id_to_delete)
+                sql = "DELETE FROM gotherpubs WHERE id = "+str(id_to_delete)
                 mycursor.execute(sql)
                 sqlconnection.commit()
                 mycursor.close()
@@ -3074,37 +2967,805 @@ def grantizeprofileotherpubs():
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileresprotocols')
+def read_research_protocols(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the grespro table
+        query = """
+        SELECT id, userid, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description
+        FROM grespro
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            profiles.append(row)
+
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching experience profiles from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileresprotocols', methods =["GET", "POST"])
 def grantizeprofileresprotocols():
     if session.get("loginnname"):
-        return render_template('grantize/profile/researchprotocols.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
+
+                def parse_date(date_str):
+                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+                # Extract form data
+                title = get_form_data_or_none('title')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                start_date = parse_date(get_form_data_or_none('start_date'))
+                end_date = parse_date(get_form_data_or_none('end_date'))
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO grespro (userid, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description]
+
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print("_________________CREATE STEP 1__________________")
+                print(values)
+                
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Experience profile information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add experience profile information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_research_protocols(user)
+            return render_template('grantize/profile/researchprotocols.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form.get('chapter_id', '')  # ID from the hidden input in the form
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'description': 'description',
+                    'keyword_description': 'keyword_description'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE grespro SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Profile details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update profile details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_research_protocols(user)
+            return render_template('grantize/profile/researchprotocols.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM grespro WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/researchprotocols.html')
+            ## Code to Read
+            documents = read_research_protocols(user)
+            return render_template('grantize/profile/researchprotocols.html', documents = documents)
+        else:
+            documents = read_research_protocols(user)
+            print(documents)
+            return render_template('grantize/profile/researchprotocols.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileiacucprotocols')
+def read_iupac_protocols(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the grespro table
+        query = """
+        SELECT id, userid, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description
+        FROM giupacpro
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            profiles.append(row)
+
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching experience profiles from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileiacucprotocols', methods =["GET", "POST"])
 def grantizeprofileiacucprotocols():
     if session.get("loginnname"):
-        return render_template('grantize/profile/iacucprotoocols.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
+
+                def parse_date(date_str):
+                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+                # Extract form data
+                title = get_form_data_or_none('title')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                start_date = parse_date(get_form_data_or_none('start_date'))
+                end_date = parse_date(get_form_data_or_none('end_date'))
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO giupacpro (userid, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, title, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description]
+
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print("_________________CREATE STEP 1__________________")
+                print(values)
+                
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Experience profile information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add experience profile information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_iupac_protocols(user)
+            return render_template('grantize/profile/iacucprotoocols.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form.get('chapter_id', '')  # ID from the hidden input in the form
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'description': 'description',
+                    'keyword_description': 'keyword_description'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE giupacpro SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Profile details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update profile details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_iupac_protocols(user)
+            return render_template('grantize/profile/iacucprotoocols.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM giupacpro WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/iacucprotoocols.html')
+            ## Code to Read
+            documents = read_iupac_protocols(user)
+            return render_template('grantize/profile/iacucprotoocols.html', documents = documents)
+        else:
+            documents = read_iupac_protocols(user)
+            print(documents)
+            return render_template('grantize/profile/iacucprotoocols.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileclinicalprotocols')
+def read_clinical_protocols(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the grespro table
+        query = """
+        SELECT id, userid, title, phase, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description
+        FROM gclinipro
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            profiles.append(row)
+
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching experience profiles from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileclinicalprotocols', methods =["GET", "POST"])
 def grantizeprofileclinicalprotocols():
     if session.get("loginnname"):
-        return render_template('grantize/profile/clinicalprotocols.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
+
+                def parse_date(date_str):
+                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+                # Extract form data
+                title = get_form_data_or_none('title')
+                phase = get_form_data_or_none('phase')
+                authors = get_form_data_or_none('authors')
+                co_authors = get_form_data_or_none('co_authors')
+                corresponding_authors = get_form_data_or_none('corresponding_authors')
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                start_date = parse_date(get_form_data_or_none('start_date'))
+                end_date = parse_date(get_form_data_or_none('end_date'))
+                techniques = get_form_data_or_none('techniques')
+                instruments = get_form_data_or_none('instruments')
+                softwares = get_form_data_or_none('softwares')
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gclinipro (userid, title, phase, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = [user, title, phase, authors, co_authors, corresponding_authors, organization, department, start_date, end_date, techniques, instruments, softwares, description, keyword_description]
+
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print("_________________CREATE STEP 1__________________")
+                print(values)
+                
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Experience profile information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add experience profile information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_clinical_protocols(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form.get('chapter_id', '')  # ID from the hidden input in the form
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'phase': 'phase',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'description': 'description',
+                    'keyword_description': 'keyword_description'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gclinipro SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Profile details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update profile details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_clinical_protocols(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gclinipro WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/clinicalprotocols.html')
+            ## Code to Read
+            documents = read_clinical_protocols(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents = documents)
+        else:
+            documents = read_clinical_protocols(user)
+            print(documents)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileconferences')
+def read_conferences(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the grespro table
+        query = """
+        SELECT id, userid, conference, role, title, keywords, filecontent, filename, techniques, instruments, softwares, abstract, keyword_description
+        FROM gconferences
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            profiles.append(row)
+
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching experience profiles from database:", str(e))
+        return []
+
+@app.route('/download_file_conf/<doc_id>')
+def download_file_conf(doc_id):
+    global sqlconnection
+    print("____________")
+    print("ENTER DOWNLOAD")
+    print(doc_id)
+    print("____________")
+    cursor = sqlconnection.cursor()
+    try:
+        # Prepare a query to fetch the file data by name
+        query = "SELECT filename, filecontent FROM gconferences WHERE id = %s"
+        cursor.execute(query, (doc_id,))
+        file_data = cursor.fetchone()
+        if file_data is None:
+            return jsonify({'error': 'File not found'}), 404
+
+        # Secure the filename to prevent path traversal attacks
+        filename = secure_filename(file_data[0])
+
+        # Guess the MIME type of the file based on its extension
+        mime_type, _ = mimetypes.guess_type(filename)
+        if mime_type is None:
+            mime_type = 'application/octet-stream'  # Fallback to binary type if MIME type is undetectable
+
+        # Send the file data as an attachment
+        file_stream = BytesIO(file_data[1])
+        return send_file(
+            file_stream,
+            mimetype=mime_type,
+            as_attachment=True,
+            download_name=filename
+        )
+    except mysql.connector.Error as err:
+        print("Error: ", err)
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+
+@app.route('/grantizeprofileconferences', methods =["GET", "POST"])
 def grantizeprofileconferences():
     if session.get("loginnname"):
-        return render_template('grantize/profile/conferences.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            try:
+                print("_________________CREATE STEP 0__________________")
+                # Retrieving form data
+                conference = request.form.get('conference', '').strip()
+                role = request.form.get('role', '').strip()
+                title = request.form.get('title', '').strip()
+                keywords = request.form.get('keywords', '').strip()
+                file = request.files.get('filecontent')  # Handling file input
+                techniques = request.form.get('techniques', '').strip()
+                instruments = request.form.get('instruments', '').strip()
+                softwares = request.form.get('softwares', '').strip()
+                abstract = request.form.get('abstract', '').strip()
+                keyword_description = request.form.get('keyword_description', '').strip()
+
+                # SQL Insert Query
+                sql = """
+                INSERT INTO gconferences (userid, conference, role, title, keywords, filecontent, filename, techniques, instruments, softwares, abstract, keyword_description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                # Preparing data for insertion
+                values = (user, conference, role, title, keywords, file.read() if file else None, secure_filename(file.filename) if file else None, techniques, instruments, softwares, abstract, keyword_description)
+
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print("_________________CREATE STEP 1__________________")
+                print(values)
+                
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Experience profile information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add conference information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_conferences(user)
+            return render_template('grantize/profile/conferences.html', documents=documents)
+        if "editsection" in request.form:
+            conference_id = request.form.get('chapter_id', '').strip()  # Assuming chapter_id is the record's unique identifier
+            try:
+                updates = []
+                values = []
+                
+                # Mapping form fields to database columns
+                form_to_db = {
+                    'conference': 'conference',
+                    'role': 'role',
+                    'title': 'title',
+                    'keywords': 'keywords',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'soft_skills': 'soft_skills',
+                    'abstract': 'abstract',
+                    'keyword_description': 'keyword_description'
+                }
+
+                # Collect updates for non-empty fields
+                for form_field, db_field in form_to_db.items():
+                    data = request.form.get(form_field, '').strip()
+                    if data:
+                        updates.append(f"{db_field} = %s")
+                        values.append(data)
+                
+                # Handle file upload if any
+                if 'filecontent' in request.files and request.files['filecontent']:
+                    file = request.files['filecontent']
+                    if file and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        #filepath = os.path.join('/path/to/upload/directory', filename)
+                        #file.save(filepath)
+                        updates.append("filename = %s, filecontent = %s")
+                        values.extend([filename, file.read()])
+                
+                # Execute update if there are changes
+                if updates:
+                    sql = f"UPDATE gconferences SET {', '.join(updates)} WHERE id = %s"
+                    values.append(conference_id)
+                    with sqlconnection.cursor() as cursor:
+                        cursor.execute(sql, tuple(values))
+                        sqlconnection.commit()
+                    flash('Conference information updated successfully!', 'success')
+                else:
+                    flash('No changes detected.', 'info')
+                    
+            except Exception as e:
+                flash(f'Error updating conference information: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_conferences(user)
+            return render_template('grantize/profile/conferences.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gconferences WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/conferences.html')
+            ## Code to Read
+            documents = read_conferences(user)
+            return render_template('grantize/profile/conferences.html', documents = documents)
+        else:
+            documents = read_conferences(user)
+            print(documents)
+            return render_template('grantize/profile/conferences.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
+def read_symposia(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the grespro table
+        query = """
+        SELECT id, userid, conference, role, title, keywords, techniques, instruments, softwares, soft_skills, abstract, keyword_description
+        FROM gsymposia
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            profiles.append(row)
+
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching experience profiles from database:", str(e))
+        return []
+
 @app.route('/grantizeprofilesymposia')
 def grantizeprofilesymposia():
     if session.get("loginnname"):
+        user = session.get('loginid')
+        if "createform" in request.form:
+            try:
+                conference = request.form.get('conference', '').strip()
+                role = request.form.get('role', '').strip()
+                title = request.form.get('title', '').strip()
+                keywords = request.form.get('keywords', '').strip()
+                techniques = request.form.get('techniques', '').strip()
+                instruments = request.form.get('instruments', '').strip()
+                softwares = request.form.get('softwares', '').strip()
+                soft_skills = request.form.get('soft_skills', '').strip()
+                abstract = request.form.get('abstract', '').strip()
+                keyword_description = request.form.get('keyword_description', '').strip()
+
+                # SQL Query to insert the data
+                sql = """
+                INSERT INTO gsymposia (userid, conference, role, title, keywords, techniques, instruments, softwares, soft_skills, abstract, keyword_description)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                values = (user, conference, role, title, keywords, techniques, instruments, softwares, soft_skills, abstract, keyword_description)
+
+                # Execute the SQL command
+                with sqlconnection.cursor() as cursor:
+                    cursor.execute(sql, values)
+                    sqlconnection.commit()
+                    flash("Profile information added successfully!", "success")
+
+            except Exception as e:
+                sqlconnection.rollback()
+                flash(f"An error occurred: {str(e)}", "error")
+                return render_template('error_template.html'), 500
+            documents = read_symposia(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form.get('chapter_id', '')  # ID from the hidden input in the form
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'phase': 'phase',
+                    'authors': 'authors',
+                    'co_authors': 'co_authors',
+                    'corresponding_authors': 'corresponding_authors',
+                    'organization': 'organization',
+                    'department': 'department',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                    'techniques': 'techniques',
+                    'instruments': 'instruments',
+                    'softwares': 'softwares',
+                    'description': 'description',
+                    'keyword_description': 'keyword_description'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gclinipro SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Profile details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update profile details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_symposia(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gclinipro WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/clinicalprotocols.html')
+            ## Code to Read
+            documents = read_symposia(user)
+            return render_template('grantize/profile/clinicalprotocols.html', documents = documents)
+        else:
+            documents = read_symposia(user)
+            print(documents)
+            return render_template('grantize/profile/clinicalprotocols.html', documents=documents)
         return render_template('grantize/profile/symposia.html')
     else:
         return render_template('grantize/grantize.html')
