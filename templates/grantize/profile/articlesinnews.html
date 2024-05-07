@@ -276,7 +276,7 @@
 					<a href="http://localhost/grantize/public/researcher/profile" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
 									</div>
 		<div class="col-12 col-sm-8 col-md-9 order-lg-1">
-			<h1>Books</h1>
+			<h1>Articles In News</h1>
 		</div>
 	</div>
 </div>
@@ -643,7 +643,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="{{ url_for('grantizeprofileartsinnews') }}" method="post" enctype="multipart/form-data" id="addForm">
+					<form action="{{ url_for('grantizeprofileartsinnews') }}" method="post" enctype="multipart/form-data" id="editForm1">
 						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
 						<input type="hidden" name="article_id" id="edit-modal-document-id" value="">
 						<div class="row">
@@ -713,7 +713,6 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<input type="hidden" name="id" value="1" form="editForm1" >
 					<input type="hidden" name="table_name" value="user_journal_original_research" form="editForm1" >
 					<input type="hidden" name="redirect" value="my_journal_original_research" form="editForm1" >
 					<input type="submit" name="submit" value="Save changes" form="editForm1" class="btn btn-primary">

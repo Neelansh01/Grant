@@ -2930,11 +2930,147 @@ def grantizeprofileartsinnews():
             return render_template('grantize/profile/articlesinnews.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
-    
-@app.route('/grantizeprofileotherpubs')
+
+def read_publications(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the articlesinnews table
+        query = """
+        SELECT id, userid, title, url, authors, keywords, abstract, keyword_abstract
+        FROM gotherpubs
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        articles = []
+        for row in rows:
+            articles.append(row)
+        
+        mycursor.close()
+        return articles
+    except Exception as e:
+        print("Error fetching articles from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileotherpubs', methods =["GET", "POST"])
 def grantizeprofileotherpubs():
     if session.get("loginnname"):
-        return render_template('grantize/profile/otherpublications.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                title = get_form_data_or_none('title')
+                url = get_form_data_or_none('url')
+                authors = get_form_data_or_none('authors')  # assuming a single author text field, adjust if necessary
+                keywords = get_form_data_or_none('keywords')  # assuming a single keyword text field, adjust if necessary
+                abstract = get_form_data_or_none('abstract')
+                keyword_abstract = get_form_data_or_none('keyword_abstract')  # additional keywords related to the abstract
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gotherpubs
+                (userid, title, url, authors, keywords, abstract, keyword_abstract)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                ## user = request.form['userid']   this should be set somewhere in your session or passed as a hidden input
+                values = [user, title, url, authors, keywords, abstract, keyword_abstract]
+
+                # Convert None values to empty strings before executing
+                values = ["" if v is None else v for v in values]
+                print(values)
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Publication information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add publication information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_publications(user)
+            return render_template('grantize/profile/otherpublications.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                article_id = request.form['article_id']  # This should be a hidden input in your form for the article's ID
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'title': 'title',
+                    'publisher': 'publisher',
+                    'date': 'date',
+                    'url': 'url',
+                    'abstract': 'abstract',
+                    'keyword_abstract': 'keyword_abstract'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE articlesinnews SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(article_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Article details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update article details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_publications(user)
+            return render_template('grantize/profile/otherpublications.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM articlesinnews WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/otherpublications.html')
+            ## Code to Read
+            documents = read_publications(user)
+            return render_template('grantize/profile/otherpublications.html', documents = documents)
+        else:
+            documents = read_publications(user)
+            print(documents)
+            return render_template('grantize/profile/otherpublications.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
