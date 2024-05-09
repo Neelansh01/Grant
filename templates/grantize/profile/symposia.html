@@ -276,7 +276,7 @@
 					<a href="http://localhost/grantize/public/researcher/profile" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
 									</div>
 		<div class="col-12 col-sm-8 col-md-9 order-lg-1">
-			<h1>Books</h1>
+			<h1>Symposia Meetings</h1>
 		</div>
 	</div>
 </div>
@@ -548,120 +548,137 @@
 		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Add Book</h5>	
+					<h5 class="modal-title">Add Symposia Meetings</h5>	
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 
-
-
-					<form action="{{ url_for('grantizeprofilebooks') }}" method="post" enctype="multipart/form-data" id="addForm">
+					<form action="{{ url_for('grantizeprofilesymposia') }}" method="post" enctype="multipart/form-data" id="addForm">
 						<input type="hidden" name="createform" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
+						
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-9">
 								<div class="mb-3">
-									<label for="publisher" class="form-label">Publisher</label>
+									<label for="conference" class="form-label">Conference</label>
 									<div class="input-group">
-										<!-- <select name="publisher" id="publisher" class="form-select"></select> -->
-										<input type="text" name="publisher" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:organizationModal(11)" title="Add Publisher">
+										<!-- <select name="conference" id="conference" class="form-select"></select> -->
+										<input type="text" name="conference" class="form-select">
+										<a class="btn btn-outline-secondary" href="javascript:conferenceModal(2,'')" title="Add Conference">
 											<i class="bi bi-plus-lg"></i>
 										</a>
+									</div>
+								</div>
+							</div>
+					
+							<div class="col-12 col-lg-3">
+								<div class="mb-3">
+									<label for="role" class="form-label">Your role</label>
+									<div class="input-group">
+										<select name="role" id="your_role" class="form-control">
+											<option value="">Select your role</option>
+											<option value="Gave Presentations">Gave Presentations</option>
+											<option value="Gave Talk">Gave Talk</option>
+											<option value="Gave Invited Lecture">Gave Invited Lecture</option>
+											<option value="Attended">Attended</option>
+										</select>
 									</div>
 								</div>
 							</div>
 						</div>
 					
 						<div class="row">
-							<div class="col-12 col-lg-6">
+							<div class="col-12 col-lg-12">
 								<div class="mb-3">
-									<label for="book" class="form-label">Book Title</label>
-									<div class="input-group">
-										<!-- <select name="book_id" id="books" class="form-select"></select> -->
-										<input type="text" name="books" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:bookModal()" title="Add Book">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-6 col-lg-2">
-								<div class="mb-3">
-									<label for="edition" class="form-label">Edition</label>
-									<input type="text" name="edition" class="form-control">
-								</div>
-							</div>
-						</div>
-					
-						<div class="row">
-							<div class="col-12 col-lg-8">
-								<div class="mb-3">
-									<label for="title" class="form-label">Chapter Title</label>
+									<label for="title" class="form-label">Title</label>
 									<input type="text" name="title" class="form-control">
 								</div>
 							</div>
-							<div class="col-6 col-lg-2">
+					
+							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label">Chapter Number</label>
-									<input type="text" name="chapter_number" class="form-control">
+									<div class="form-group keywords_div">
+										<label for="keywords" class="form-label">Keywords</label>
+										<div class="input-group">
+											<input type="text" name="keywords" class="form-select">
+											<!-- <select name="keywords[]" id="keywords" class="form-select" multiple="multiple"></select> -->
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="col-6 col-lg-2">
-								<div class="mb-3">
-									<label for="degree" class="form-label">Page Number</label>
-									<input type="text" name="page" class="form-control">
+						</div>
+					
+						<div class="row bg-light mb-2 pt-3 pb-2">
+							<div class="col-12">
+								<div class="row">
+									<div class="col-lg-12">
+										<h6>
+											<b>Skill Gained/Utilized</b>
+											<a class="skillgained-more btn btn-sm btn-outline-dark float-end" href="javascript:void(0)">View all Skills <i class="bi bi-arrow-down-square"></i></a>
+											<a class="skillgained-less btn btn-sm btn-outline-dark float-end" href="javascript:void(0)">View less Skills <i class="bi bi-arrow-up-square"></i></a>
+										</h6>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12 col-lg-12 techniques_div">
+										<div class="mb-1">
+											<label for="techniques" class="form-label">Scientific/Technical Skills</label>
+											<div class="input-group">
+												<input type="text" name="techniques" class="form-select">
+												<!-- <select name="techniques[]" id="techniques" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="skillgained-more-content">
+									<div class="row">
+										<div class="col-12 col-lg-12 instruments_div">
+											<div class="mb-1">
+												<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
+												<div class="input-group">
+													<input type="text" name="instruments" class="form-select">
+													<!-- <select name="instruments[]" id="instruments" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-lg-12 softwares_div">
+											<div class="mb-1">
+												<label for="softwares" class="form-label">Software/Computational Skills</label>
+												<div class="input-group">
+													<input type="text" name="softwares" class="form-select">
+													<!-- <select name="softwares[]" id="softwares" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-lg-12 soft_skills_div">
+											<div class="mb-1">
+												<label for="soft_skills" class="form-label">Soft/Employability Skills</label>
+												<div class="input-group">
+													<input type="text" name="soft_skills" class="form-select">
+													<!-- <select name="soft_skills[]" id="soft_skills" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label">URL</label>
-									<input type="text" name="url" class="form-control">
-								</div>
-							</div>
-						</div>
-					
-						<div class="row">
-							<div class="col-12 authors_div">
-								<div class="mb-3">
-									<label for="authors" class="form-label">First Author/Editor</label>
-									<div class="input-group">
-										<!-- <select name="authors" id="authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-12 co_authors_div">
-								<div class="mb-3">
-									<label for="co_authors" class="form-label">Co-Author</label>
-									<div class="input-group">
-										<!-- <select name="co_authors" id="co_authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="co_authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-12 corresponding_authors_div">
-								<div class="mb-3">
-									<label for="corresponding_authors" class="form-label">Corresponding Author</label>
-									<div class="input-group">
-										<!-- <select name="corresponding_authors" id="corresponding_authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="corresponding_authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
+									<label for="abstract" class="form-label">Abstract/description</label>
+									<textarea name="abstract" id="description_ck" rows="4" cols="50" class="form-control"></textarea>
+									<div class="input-group input-group-sm">
+										<span class="input-group-text">Keywords</span>
+										<input type="text" name="keyword_description" class="form-select">
+										<!-- <select name="keyword_description[]" id="keyword_description_ck" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
 							</div>
 						</div>
 					</form>
+
+					
 
 				</div>
 				<div class="modal-footer">
@@ -678,113 +695,129 @@
 		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Edit Books</h5>
+					<h5 class="modal-title">Edit Symposia Meetings</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="{{ url_for('grantizeprofilebooks') }}" method="post" enctype="multipart/form-data" id="editForm1">
+					<form action="{{ url_for('grantizeprofilesymposia') }}" method="post" enctype="multipart/form-data" id="editForm1">
 						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
-						<input type="hidden" name="chapter_id" id="edit-modal-document-id" value="">
+						<input type="hidden" name="symposia_id" id="edit-modal-document-id" value="">
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12 col-lg-9">
 								<div class="mb-3">
-									<label for="publisher" class="form-label">Publisher</label>
+									<label for="conference" class="form-label">Conference</label>
 									<div class="input-group">
-										<!-- <select name="publisher" id="publisher" class="form-select"></select> -->
-										<input type="text" name="publisher" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:organizationModal(11)" title="Add Publisher">
+										<!-- <select name="conference" id="conference" class="form-select"></select> -->
+										<input type="text" name="conference" class="form-select">
+										<a class="btn btn-outline-secondary" href="javascript:conferenceModal(2,'')" title="Add Conference">
 											<i class="bi bi-plus-lg"></i>
 										</a>
+									</div>
+								</div>
+							</div>
+					
+							<div class="col-12 col-lg-3">
+								<div class="mb-3">
+									<label for="role" class="form-label">Your role</label>
+									<div class="input-group">
+										<select name="role" id="your_role" class="form-control">
+											<option value="">Select your role</option>
+											<option value="Gave Presentations">Gave Presentations</option>
+											<option value="Gave Talk">Gave Talk</option>
+											<option value="Gave Invited Lecture">Gave Invited Lecture</option>
+											<option value="Attended">Attended</option>
+										</select>
 									</div>
 								</div>
 							</div>
 						</div>
 					
 						<div class="row">
-							<div class="col-12 col-lg-6">
+							<div class="col-12 col-lg-12">
 								<div class="mb-3">
-									<label for="book" class="form-label">Book Title</label>
-									<div class="input-group">
-										<!-- <select name="book_id" id="books" class="form-select"></select> -->
-										<input type="text" name="books" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:bookModal()" title="Add Book">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-6 col-lg-2">
-								<div class="mb-3">
-									<label for="edition" class="form-label">Edition</label>
-									<input type="text" name="edition" class="form-control">
-								</div>
-							</div>
-						</div>
-					
-						<div class="row">
-							<div class="col-12 col-lg-8">
-								<div class="mb-3">
-									<label for="title" class="form-label">Chapter Title</label>
+									<label for="title" class="form-label">Title</label>
 									<input type="text" name="title" class="form-control">
 								</div>
 							</div>
-							<div class="col-6 col-lg-2">
+					
+							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label">Chapter Number</label>
-									<input type="text" name="chapter_number" class="form-control">
+									<div class="form-group keywords_div">
+										<label for="keywords" class="form-label">Keywords</label>
+										<div class="input-group">
+											<input type="text" name="keywords" class="form-select">
+											<!-- <select name="keywords[]" id="keywords" class="form-select" multiple="multiple"></select> -->
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="col-6 col-lg-2">
-								<div class="mb-3">
-									<label for="degree" class="form-label">Page Number</label>
-									<input type="text" name="page" class="form-control">
+						</div>
+					
+						<div class="row bg-light mb-2 pt-3 pb-2">
+							<div class="col-12">
+								<div class="row">
+									<div class="col-lg-12">
+										<h6>
+											<b>Skill Gained/Utilized</b>
+											<a class="skillgained-more btn btn-sm btn-outline-dark float-end" href="javascript:void(0)">View all Skills <i class="bi bi-arrow-down-square"></i></a>
+											<a class="skillgained-less btn btn-sm btn-outline-dark float-end" href="javascript:void(0)">View less Skills <i class="bi bi-arrow-up-square"></i></a>
+										</h6>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12 col-lg-12 techniques_div">
+										<div class="mb-1">
+											<label for="techniques" class="form-label">Scientific/Technical Skills</label>
+											<div class="input-group">
+												<input type="text" name="techniques" class="form-select">
+												<!-- <select name="techniques[]" id="techniques" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="skillgained-more-content">
+									<div class="row">
+										<div class="col-12 col-lg-12 instruments_div">
+											<div class="mb-1">
+												<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
+												<div class="input-group">
+													<input type="text" name="instruments" class="form-select">
+													<!-- <select name="instruments[]" id="instruments" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-lg-12 softwares_div">
+											<div class="mb-1">
+												<label for="softwares" class="form-label">Software/Computational Skills</label>
+												<div class="input-group">
+													<input type="text" name="softwares" class="form-select">
+													<!-- <select name="softwares[]" id="softwares" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-lg-12 soft_skills_div">
+											<div class="mb-1">
+												<label for="soft_skills" class="form-label">Soft/Employability Skills</label>
+												<div class="input-group">
+													<input type="text" name="soft_skills" class="form-select">
+													<!-- <select name="soft_skills[]" id="soft_skills" class="form-select" multiple="multiple" style="width:100%;"></select> -->
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 					
 						<div class="row">
-							<div class="col-12 col-lg-8">
+							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label">URL</label>
-									<input type="text" name="url" class="form-control">
-								</div>
-							</div>
-						</div>
-					
-						<div class="row">
-							<div class="col-12 authors_div">
-								<div class="mb-3">
-									<label for="authors" class="form-label">First Author/Editor</label>
-									<div class="input-group">
-										<!-- <select name="authors" id="authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-12 co_authors_div">
-								<div class="mb-3">
-									<label for="co_authors" class="form-label">Co-Author</label>
-									<div class="input-group">
-										<!-- <select name="co_authors" id="co_authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="co_authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
-									</div>
-								</div>
-							</div>
-							<div class="col-12 corresponding_authors_div">
-								<div class="mb-3">
-									<label for="corresponding_authors" class="form-label">Corresponding Author</label>
-									<div class="input-group">
-										<!-- <select name="corresponding_authors" id="corresponding_authors" class="form-select" multiple="multiple"></select> -->
-										<input type="text" name="corresponding_authors" class="form-select">
-										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors">
-											<i class="bi bi-plus-lg"></i>
-										</a>
+									<label for="abstract" class="form-label">Abstract/description</label>
+									<textarea name="abstract" id="description_ck" rows="4" cols="50" class="form-control"></textarea>
+									<div class="input-group input-group-sm">
+										<span class="input-group-text">Keywords</span>
+										<input type="text" name="keyword_description" class="form-select">
+										<!-- <select name="keyword_description[]" id="keyword_description_ck" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
 							</div>
@@ -3743,7 +3776,7 @@ $(document).ready(function(){
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>            
 	</div>
 	<div class="modal-body">
-		<form action="{{ url_for('grantizeprofilebooks') }}" method="post" enctype="multipart/form-data" id="addForm">
+		<form action="{{ url_for('grantizeprofilesymposia') }}" method="post" enctype="multipart/form-data" id="addForm">
 			<input type="hidden" name="delete" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
 			<input type="hidden" name="id" id="delete-modal-id" value="">
 			<h3 class="modal-title text-center">
