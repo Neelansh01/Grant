@@ -123,7 +123,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="researcher/dashboard" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('logingrantizeresdash') }}"class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Dashboard</span>
                 </a>
@@ -132,7 +132,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="researcher/profile" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('grantizeprofile') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Profile</span>
                 </a>
@@ -202,19 +202,19 @@
 
     <li class="nav-heading">My Account</li>
     <li class="nav-item">
-      <a  href="researcher/profile" class="nav-link ">
+      <a  href="{{ url_for('grantizeprofile') }}" class="nav-link ">
         <i class="bi bi-grid"></i>
         <span>Profile</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="researcher/profile/references_request" class="nav-link collapsed">
+      <a href="{{ url_for('grantizerefreq') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Reference Request</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="researcher/dashboard" class="nav-link collapsed">
+      <a href="{{ url_for('logingrantizeresdash') }}"class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
@@ -223,37 +223,37 @@
         
 
     <li class="nav-item">
-      <a  href="researcher/grants" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizebrowsegrants') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Browse Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="researcher/grants/searchquery" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesearchquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Search Query</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="researcher/grants/favorite" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizefavquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Favorite Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="researcher/grants/saved" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesavedquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Saved Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="researcher/grants/sharedbyme" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesharedbyme') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Shared by Me</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="researcher/grants/sharedwithme" class="nav-link collapsed">
+      <a href="{{ url_for('grantizesharedwithme') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Shared with Me</span>
       </a>
@@ -483,597 +483,47 @@
 		<div class="row">
 			<div class="col-sm-12 col-xl-12 mt-2">
 				<div class="card">
-				<div class="card-body" style="padding:5px;">
-					<div id="user-profile-sections" class="container profile-sections sections-category-outer">
-						<div class="row">
-							<div class="col-lg-12 mt-4">
-								<h4>
-									My Profile Sections <span></span>
-									<button type="button" class="btn btn-lg btn-tool float-end section-reorder" title="Reorder"><i class="bi bi-filter-right"></i></button>
-									<button type="button" class="btn btn-lg btn-tool float-end" data-bs-toggle="modal" data-bs-target="#preferenceModal"><i class="bi bi-gear"></i></button>
-								</h4>
+					<div class="card-body" style="padding:5px;">
+						<div id="user-profile-sections" class="container profile-sections sections-category-outer">
+							<div class="row">
+								<div class="col-lg-12 mt-4">
+									<h4>
+										My Profile Sections <span></span>
+										<button type="button" class="btn btn-lg btn-tool float-end section-reorder" title="Reorder"><i class="bi bi-filter-right"></i></button>
+										<button type="button" class="btn btn-lg btn-tool float-end" data-bs-toggle="modal" data-bs-target="#preferenceModal"><i class="bi bi-gear"></i></button>
+									</h4>
+								</div>
 							</div>
+							{% for section in documents[0]["sections"] %}
+								<div id="{{ section }}" class="row sections-category sections-category-div mb-3">
+									<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
+										<p>
+											{{ documents[0]["sectionheads"][section] }}
+											<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal({{ section }},'{{ documents[0]['sectionheads'][section] }}')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
+										</p>
+									</div>
+									<div class="col-lg-12">
+										<div class="row sections-outer">
+											{% for topic in documents[0]["sectioncontent"][section] %}
+											<div id="{{ topic }}" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
+												<a style="width:100%;" class="d-flex align-items-stretch" href="{{ documents[0]['urls'][topic] }}">
+													<div class="icon-box">
+														<div class="icon"><i class="bi bi-pencil"></i></div>
+														<h4>{{ documents[0]["topicheads"][topic] }}</h4>
+													</div>
+												</a>
+												<div class="" style="position:absolute;">
+													<a style="width:auto;" href="javascript:deleteModal({{ topic }})" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
+													<a style="width:auto;" href="javascript:permissionModal({{ topic }},'{{ documents[0]['topicheads'][topic] }}')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
+												</div>
+											</div>
+											{% endfor %}
+										</div>
+									</div>
+								</div>
+								{% endfor %}
 						</div>
-						
-												<div id="1" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Introduction									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(1,'Introduction')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="21" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilesummary') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Summary</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(21)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(21,'Summary')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="22" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileobjective') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Objective</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(22)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(22,'Objective')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="23" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileresstatement') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Research Statement</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(23)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(23,'Research Statement')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="24" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="profile/teaching_philosophy">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Teaching Philosophy</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(24)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(24,'Teaching Philosophy')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-												<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Academics and Experiences									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="profile/educations">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Educations</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(25)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(25,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilerescredentials') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Credentials and Transcripts</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(26)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(26,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="27" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileexperience') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Work Experiences</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(27)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(27,'Work Experiences')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="28" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilevolunteer') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Volunteer Experiences</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(28)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(28,'Volunteer Experiences')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="29" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileawards') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Awards and Honors</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(29)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(29,'Awards and Honors')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-												<div id="3" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Research Outcome									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(3,'Research Outcome')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="30" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilegrantscontracts') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Grants or Contracts</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(30)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(30,'Grants or Contracts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="31" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilepatents') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Patents or Technology License</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(31)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(31,'Patents or Technology License')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-												<div id="4" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Publications									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(4,'Publications')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="32" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourorgres') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Original Research</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(32)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(32,'Journal<br> Original Research')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="33" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourshortsrep') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Short Reports or Letters</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(33)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(33,'Journal<br> Short Reports or Letters')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="34" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourreviewarts') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Review Articles</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(34)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(34,'Journal<br> Review Articles')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="35" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourcasestudy') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Case Studies or Clinical Trials</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(35)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(35,'Journal<br> Case Studies or Clinical Trials')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="36" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourmethodologies') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Methodologies</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(36)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(36,'Journal<br> Methodologies')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="37" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejoureditorials') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Editorials</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(37)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(37,'Journal<br> Editorials')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="38" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourotherarts') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journal<br> Other Articles</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(38)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(38,'Journal<br> Other Articles')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="39" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilebooks') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Books</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(39)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(39,'Books')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="40" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilebookchapters') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Book Chapters</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(40)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(40,'Book Chapters')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="41" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileartsinnews') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Articles in News</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(41)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(41,'Articles in News')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="42" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileotherpubs') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Other Publications</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(42)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(42,'Other Publications')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-												<div id="5" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Protocols									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(5,'Protocols')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="43" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileresprotocols') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Research Protocols</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(43)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(43,'Research Protocols')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="44" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileiacucprotocols') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>IACUC Protocols</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(44)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(44,'IACUC Protocols')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="45" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileclinicalprotocols') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Clinical Protocols</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(45)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(45,'Clinical Protocols')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-						<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Meetings and Memberships									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileconferences') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Conferences</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(46)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(46,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilesymposia') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Symposia</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="27" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileworkshops') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Workshops</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(48)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(48,'Work Experiences')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="28" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileseminars') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Seminars</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(49)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(49,'Volunteer Experiences')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="29" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileprofmembers') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Professional Membership</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(50)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(50,'Awards and Honors')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-						<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Teaching and Mentoring Activities									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileteachingex') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Teaching Experiences</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(51)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(51,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilesupermentor') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Supervision and Mentoring</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-						<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Reviewing Roles									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilejourreviewses') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Journals' Reviewer and Editorial Services</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(51)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(51,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilegrantreviewservices') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Grants' Review Services</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-						<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									Other Activities									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilecommactivities') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Committee Activities</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(51)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(51,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilehobbies') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Hobbies</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																		<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilelangprof') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Language Proficiency</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-									<div id="26" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofileotheractivities') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>Other Activities</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(47)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(47,'Credentials and Transcripts')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>								</div>
-							</div>
-						</div>
-						<div id="2" class="row sections-category sections-category-div mb-3 ">
-							<div class="col-lg-12 section-title" style="padding-top:10px;padding-bottom:10px;">
-								<p>
-									References									<a style="width:auto;" class="btn btn-sm btn-outline-dark float-end" href="javascript:permissionModal(2,'Academics and Experiences')" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-								</p>
-							</div>
-							<div class="col-lg-12">
-								<div class="row sections-outer">
-																		<div id="25" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-										<a style="width:100%;" class="d-flex align-items-stretch" href="{{ url_for('grantizeprofilereferences') }}">
-											<div class="icon-box">
-												<div class="icon"><i class="bi bi-pencil"></i></div>
-												<h4>References</h4>
-											</div>
-										</a>
-										<div class="" style="position:absolute;">
-											<a style="width:auto;" href="javascript:deleteModal(51)" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-											<a style="width:auto;" href="javascript:permissionModal(51,'Educations')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-										</div>
-									</div>
-																	</div>
-							</div>
-						</div>
-											</div>
-				</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1975,473 +1425,37 @@
 
 		<div class="modal-body">
 
-			<form action="researcher/profile/update_qualification" method="post" enctype="multipart/form-data" id="qualificationForm">	
-				<input type="hidden" name="_token" value="fcgwvIj4jShw5XEZURACTUYZfiiCZLAmDBEHIHBt" autocomplete="off">				<div class="row" id="qualification_sections" >	
+			<form action="{{ url_for('grantizeprofile') }}" method="post" enctype="multipart/form-data" id="qualificationForm">	
+				<input type="hidden" name="checks" value="fcgwvIj4jShw5XEZURACTUYZfiiCZLAmDBEHIHBt" autocomplete="off">				<div class="row" id="qualification_sections" >	
 					<div class="col-12"><label>Select Your profile Sections</label></div>
 
 						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="1" id="category1" name="sections[]" value="1" checked >
-								<label for="category" style="padding-left:10px;">Introduction</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
+					{% for section_id, section_name in documents[0]['sectionheads'].items() %}
+					<div class="row" id="qualification_sections">
+						<div class="col-12">
+							<hr>
+							<h5>
 								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="21" id="sections21" name="sections[]" value="21" checked >
-									<label for="sections" style="padding-left:10px;">Summary</label><br>
+									<input type="checkbox" class="checkbox category" data-key="{{ section_id }}" id="category{{ section_id }}" name="sections[]" value="{{ section_id }}" {{ 'checked' if section_id in documents[0]['sections'] }}>
+									<label for="category" style="padding-left:10px;">{{ section_name }}</label><br>
 								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="22" id="sections22" name="sections[]" value="22" checked >
-									<label for="sections" style="padding-left:10px;">Objective</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="23" id="sections23" name="sections[]" value="23" checked >
-									<label for="sections" style="padding-left:10px;">Research Statement</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="24" id="sections24" name="sections[]" value="24" checked >
-									<label for="sections" style="padding-left:10px;">Teaching Philosophy</label><br>
-								</div>
-							</div>
-								
-
+							</h5>
 						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="2" id="category2" name="sections[]" value="2" checked >
-								<label for="category" style="padding-left:10px;">Academics and Experiences</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="25" id="sections25" name="sections[]" value="25" checked >
-									<label for="sections" style="padding-left:10px;">Educations</label><br>
+						<!-- Assuming each section has subsections or topics -->
+						<div class="col-12" style="padding-left:40px;">
+							<div class="row mt-2">
+								{% for topic in nestedtopics[section_id] %}
+								<div class="col-6">
+									<div class="form-group float-start">
+										<input type="checkbox" class="checkbox sections" data-key="{{ topic }}" id="sections{{ topic }}" name="sections[]" value="{{ topic }}" {{ 'checked' if topic in documents[0]['topics'] }}>
+										<label for="sections" style="padding-left:10px;">{{ documents[0]['topicheads'][topic] }}</label><br>
+									</div>
 								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="26" id="sections26" name="sections[]" value="26" checked >
-									<label for="sections" style="padding-left:10px;">Credentials and Transcripts</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="27" id="sections27" name="sections[]" value="27" checked >
-									<label for="sections" style="padding-left:10px;">Work Experiences</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="28" id="sections28" name="sections[]" value="28" checked >
-									<label for="sections" style="padding-left:10px;">Volunteer Experiences</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="29" id="sections29" name="sections[]" value="29" checked >
-									<label for="sections" style="padding-left:10px;">Awards and Honors</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="3" id="category3" name="sections[]" value="3" checked >
-								<label for="category" style="padding-left:10px;">Research Outcome</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="30" id="sections30" name="sections[]" value="30" checked >
-									<label for="sections" style="padding-left:10px;">Grants or Contracts</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="31" id="sections31" name="sections[]" value="31" checked >
-									<label for="sections" style="padding-left:10px;">Patents or Technology License</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="4" id="category4" name="sections[]" value="4" checked >
-								<label for="category" style="padding-left:10px;">Publications</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="32" id="sections32" name="sections[]" value="32" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Original Research</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="33" id="sections33" name="sections[]" value="33" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Short Reports or Letters</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="34" id="sections34" name="sections[]" value="34" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Review Articles</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="35" id="sections35" name="sections[]" value="35" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Case Studies or Clinical Trials</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="36" id="sections36" name="sections[]" value="36" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Methodologies</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="37" id="sections37" name="sections[]" value="37" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Editorials</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="38" id="sections38" name="sections[]" value="38" checked >
-									<label for="sections" style="padding-left:10px;">Journal<br> Other Articles</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="39" id="sections39" name="sections[]" value="39" checked >
-									<label for="sections" style="padding-left:10px;">Books</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="40" id="sections40" name="sections[]" value="40" checked >
-									<label for="sections" style="padding-left:10px;">Book Chapters</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="41" id="sections41" name="sections[]" value="41" checked >
-									<label for="sections" style="padding-left:10px;">Articles in News</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="42" id="sections42" name="sections[]" value="42" checked >
-									<label for="sections" style="padding-left:10px;">Other Publications</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="5" id="category5" name="sections[]" value="5" checked >
-								<label for="category" style="padding-left:10px;">Protocols</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="43" id="sections43" name="sections[]" value="43" checked >
-									<label for="sections" style="padding-left:10px;">Research Protocols</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="44" id="sections44" name="sections[]" value="44" checked >
-									<label for="sections" style="padding-left:10px;">IACUC Protocols</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="45" id="sections45" name="sections[]" value="45" checked >
-									<label for="sections" style="padding-left:10px;">Clinical Protocols</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="6" id="category6" name="sections[]" value="6"  >
-								<label for="category" style="padding-left:10px;">Meetings and Memberships</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="46" id="sections46" name="sections[]" value="46"  >
-									<label for="sections" style="padding-left:10px;">Conferences</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="47" id="sections47" name="sections[]" value="47"  >
-									<label for="sections" style="padding-left:10px;">Symposia</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="48" id="sections48" name="sections[]" value="48"  >
-									<label for="sections" style="padding-left:10px;">Workshops</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="49" id="sections49" name="sections[]" value="49"  >
-									<label for="sections" style="padding-left:10px;">Seminars</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="50" id="sections50" name="sections[]" value="50"  >
-									<label for="sections" style="padding-left:10px;">Professional Memberships</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="7" id="category7" name="sections[]" value="7"  >
-								<label for="category" style="padding-left:10px;">Teaching and Mentoring Activities</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="51" id="sections51" name="sections[]" value="51"  >
-									<label for="sections" style="padding-left:10px;">Teaching Experiences</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="52" id="sections52" name="sections[]" value="52"  >
-									<label for="sections" style="padding-left:10px;">Supervision<br> and Mentoring</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="8" id="category8" name="sections[]" value="8"  >
-								<label for="category" style="padding-left:10px;">Reviewing Roles</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="53" id="sections53" name="sections[]" value="53"  >
-									<label for="sections" style="padding-left:10px;">Journals' Reviewer and Editorial Services</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="54" id="sections54" name="sections[]" value="54"  >
-									<label for="sections" style="padding-left:10px;">Grants' Review Services</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="9" id="category9" name="sections[]" value="9"  >
-								<label for="category" style="padding-left:10px;">Other Activities</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="55" id="sections55" name="sections[]" value="55"  >
-									<label for="sections" style="padding-left:10px;">Committee Activities</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="56" id="sections56" name="sections[]" value="56"  >
-									<label for="sections" style="padding-left:10px;">Hobbies</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="57" id="sections57" name="sections[]" value="57"  >
-									<label for="sections" style="padding-left:10px;">Language Proficiency</label><br>
-								</div>
-							</div>
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="58" id="sections58" name="sections[]" value="58"  >
-									<label for="sections" style="padding-left:10px;">Other Activities</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-					<div class="col-12">
-						<hr>
-						<h5>
-							<div class="form-group float-start">
-								<input type="checkbox" class="checkbox category" data-key="10" id="category10" name="sections[]" value="10"  >
-								<label for="category" style="padding-left:10px;">References</label><br>
-							</div>
-						</h5>
-					</div>
-					<div class="col-12" style="padding-left:40px;">
-						<div class="row mt-2">
-
-														<div class="col-6">
-								<div class="form-group float-start">
-									<input type="checkbox" class="checkbox sections" data-key="59" id="sections59" name="sections[]" value="59"  >
-									<label for="sections" style="padding-left:10px;">References</label><br>
-								</div>
-							</div>
-								
-
-						</div>
-					</div>
-						
-
-				</div>
-				<div class="row mt-4 mb-4 section-bg">
-					<div class="col-12 mt-4 mb-3">
-						<h5>SET Permissions for Sections</h5>
-					</div>
-					
-					<div class="col-12 mt-2 mb-4">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="public" name="public" value="1"
-							 
-							>
-							<label class="form-check-label" for="public">
-								<b>Show only for me</b>
-							</label>
-						</div>
-						<div id="except_persons-select">
-							<label class="">( Except Persons )</label>
-							<div class="input-group">
-								<select name="except_persons[]" id="except_persons" class="form-select" multiple="multiple" style="width:100%;" >
-																</select>
+								{% endfor %}
 							</div>
 						</div>
 					</div>
-
-					<div class="col-12 mb-3">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="person" name="person" value="1"
-							 
-							>
-							<label class="form-check-label" for="person">
-								<b>Hide from Individuals</b>
-							</label>
-						</div>
-						<div class="input-group" id="persons-select">
-							<select name="persons[]" id="persons" class="form-select" multiple="multiple" style="width:100%;" >
-														</select>
-						</div>
-					</div>
-
-					<div class="col-12 mt-2 mb-3">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="designation" name="designation" value="1"
-							 
-							>
-							<label class="form-check-label" for="designation">
-								<b>Hide from Designation</b>
-							</label>
-						</div>
-						<div class="input-group" id="designations-select">
-							<select name="designations[]" id="designations" class="form-select" multiple="multiple" style="width:100%;" >
-																<option value="<?//= $value['id'];?>" 
-																><?//= $value['name'];?></option>
-															</select>
-						</div>
-					</div>
-				</div>
-
+				{% endfor %}
 			</form>
 		</div>
 
@@ -2559,7 +1573,7 @@
 
 
 
-<form action="researcher/grants" id="filterFormLogin" method="post">
+<form action="{{ url_for('grantizebrowsegrants') }}" id="filterFormLogin" method="post">
   <input type="hidden" name="_token" value="fcgwvIj4jShw5XEZURACTUYZfiiCZLAmDBEHIHBt" autocomplete="off">  <input type="hidden" id="grants_status_login" name="grants_status">
 </form>
 <script type="text/javascript">

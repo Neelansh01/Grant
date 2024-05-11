@@ -123,7 +123,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="https://techiefolk.com/grantize/public/researcher/dashboard" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('logingrantizeresdash') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Dashboard</span>
                 </a>
@@ -132,7 +132,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="https://techiefolk.com/grantize/public/researcher/profile" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('grantizeprofile') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Profile</span>
                 </a>
@@ -416,7 +416,7 @@
 
 
 
-<form action="https://techiefolk.com/grantize/public/researcher/grants" id="filterFormLogin" method="post">
+<form action="{{ url_for('grantizebrowsegrants') }}" id="filterFormLogin" method="post">
   <input type="hidden" name="_token" value="JvJdLlqk7uOMLgDEb7ueqSoDIpO3bXP9zmXL2b2o" autocomplete="off">  <input type="hidden" id="grants_status_login" name="grants_status">
 </form>
 <script type="text/javascript">

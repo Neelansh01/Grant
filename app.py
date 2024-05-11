@@ -23,7 +23,6 @@ sqlconnection = ""
 
 @app.route('/grantize')
 def grantize():
-    session.clear()
     return render_template('grantize/grantize.html')
 
 @app.route('/logingrantizeoptions')
@@ -202,10 +201,234 @@ def grantizelogout():
     else:
         return render_template('grantize/grantize.html')
 
-@app.route('/grantizeprofile')
+def read_user_checks(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get all columns except 'id' and 'userid'
+        query = """
+        SELECT id, userid, sections, topics
+        FROM gprofilechecks
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries for easy handling in the template
+        experiences = []
+        for row in rows: 
+            experiences.append(row)
+            
+        mycursor.close()
+        
+        sectionheads = {1:"Introduction",
+                        2:"Academics and Experiences",
+                        3:"Research Outcome",
+                        4:"Publications",
+                        5:"Protocols",
+                        6:"Meetings and Memberships",
+                        7:"Teaching and Mentoring Activities",
+                        8:"Reviewing Roles",
+                        9:"Other Activities",
+                        10:"References"}
+        topicheads = {21:"Summary",
+                      22:"Objective",
+                      23:"Research Statement",
+                      24:"Teaching Philosophy",
+                      25:"Educations",
+                      26:"Credentials and Transcripts",
+                      27:"Work Experiences",
+                      28:"Volunteer Experiences",
+                      29:"Awards and Honors",
+                      30:"Grants or Contracts",
+                      31:"Patents or Technology License",
+                      32:"Journal Original Research",
+                      33:"Journal Short Reports or Letters",
+                      34:"Journal Review Articles",
+                      35:"Journal Case Studies or Clinical Trials",
+                      36:"Journal Methodologies",
+                      37:"Journal Editorials",
+                      38:"Journal Other Articles",
+                      39:"Books",
+                      40:"Book Chapters",
+                      41:"Articles in New",
+                      42:"Other Publications",
+                      43:"Research Protocols",
+                      44:"IACUC Protocols",
+                      45:"Clinical Protocols",
+                      46:"Conferences",
+                      47:"Symposia",
+                      48:"Workshops",
+                      49:"Seminars",
+                      50:"Professional Membership",
+                      51:"Teaching Experiences",
+                      52:"Supervision and Mentoring",
+                      53:"Journals' Reviewer and Editorial Services",
+                      54:"Grants' Review Services",
+                      55:"Committee Activities",
+                      56:"Hobbies",
+                      57:"Language Proficiency",
+                      58:"Other Activities",
+                      59:"References"}
+        urls =       {21:"grantizeprofilesummary",
+                      22:"grantizeprofileobjective",
+                      23:"grantizeprofileresstatement",
+                      24:"grantizeprofileteachphil",
+                      25:"grantizeprofileeducation",
+                      26:"grantizeprofilerescredentials",
+                      27:"grantizeprofileexperience",
+                      28:"grantizeprofilevolunteer",
+                      29:"grantizeprofileawards",
+                      30:"grantizeprofilegrantscontracts",
+                      31:"grantizeprofilepatents",
+                      32:"grantizeprofilejourorgres",
+                      33:"grantizeprofilejourshortsrep",
+                      34:"grantizeprofilejourreviewarts",
+                      35:"grantizeprofilejourcasestudy",
+                      36:"grantizeprofilejourmethodologies",
+                      37:"grantizeprofilejoureditorials",
+                      38:"grantizeprofilejourotherarts",
+                      39:"grantizeprofilebooks",
+                      40:"grantizeprofilebookchapters",
+                      41:"grantizeprofileartsinnews",
+                      42:"grantizeprofileotherpubs",
+                      43:"grantizeprofileresprotocols",
+                      44:"grantizeprofileiacucprotocols",
+                      45:"grantizeprofileclinicalprotocols",
+                      46:"grantizeprofileconferences",
+                      47:"grantizeprofilesymposia",
+                      48:"grantizeprofileworkshops",
+                      49:"grantizeprofileseminars",
+                      50:"grantizeprofileprofmembers",
+                      51:"grantizeprofileteachingex",
+                      52:"grantizeprofilesupermentor",
+                      53:"grantizeprofilejourreviewses",
+                      54:"grantizeprofilegrantreviewservices",
+                      55:"grantizeprofilecommactivities",
+                      56:"grantizeprofilehobbies",
+                      57:"grantizeprofilelangprof",
+                      58:"grantizeprofileotheractivities",
+                      59:"grantizeprofilereferences"}
+        
+        nestedtopics = {1:[21, 22, 23, 24],
+                        2:[25, 26, 27, 28, 29],
+                        3:[30, 31],
+                        4:[32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42],
+                        5:[43, 44, 45],
+                        6:[46, 47, 48, 49, 50],
+                        7:[51, 52],
+                        8:[53, 54],
+                        9:[55, 56, 57, 58],
+                        10:[59]}
+
+        for vals in experiences:
+            print(vals)
+            print(vals['sections'])
+            vals['sections'] = vals['sections'].split(",-#-,")
+            vals['sections'] = [int(v) for v in vals['sections']]
+            vals['sectioncontent'] = {}
+            vals['topics'] = vals['topics'].split(",-#-,")
+            vals['topics'] = [int(v) for v in vals['topics']]
+            temp = vals['topics']
+            for topic in temp:
+                if int(topic) in [21, 22, 23, 24]:
+                    if 1 in vals['sectioncontent']:
+                        vals['sectioncontent'][1].append(topic)
+                    else:
+                        vals['sectioncontent'][1] = [topic]
+                elif int(topic) in [25, 26, 27, 28, 29]:
+                    if 2 in vals['sectioncontent']:
+                        vals['sectioncontent'][2].append(topic)
+                    else:
+                        vals['sectioncontent'][2] = [topic]
+                elif int(topic) in [30, 31]:
+                    if 3 in vals['sectioncontent']:
+                        vals['sectioncontent'][3].append(topic)
+                    else:
+                        vals['sectioncontent'][3] = [topic]
+                elif int(topic) in [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]:
+                    if 4 in vals['sectioncontent']:
+                        vals['sectioncontent'][4].append(topic)
+                    else:
+                        vals['sectioncontent'][4] = [topic]
+                elif int(topic) in [43, 44, 45]:
+                    if 5 in vals['sectioncontent']:
+                        vals['sectioncontent'][5].append(topic)
+                    else:
+                        vals['sectioncontent'][5] = [topic]
+                elif int(topic) in [46, 47, 48, 49, 50]:
+                    if 6 in vals['sectioncontent']:
+                        vals['sectioncontent'][6].append(topic)
+                    else:
+                        vals['sectioncontent'][6] = [topic]
+                elif int(topic) in [51, 52]:
+                    if 7 in vals['sectioncontent']:
+                        vals['sectioncontent'][7].append(topic)
+                    else:
+                        vals['sectioncontent'][7] = [topic]
+                elif int(topic) in [53, 54]:
+                    if 8 in vals['sectioncontent']:
+                        vals['sectioncontent'][8].append(topic)
+                    else:
+                        vals['sectioncontent'][8] = [topic]
+                elif int(topic) in [55, 56, 57, 58]:
+                    if 9 in vals['sectioncontent']:
+                        vals['sectioncontent'][9].append(topic)
+                    else:
+                        vals['sectioncontent'][9] = [topic]
+                elif int(topic) in [59]:
+                    if 10 in vals['sectioncontent']:
+                        vals['sectioncontent'][10].append(topic)
+                    else:
+                        vals['sectioncontent'][10] = [topic]
+        experiences[0]["sectionheads"]=sectionheads
+        experiences[0]["topicheads"] = topicheads
+        experiences[0]["urls"] = urls
+        return experiences, nestedtopics
+    except Exception as e:
+        print("Error fetching work experience from database:", str(e))
+        return []
+
+@app.route('/grantizeprofile', methods =["GET", "POST"])
 def grantizeprofile():
     if session.get("loginnname"):
-        return render_template('grantize/dashboard/profile.html')
+        user = session.get('loginid')
+        print("^^^^^^^^^^^^^^^^^^")
+        if "checks" in request.form:
+            try:
+                selected_sections = request.form.getlist('sections[]')
+                sections, topics = [], []
+                for ids in selected_sections:
+                    if int(ids)<20:
+                        sections.append(ids)
+                    else:
+                        topics.append(ids)
+                sections = ",-#-,".join(sections)
+                topics = ",-#-,".join(topics)
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/dashboard/profile.html')
+            try:
+                mycursor = sqlconnection.cursor()
+                # Use parameterized query for deletion to avoid SQL injection
+                delete_query = "DELETE FROM gprofilechecks WHERE userid = %s"
+                mycursor.execute(delete_query, (user,))
+                sqlconnection.commit()
+                sql = "INSERT INTO gprofilechecks (userid, sections, topics) VALUES (%s, %s, %s)"
+                values = (user, sections, topics)
+                mycursor.execute(sql, values)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("DATBASE FAILURE!!")
+                return render_template('grantize/dashboard/profile.html')
+            ## Code to Read
+            documents, nestedtopics = read_user_checks(user)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics)
+        else:
+            documents, nestedtopics = read_user_checks(user)
+            print(documents)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics)
     else:
         return render_template('grantize/grantize.html')
 
@@ -5329,7 +5552,7 @@ def grantizeprofilereferences():
 
 @app.route('/grantizerefreq')
 def grantizerefreq():
-    return redirect(url_for('grantize'))
+    return redirect(url_for('grantizeprofilereferences'))
 
 @app.route('/grantizebrowsegrants', methods =["GET", "POST"])
 def grantizebrowsegrants():

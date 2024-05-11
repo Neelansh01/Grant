@@ -123,7 +123,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="http://localhost/grantize/public/researcher/dashboard" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('logingrantizeresdash') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Dashboard</span>
                 </a>
@@ -132,7 +132,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="http://localhost/grantize/public/researcher/profile" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('grantizeprofile') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-person"></i>
                     <span>My Profile</span>
                 </a>
@@ -202,19 +202,19 @@
 
     <li class="nav-heading">My Account</li>
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/profile" class="nav-link ">
+      <a  href="{{ url_for('grantizeprofile') }}" class="nav-link ">
         <i class="bi bi-grid"></i>
         <span>Profile</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="http://localhost/grantize/public/researcher/profile/references_request" class="nav-link collapsed">
+      <a href="{{ url_for('grantizerefreq') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Reference Request</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="http://localhost/grantize/public/researcher/dashboard" class="nav-link collapsed">
+      <a href="{{ url_for('logingrantizeresdash') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
@@ -223,37 +223,37 @@
         
 
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/grants" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizebrowsegrants') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Browse Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/grants/searchquery" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesearchquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Search Query</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/grants/favorite" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizefavquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Favorite Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/grants/saved" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesavedquery') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Saved Grants</span>
       </a>
     </li>
     <li class="nav-item">
-      <a  href="http://localhost/grantize/public/researcher/grants/sharedbyme" class="nav-link collapsed">
+      <a  href="{{ url_for('grantizesharedbyme') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Shared by Me</span>
       </a>
     </li>
     <li class="nav-item">
-      <a href="http://localhost/grantize/public/researcher/grants/sharedwithme" class="nav-link collapsed">
+      <a href="{{ url_for('grantizesharedwithme') }}" class="nav-link collapsed">
         <i class="bi bi-grid"></i>
         <span>Shared with Me</span>
       </a>
@@ -274,7 +274,7 @@
 		<div class="col-12 col-sm-4 col-md-3 order-lg-2 ps-0 pe-0">
 												<button type="button" id="page-section-reorder" class="btn btn-lg btn-tool float-end" title="Reorder"><i class="bi bi-filter-right"></i></button>
 					<button type="button" class="btn btn-lg float-end" data-bs-toggle="modal" data-bs-target="#addModal" title="Add"><i class="bi bi-plus-lg"></i></button>
-					<a href="http://localhost/grantize/public/researcher/profile" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
+					<a href="{{ url_for('grantizeprofile') }}" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
 									</div>
 		<div class="col-12 col-sm-8 col-md-9 order-lg-1">
 			<h1>Summary</h1>
@@ -2434,7 +2434,7 @@
 
  
 
-<form action="http://localhost/grantize/public/researcher/grants" id="filterFormLogin" method="post">
+<form action="{{ url_for('grantizebrowsegrants') }}" id="filterFormLogin" method="post">
   <input type="hidden" name="_token" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">  <input type="hidden" id="grants_status_login" name="grants_status">
 </form>
 <script type="text/javascript">
