@@ -111,13 +111,13 @@
 
             <li class="nav-item dropdown pe-3">
             <a href="#" class="nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
-                                <img src="sisterlab/public/assets/users/dp/1710848217.png" alt="Profile" class="rounded-circle">
+                                
                 
-                <span class="d-none d-md-block dropdown-toggle ps-2">Pankaj</span>
+                <span class="d-none d-md-block dropdown-toggle ps-2">{{session["loginnname"]}}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                <h6>Pankaj</h6>
+                <h6>{{session["loginnname"]}}</h6>
                 </li>
                 <li>
                 <hr class="dropdown-divider">
@@ -159,7 +159,7 @@
                 <hr class="dropdown-divider">
                 </li>
                 <li>
-                <a href="researcher/logout" class="dropdown-item d-flex align-items-center">
+                <a href="{{ url_for('grantizelogout') }}" class="dropdown-item d-flex align-items-center">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Sign Out</span>
                 </a>
@@ -303,7 +303,7 @@
 									<div class="profile-dp-info">
 										<div class="row">
 											<div class="col-lg-10 col-xl-12">
-												<h3>Pankaj  Singh</h3> 
+												<h3>{{session["loginnname"]}}</h3> 
 											</div>
 											<div class="col-lg-2 col-xl-12">
 												<button type="button" class="btn btn-sm btn-outline-dark float-end me-2" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="bi bi-pencil-square"></i></button> 

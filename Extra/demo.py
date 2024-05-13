@@ -14,9 +14,6 @@ app = Flask(__name__)
 app.secret_key = 'Grant####secret***my_hard_to_crack_secret_key'
 app.permanent_session_lifetime = timedelta(hours=3)
 sqlconnection = ""
-globalcities = ""
-globalcountries = ""
-globalorganizations = ""
 
 
 
@@ -42,8 +39,7 @@ def logingrantizespo():
 
 @app.route('/createusergrantize')
 def createusergrantize():
-    global globalcountries
-    return render_template('grantize/login/createusergrantize.html', globalcountries=globalcountries)
+    return render_template('grantize/login/createusergrantize.html')
 
 @app.route('/grantizewhyus')
 def grantizewhyus():
@@ -73,8 +69,8 @@ def termsnconditions():
 def grantizegrants():
     return render_template('grantize/grants/grants.html')
 
-@app.route('/registerresgrantize', methods =["GET", "POST"])
-def registerresgrantize():
+@app.route('/registerspograntize', methods =["GET", "POST"])
+def registerspograntize():
     global sqlconnection
     print("ENTER REGISTER FUNCTION")
     if "_tokenpersonal" in request.form:
@@ -97,7 +93,7 @@ def registerresgrantize():
             print("REGISTER USER VARIABLES COULD NOT BE READ!!")
             return render_template('grantize/grantize.html')
         mycursor = sqlconnection.cursor()
-        sql = "INSERT INTO gresearcherslist (prefix, firstname, lastname, qualification, email, mobile, username, password, addressline1, addressline2, postcode, country, state, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO gsponsorsslist (prefix, firstname, lastname, qualification, email, mobile, username, password, addressline1, addressline2, postcode, country, state, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         val = (name_prefix, fname, lname, qualification, email, mobile, username, password, addl1, addl2, postcode, country, state, city)
         try:
             mycursor.execute(sql, val)
@@ -106,7 +102,8 @@ def registerresgrantize():
             print("Database Insertion Successful....")
         except:
             print("Database Insertion Failed!!")
-        return render_template('grantize/login/logingrantizeoptions.html')
+        documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
     elif "_tokenmanager" in request.form:
         try:
             organization = request.form['organization']
@@ -138,10 +135,11 @@ def registerresgrantize():
             print("Database Insertion Successful....")
         except:
             print("Database Insertion Failed!!")
-        return render_template('grantize/login/logingrantizeoptions.html')
+        documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
     else:
-        #documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
-        return render_template('grantize/login/logingrantizeoptions.html')
+        documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
 
 
 @app.route('/logingrantizeresdash', methods =["GET", "POST"])
@@ -166,7 +164,8 @@ def logingrantizeresdash():
                 session["loginnname"] = username
                 session["loginid"] = result[0][0]
                 print(session.get('loginid'))
-                return render_template('grantize/dashboard/dashboard.html')
+                documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
             else:
                 print("Match Not Found..")
                 return render_template('grantize/grantize.html')
@@ -187,14 +186,16 @@ def logingrantizeresdash():
                 session["loginnname"] = username
                 session["loginid"] = result[0][0]
                 print(session.get('loginid'))
-                return render_template('grantize/dashboard/dashboard.html')
+                documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
             else:
                 print("Match Not Found..")
                 return render_template('grantize/grantize.html')
         else:
             return render_template('grantize/grantize.html')
     else:
-        return render_template('grantize/dashboard/dashboard.html')
+        documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
+        return render_template('grantize/dashboard/dashboard.html', documents=documents)
     
 @app.route('/grantizelogout')
 def grantizelogout():
@@ -394,37 +395,11 @@ def read_user_checks(user):
         print("Error fetching work experience from database:", str(e))
         return []
 
-def read_user_profile_info(user):
-    global sqlconnection
-    # SQL query to get all files and other data with condition "WHERE 1=1"
-    cursor = sqlconnection.cursor(dictionary=True)
-    sql = ("SELECT firstname, middlename, lastname, mobile, email_institutional, "
-            "email, organization, department, qualification, date_of_birth, "
-            "addressline1, addressline2, postcode, country, state, city, linkedln_url, "
-            "pubmed_url, google_scholar, personal_blog, orcid FROM gresearcherslist WHERE id = %s")
-    cursor.execute(sql, (user,))
-    user_profile_info = cursor.fetchone()  # fetchone() if you expect only one row
-    cursor.close()
-    #print("________________")
-    #print(profile_info)
-    return user_profile_info
-
 @app.route('/grantizeprofile', methods =["GET", "POST"])
 def grantizeprofile():
     if session.get("loginnname"):
         user = session.get('loginid')
-        cursor = sqlconnection.cursor()
-        query = "SELECT id, qualification, email, firstname, lastname FROM gresearcherslist WHERE id = %s"
-        cursor.execute(query, (user,))
-        result = cursor.fetchone()
-        cursor.close()
-        if result:
-            profileinfo = {
-                "id": result[0],
-                "qualification": result[1],
-                "email": result[2],
-                "fullname": result[3]+" "+result[4],
-            }
+        print("^^^^^^^^^^^^^^^^^^")
         if "checks" in request.form:
             try:
                 selected_sections = request.form.getlist('sections[]')
@@ -438,8 +413,7 @@ def grantizeprofile():
                 topics = ",-#-,".join(topics)
             except:
                 print("REGISTER USER VARIABLES COULD NOT BE READ!!")
-                user_profile_info = read_user_profile_info(user)
-                return render_template('grantize/dashboard/profile.html', profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
+                return render_template('grantize/dashboard/profile.html')
             try:
                 mycursor = sqlconnection.cursor()
                 # Use parameterized query for deletion to avoid SQL injection
@@ -453,59 +427,14 @@ def grantizeprofile():
                 mycursor.close()
             except:
                 print("DATBASE FAILURE!!")
-                return render_template('grantize/dashboard/profile.html', profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations)
+                return render_template('grantize/dashboard/profile.html')
             ## Code to Read
-            user_profile_info = read_user_profile_info(user)
             documents, nestedtopics = read_user_checks(user)
-            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
-        if "updateprofile" in request.form:
-            first_name = request.form.get('first_name')
-            middle_name = request.form.get('middle_name')
-            last_name = request.form.get('last_name')
-            telephone_number = request.form.get('telephone_number')
-            email_institutional = request.form.get('email_institutional')
-            email_personal = request.form.get('email_personal')
-            organization = request.form.get('organization')
-            department = request.form.get('department')
-            current_position = request.form.get('current_position')
-            date_of_birth = request.form.get('date_of_birth')
-            address_line_one = request.form.get('address_line_one')
-            address_line_two = request.form.get('address_line_two')
-            post_code = request.form.get('post_code')
-            country = request.form.get('country')
-            state = request.form.get('state')
-            city = request.form.get('city')
-            linkedin_url = request.form.get('linkedln_url')
-            pubmed_url = request.form.get('pubmed_url')
-            google_scholar = request.form.get('google_scholar')
-            personal_blog = request.form.get('personal_blog')
-            orcid = request.form.get('orcid')
-            if date_of_birth:
-                date_of_birth = datetime.strptime(date_of_birth, '%m-%d-%Y').date()
-            try:
-                cursor = sqlconnection.cursor()
-                sql = ("UPDATE gresearcherslist SET firstname=%s, middlename=%s, lastname=%s, "
-                    "mobile=%s, email_institutional=%s, email=%s, organization=%s, "
-                    "department=%s, qualification=%s, date_of_birth=%s, addressline1=%s, "
-                    "addressline2=%s, postcode=%s, country=%s, state=%s, city=%s, linkedln_url=%s, "
-                    "pubmed_url=%s, google_scholar=%s, personal_blog=%s, orcid=%s WHERE id=%s")
-                values = (first_name, middle_name, last_name, telephone_number, email_institutional,
-                        email_personal, organization, department, current_position, date_of_birth,
-                        address_line_one, address_line_two, post_code, country, state, city,
-                        linkedin_url, pubmed_url, google_scholar, personal_blog, orcid, user)
-                cursor.execute(sql, values)
-                sqlconnection.commit()
-                cursor.close()
-            except Exception as e:
-                print(e)
-            documents, nestedtopics = read_user_checks(user)
-            user_profile_info = read_user_profile_info(user)
-            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics)
         else:
             documents, nestedtopics = read_user_checks(user)
-            user_profile_info = read_user_profile_info(user)
             print(documents)
-            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics)
     else:
         return render_template('grantize/grantize.html')
 
@@ -6171,9 +6100,6 @@ def sislabrecpages():
 
 def connect_with_database():
     global sqlconnection
-    global globalcities
-    global globalcountries
-    global globalorganizations
     sqlconnection = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -6182,21 +6108,6 @@ def connect_with_database():
         )
     if sqlconnection.is_connected():
         print("Database Connection Succeeded!!")
-        mycursor = sqlconnection.cursor()
-        sql = "SELECT name FROM cities"
-        mycursor.execute(sql)
-        globalcities = mycursor.fetchall()
-        sql = "SELECT name FROM countries"
-        mycursor.execute(sql)
-        globalcountries = mycursor.fetchall()
-        sql = "SELECT name FROM organizations"
-        mycursor.execute(sql)
-        globalorganizations = mycursor.fetchall()
-        mycursor.close()
-        globalcities = [g[0] for g in globalcities]
-        globalcountries = [g[0] for g in globalcountries]
-        globalorganizations = [g[0] for g in globalorganizations]
-        print(globalcities[:10])
     else:
         print("Database Connection Failed!!")
         exit
