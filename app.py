@@ -501,6 +501,20 @@ def grantizeprofile():
             documents, nestedtopics = read_user_checks(user)
             user_profile_info = read_user_profile_info(user)
             return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
+        if "changepassword" in request.form:
+            password = request.form.get('password')
+            try:
+                cursor = sqlconnection.cursor()
+                sql = ("UPDATE gresearcherslist SET password=%s WHERE id=%s")
+                values = (password, user)
+                cursor.execute(sql, values)
+                sqlconnection.commit()
+                cursor.close()
+            except Exception as e:
+                print(e)
+            documents, nestedtopics = read_user_checks(user)
+            user_profile_info = read_user_profile_info(user)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
         else:
             documents, nestedtopics = read_user_checks(user)
             user_profile_info = read_user_profile_info(user)

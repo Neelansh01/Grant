@@ -113,11 +113,11 @@
             <a href="#" class="nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
                                 
                 
-                <span class="d-none d-md-block dropdown-toggle ps-2">{{session["loginnname"]}}</span>
+                <span class="d-none d-md-block dropdown-toggle ps-2">{{session['loginnname']}}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                <h6>{{session["loginnname"]}}</h6>
+                <h6>{{session['loginnname']}}</h6>
                 </li>
                 <li>
                 <hr class="dropdown-divider">
@@ -303,7 +303,7 @@
 									<div class="profile-dp-info">
 										<div class="row">
 											<div class="col-lg-10 col-xl-12">
-												<h3>{{session["loginnname"]}}</h3> 
+												<h3>{{session['loginnname']}}</h3> 
 											</div>
 											<div class="col-lg-2 col-xl-12">
 												<button type="button" class="btn btn-sm btn-outline-dark float-end me-2" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="bi bi-pencil-square"></i></button> 
@@ -345,13 +345,13 @@
 								<button class="btn btn-sm btn-outline-primary w-100 nav-item active" data-bs-toggle="tab" data-bs-target="#profile-overview">My Skills</button>
 							</div>
 							<div class="col-md-6 col-lg-3">
-								<button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-edit">Tab2</button>
+								<!-- <button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-edit">Tab2</button> -->
 							</div>
 							<div class="col-md-6 col-lg-3">
-								<button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-settings">Tab3</button>
+								<!-- <button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-settings">Tab3</button> -->
 							</div>
 							<div class="col-md-6 col-lg-3">
-								<button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-change-password">Tab4</button>
+								<!-- <button class="btn btn-sm btn-outline-primary w-100 nav-item" data-bs-toggle="tab" data-bs-target="#profile-change-password">Tab4</button> -->
 							</div>
 						</div>
 						<div class="tab-content pt-2">
@@ -503,17 +503,24 @@
 										<div class="row sections-outer">
 											{% for topic in documents[0]["sectioncontent"][section] %}
 											<div id="{{ topic }}" class="sections col-12 col-sm-4 col-md-3 col-lg-2 d-flex align-items-stretch mb-4">
-												<a style="width:100%;" class="d-flex align-items-stretch" href="{{ documents[0]['urls'][topic] }}">
-													<div class="icon-box">
-														<div class="icon"><i class="bi bi-pencil"></i></div>
-														<h4>{{ documents[0]["topicheads"][topic] }}</h4>
-													</div>
-												</a>
-												<div class="" style="position:absolute;">
-													<a style="width:auto;" href="javascript:deleteModal({{ topic }})" class="btn btn-sm btn-outline-dark" title="Delete"><i class="bi bi-x-lg"></i></a>
-													<a style="width:auto;" href="javascript:permissionModal({{ topic }},'{{ documents[0]['topicheads'][topic] }}')" class="btn btn-sm btn-outline-dark" title="Permission"><i class="bi bi-unlock-fill"></i></a>
+												<div style="position: relative; width: 100%; height: 100%;">
+													<!-- Main clickable area -->
+													<a style="width: 100%; display: block; position: relative; z-index: 1;" class="d-flex align-items-stretch" href="{{ documents[0]['urls'][topic] }}">
+														<div class="icon-box">
+															<div class="icon"><i class="bi bi-pencil"></i></div>
+															<h4>{{ documents[0]["topicheads"][topic] }}</h4>
+														</div>
+													</a>
+													<!-- Delete button -->
+													<a style="position: absolute; top: 0; left: 0; z-index: 2; padding: 2px; width: 32px; height: 32px;" href="javascript:deleteModal({{ topic }})" class="btn btn-sm btn-outline-dark" title="Delete">
+														<i class="bi bi-x-lg"></i>
+													</a>
+													<!-- Permission button -->
+													<a style="position: absolute; top: 0; right: 0; z-index: 2; padding: 2px; width: 32px; height: 32px;" href="javascript:permissionModal({{ topic }},'{{ documents[0]['topicheads'][topic] }}')" class="btn btn-sm btn-outline-dark" title="Permission">
+														<i class="bi bi-unlock-fill"></i>
+													</a>
 												</div>
-											</div>
+											</div>																																											
 											{% endfor %}
 										</div>
 									</div>
@@ -865,17 +872,8 @@
 			</div>
 			<div class="modal-body">
 
-				<form action="researcher/profile/update_password" method="post" enctype="multipart/form-data" id="passwordForm">
-					<input type="hidden" name="_token" value="fcgwvIj4jShw5XEZURACTUYZfiiCZLAmDBEHIHBt" autocomplete="off">					<!-- <div class="row">	
-						<div class="col-lg-3 col-12">
-						</div>	
-						<div class="col-lg-6 col-12">
-							<div class="form-group validation mb-3">
-								<label for="current_password">Current Password</label>
-								<input type="password" name="current_password" id="current_password" class="form-control">
-							</div>
-						</div>	
-					</div> -->
+				<form action="{{ url_for('grantizeprofile') }}" method="post" enctype="multipart/form-data" id="passwordForm">
+					<input type="hidden" name="changepassword" value="fcgwvIj4jShw5XEZURACTUYZfiiCZLAmDBEHIHBt" autocomplete="off">
 					<div class="row">	
 						<div class="col-lg-3 col-12">
 						</div>	

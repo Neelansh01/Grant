@@ -111,11 +111,11 @@
                  
                 
                 
-                <span class="d-none d-md-block dropdown-toggle ps-2">Neelansh</span>
+                <span class="d-none d-md-block dropdown-toggle ps-2">{{session['loginnname']}}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li class="dropdown-header">
-                <h6>Neelansh</h6>
+                <h6>{{session['loginnname']}}</h6>
                 </li>
                 <li>
                 <hr class="dropdown-divider">
@@ -301,7 +301,7 @@
 									<div class="profile-dp-info">
 										<div class="row">
 											<div class="col-lg-10 col-xl-12">
-												<h3>Neelansh  Fnu</h3> 
+												<h3>{{session['loginnname']}}</h3> 
 											</div>
 											<div class="col-lg-2 col-xl-12">
 												<button type="button" class="btn btn-sm btn-outline-dark float-end me-2" data-bs-toggle="modal" data-bs-target="#infoModal"><i class="bi bi-pencil-square"></i></button> 
@@ -793,7 +793,7 @@
 					<div class="col-lg-4 col-12">
 						<div class="mb-3">
 							<label for="first_name" class="form-label">First Name</label>
-							<input type="text" name="first_name" value="Neelansh" class="form-control" >
+							<input type="text" name="first_name" value="{{session['loginnname']}}" class="form-control" >
 						</div>
 					</div>	
 					<div class="col-lg-4 col-12">
@@ -825,7 +825,7 @@
 					<div class="col-lg-4 col-12">
 						<div class="mb-3">
 							<label for="email_personal" class="form-label">Email Personal</label>
-							<input type="email" name="email_personal" value="work.neelansh@gmail.com" class="form-control">
+							<input type="email" name="email_personal" value="work.{{session['loginnname']}}@gmail.com" class="form-control">
 						</div>
 					</div>	
 				</div>	
