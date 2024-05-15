@@ -43,6 +43,8 @@
     <!-- <link href="https://techiefolk.com/grantize/public/assets/css/style_responsive.css" rel="stylesheet"> -->
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/grantize/page1/style_responsive.css') }}">
     <!--<link href="assets/css/pages_backend.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
 
 <!-- Jquery ( Production ) -->
@@ -63,7 +65,7 @@
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between"> 
     
     <div class="d-flex align-items-center justify-content-between">
-        <a href="https://techiefolk.com/grantize/public" class="logo d-flex align-items-center">
+        <a href="{{ url_for('grantize') }}" class="logo d-flex align-items-center">
         <!-- <img class="mobile" src="assets/images/logo.png" alt=""> -->
         <span class="d-none d-lg-block">Grantize</span>
         </a>
@@ -125,9 +127,9 @@
         <h2 data-aos="fade-up">Welcome to <span>Grantize</span></h2>
         <p data-aos="fade-up" data-aos-delay="100">The Largest and <span>Only platform</span> Solely Dedicated to Recruiting <br>Candidates with Doctoral degrees. <span>Join with Pride.</span></p>
 
-        <form action="https://techiefolk.com/grantize/public/grants" method="post" id="filterForm" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
-          <input type="hidden" name="_token" value="sXgYM1KoTs5siAHKOaWHtxxN7v5I772mpr7Ak015" autocomplete="off">          <input type="hidden" form="filterForm" id="grants_status" name="grants_status" value="all" >
-          <input type="text" id="title" name="title" class="form-control" placeholder="Search Grants">
+        <form action="{{ url_for('grantize') }}" method="post" id="filterForm" class="form-search d-flex align-items-stretch mb-3" data-aos="fade-up" data-aos-delay="200">
+          <input type="hidden" name="searchgrant" value="sXgYM1KoTs5siAHKOaWHtxxN7v5I772mpr7Ak015" autocomplete="off">          <input type="hidden" form="filterForm" id="grants_status" name="grants_status" value="all" >
+          <input type="text" id="title" name="tquery" class="form-control" placeholder="Search Grants">
           <button type="submit" name="submit_status" id="submit_status" class="btn btn-search"><i class="bi bi-search"></i></button>
         </form>
 
@@ -194,261 +196,33 @@
       <h2>Grants</h2>
       <!-- <p>Magnam dolores commodi suscipit.</p> -->
     </div>
-  
+    {% for document in documents %}
     <div class="row">
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/2">use of the name of the japan foundation as a supporter</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
+      {% for grant in document %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
+        <div class="item-box">
+          <div class="row item-box-row">
+            <div class="col-3 col-lg-3 col1">
+              <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
             </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/2" class="apply-btn"> Apply</a>
-              </div>
+            <div class="col-9 col-lg-9">
+              <h4><a href="{{grant['grant_source_url']}}">{{ grant['title'] }}</a></h4>
+            </div>
+            <div class="col-12 col-lg-12">
+              <p>Deadline : {{ grant['expiration_date'] }}</p>
+            </div>
+          </div>
+    
+          <div class="row">
+            <div class="col-12 col-lg-12">
+              <a href="{{ grant['grant_source_url'] }}" class="apply-btn"> Apply</a>
             </div>
           </div>
         </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/3">mini grant for japanese arts & culture</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/3" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/4">wye valley aonb fund</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/4" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/6">david tyson memorial fund</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/6" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/7">la porte peinte centre pour les arts - artist residency programme</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/7" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/8">walter & elise haas fund grant</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/8" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/9">the caesars foundation of floyd county major grants</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/9" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/10">the kimmel foundation grants</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/10" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/11">st. croix valley foundation bethany's butterflies scholarship</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/11" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/12">2023-2024 residential fellow projects curatorial fellowship: newport & chin</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/12" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/13">2023-2024 residential fellow projects - landscape history fellowship: estat</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/13" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch mb-4">
-          <div class="item-box">
-            <div class="row item-box-row">
-              <div class="col-3 col-lg-3 col1">
-                                  <img style="width:100%;" src="/static/images/logo_default.png" class="profile-organization-img" alt="">
-                              </div>
-              <div class="col-9 col-lg-9">
-                <h4><a href="https://techiefolk.com/grantize/public/grant/detail/14">harry chapin foundation grant</a></h4>
-              </div>
-              <div class="col-12 col-lg-12">
-                <p>Deadline : Ongoing</p>
-              </div>
-            </div>
-  
-            <div class="row">
-              <div class="col-12 col-lg-12">
-                <a href="https://techiefolk.com/grantize/public/grant/detail/14" class="apply-btn"> Apply</a>
-              </div>
-            </div>
-          </div>
-        </div>
-          </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
   </div>
 </section>
 <!-- End Home Grants Section -->
@@ -915,7 +689,7 @@
     <div class="row gy-4">
 
       <div class="col-lg-3 col-md-12 footer-info">
-        <a href="https://techiefolk.com/grantize/public" class="logo d-flex align-items-center mb-4">
+        <a href="{{ url_for('grantize') }}" class="logo d-flex align-items-center mb-4">
           <span>Grantize</span>
         </a>
         <!-- <p>.</p> -->
@@ -929,18 +703,18 @@
       <div class="col-lg-3 col-6 footer-links">
         <h4>Useful Links</h4>
         <ul>
-          <li><a href="https://techiefolk.com/grantize/public">Home</a></li>
-          <li><a href="https://techiefolk.com/grantize/public/whyus">Why us</a></li>
-          <li><a href="https://techiefolk.com/grantize/public/termsandconditions">Terms and Conditions</a></li>
+          <li><a href="{{ url_for('grantize') }}">Home</a></li>
+          <li><a href="{{ url_for('grantizewhyus') }}">Why us</a></li>
+          <li><a href="{{ url_for('termsnconditions') }}">Terms and Conditions</a></li>
           <li><a href="https://techiefolk.com/grantize/public/privacypolicy">Privacy policy</a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-6 footer-links">
         <h4>Our Services</h4>
         <ul>
-          <li><a href="https://techiefolk.com/grantize/public">Home</a></li>
-          <li><a href="https://techiefolk.com/grantize/public/whyus">Why us</a></li>
-          <li><a href="https://techiefolk.com/grantize/public/termsandconditions">Terms and Conditions</a></li>
+          <li><a href="{{ url_for('grantize') }}">Home</a></li>
+          <li><a href="{{ url_for('grantizewhyus') }}">Why us</a></li>
+          <li><a href="{{ url_for('termsnconditions') }}">Terms and Conditions</a></li>
           <li><a href="https://techiefolk.com/grantize/public/privacypolicy">Privacy policy</a></li>
         </ul>
       </div>

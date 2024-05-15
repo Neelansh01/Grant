@@ -26,7 +26,45 @@ globalorganizations = ""
 
 @app.route('/grantize')
 def grantize():
-    return render_template('grantize/grantize.html')
+    global sqlconnection
+    if "searchgrant" in request.form:
+        try:
+            title_query = request.form['tquery']
+            mycursor = sqlconnection.cursor(dictionary=True)
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+            mycursor.execute(sql)
+            result = mycursor.fetchall()
+            return render_template('grantize/dashboard/searchquery.html', grants=result)
+        except:
+            print("Database Connection Not Working!!")
+            return render_template('grantize/grantize.html')
+    try:
+        print("=============")
+        mycursor = sqlconnection.cursor(dictionary=True)
+        sql = "SELECT id,title,grant_source_url,expiration_date FROM ggrants LIMIT 12"
+        mycursor.execute(sql)
+        result = mycursor.fetchall()
+        print(result)
+        print("-------------")
+        for r in result:
+            if not r["expiration_date"] or r["expiration_date"]!=None:
+                r["expiration_date"] = "Unknown"
+            else:
+                expiration_date = datetime.datetime.strptime(r["expiration_date"], '%Y-%m-%d').date()
+                current_date = datetime.date.today()
+                if expiration_date > current_date:
+                    r["expiration_date"] = "Ongoing"
+                else:
+                    r["expiration_date"] = "Closed"
+        documents = []
+        documents.append(result[:4])
+        documents.append(result[4:8])
+        documents.append(result[8:])
+        print(documents)
+        return render_template('grantize/grantize.html', documents=documents)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/grantize.html')
 
 @app.route('/logingrantizeoptions')
 def logingrantizeoptions():
@@ -206,7 +244,7 @@ def grantizelogout():
     else:
         return render_template('grantize/grantize.html')
 
-def read_user_checks(user):
+def read_user_checks(user, id_to_delete=100):
     global sqlconnection
     try:
         mycursor = sqlconnection.cursor(dictionary=True)
@@ -334,58 +372,61 @@ def read_user_checks(user):
             vals['sectioncontent'] = {}
             vals['topics'] = vals['topics'].split(",-#-,")
             vals['topics'] = [int(v) for v in vals['topics']]
+            if int(id_to_delete) in vals['topics']:
+                vals['topics'].remove(int(id_to_delete))
             temp = vals['topics']
             for topic in temp:
-                if int(topic) in [21, 22, 23, 24]:
-                    if 1 in vals['sectioncontent']:
-                        vals['sectioncontent'][1].append(topic)
-                    else:
-                        vals['sectioncontent'][1] = [topic]
-                elif int(topic) in [25, 26, 27, 28, 29]:
-                    if 2 in vals['sectioncontent']:
-                        vals['sectioncontent'][2].append(topic)
-                    else:
-                        vals['sectioncontent'][2] = [topic]
-                elif int(topic) in [30, 31]:
-                    if 3 in vals['sectioncontent']:
-                        vals['sectioncontent'][3].append(topic)
-                    else:
-                        vals['sectioncontent'][3] = [topic]
-                elif int(topic) in [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]:
-                    if 4 in vals['sectioncontent']:
-                        vals['sectioncontent'][4].append(topic)
-                    else:
-                        vals['sectioncontent'][4] = [topic]
-                elif int(topic) in [43, 44, 45]:
-                    if 5 in vals['sectioncontent']:
-                        vals['sectioncontent'][5].append(topic)
-                    else:
-                        vals['sectioncontent'][5] = [topic]
-                elif int(topic) in [46, 47, 48, 49, 50]:
-                    if 6 in vals['sectioncontent']:
-                        vals['sectioncontent'][6].append(topic)
-                    else:
-                        vals['sectioncontent'][6] = [topic]
-                elif int(topic) in [51, 52]:
-                    if 7 in vals['sectioncontent']:
-                        vals['sectioncontent'][7].append(topic)
-                    else:
-                        vals['sectioncontent'][7] = [topic]
-                elif int(topic) in [53, 54]:
-                    if 8 in vals['sectioncontent']:
-                        vals['sectioncontent'][8].append(topic)
-                    else:
-                        vals['sectioncontent'][8] = [topic]
-                elif int(topic) in [55, 56, 57, 58]:
-                    if 9 in vals['sectioncontent']:
-                        vals['sectioncontent'][9].append(topic)
-                    else:
-                        vals['sectioncontent'][9] = [topic]
-                elif int(topic) in [59]:
-                    if 10 in vals['sectioncontent']:
-                        vals['sectioncontent'][10].append(topic)
-                    else:
-                        vals['sectioncontent'][10] = [topic]
+                if int(topic) != int(id_to_delete):
+                    if int(topic) in [21, 22, 23, 24]:
+                        if 1 in vals['sectioncontent']:
+                            vals['sectioncontent'][1].append(topic)
+                        else:
+                            vals['sectioncontent'][1] = [topic]
+                    elif int(topic) in [25, 26, 27, 28, 29]:
+                        if 2 in vals['sectioncontent']:
+                            vals['sectioncontent'][2].append(topic)
+                        else:
+                            vals['sectioncontent'][2] = [topic]
+                    elif int(topic) in [30, 31]:
+                        if 3 in vals['sectioncontent']:
+                            vals['sectioncontent'][3].append(topic)
+                        else:
+                            vals['sectioncontent'][3] = [topic]
+                    elif int(topic) in [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]:
+                        if 4 in vals['sectioncontent']:
+                            vals['sectioncontent'][4].append(topic)
+                        else:
+                            vals['sectioncontent'][4] = [topic]
+                    elif int(topic) in [43, 44, 45]:
+                        if 5 in vals['sectioncontent']:
+                            vals['sectioncontent'][5].append(topic)
+                        else:
+                            vals['sectioncontent'][5] = [topic]
+                    elif int(topic) in [46, 47, 48, 49, 50]:
+                        if 6 in vals['sectioncontent']:
+                            vals['sectioncontent'][6].append(topic)
+                        else:
+                            vals['sectioncontent'][6] = [topic]
+                    elif int(topic) in [51, 52]:
+                        if 7 in vals['sectioncontent']:
+                            vals['sectioncontent'][7].append(topic)
+                        else:
+                            vals['sectioncontent'][7] = [topic]
+                    elif int(topic) in [53, 54]:
+                        if 8 in vals['sectioncontent']:
+                            vals['sectioncontent'][8].append(topic)
+                        else:
+                            vals['sectioncontent'][8] = [topic]
+                    elif int(topic) in [55, 56, 57, 58]:
+                        if 9 in vals['sectioncontent']:
+                            vals['sectioncontent'][9].append(topic)
+                        else:
+                            vals['sectioncontent'][9] = [topic]
+                    elif int(topic) in [59]:
+                        if 10 in vals['sectioncontent']:
+                            vals['sectioncontent'][10].append(topic)
+                        else:
+                            vals['sectioncontent'][10] = [topic]
         experiences[0]["sectionheads"]=sectionheads
         experiences[0]["topicheads"] = topicheads
         experiences[0]["urls"] = urls
@@ -519,16 +560,11 @@ def grantizeprofile():
                 print("-------------")
                 print(id_to_delete)
                 print("--------------")
-                # mycursor = sqlconnection.cursor()
-                # sql = "DELETE FROM gexperience WHERE id = "+str(id_to_delete)
-                # mycursor.execute(sql)
-                # sqlconnection.commit()
-                # mycursor.close()
             except:
                 print("REGISTER USER VARIABLES COULD NOT BE READ!!")
                 return render_template('grantize/profile/credentials.html')
             ## Code to Read
-            documents, nestedtopics = read_user_checks(user)
+            documents, nestedtopics = read_user_checks(user, id_to_delete)
             user_profile_info = read_user_profile_info(user)
             return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
         else:
@@ -5677,7 +5713,7 @@ def grantizebrowsegrants():
         except:
             print("Database Connection Not Working!!")
             documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
-        return render_template('grantize/dashboard/dashboard.html', documents=documents)
+        return render_template('grantize/dashboard/browsegrants.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
