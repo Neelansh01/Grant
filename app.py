@@ -157,7 +157,7 @@ def logingrantizeresdash():
                 print("REGISTER USER VARIABLES COULD NOT BE READ!!")
                 return render_template('grantize/grantize.html')
             mycursor = sqlconnection.cursor()
-            sql = "SELECT * FROM gmanagerslist WHERE uname = %s AND password = %s"
+            sql = "SELECT * FROM gresearcherslist WHERE username = %s AND password = %s"
             values = (username, password)
             mycursor.execute(sql, values)
             result = mycursor.fetchall()
@@ -178,7 +178,7 @@ def logingrantizeresdash():
                 print("REGISTER USER VARIABLES COULD NOT BE READ!!")
                 return render_template('grantize/grantize.html')
             mycursor = sqlconnection.cursor()
-            sql = "SELECT id FROM gsponsorslist WHERE username = %s AND password = %s"
+            sql = "SELECT id FROM gmanagerslist WHERE username = %s AND password = %s"
             values = (username, password)
             mycursor.execute(sql, values)
             result = mycursor.fetchall()
@@ -396,17 +396,14 @@ def read_user_checks(user):
 
 def read_user_profile_info(user):
     global sqlconnection
-    # SQL query to get all files and other data with condition "WHERE 1=1"
     cursor = sqlconnection.cursor(dictionary=True)
     sql = ("SELECT firstname, middlename, lastname, mobile, email_institutional, "
-            "email, organization, department, qualification, date_of_birth, "
+            "email, organization, department, qualification, date_of_birth, citizenships,"
             "addressline1, addressline2, postcode, country, state, city, linkedln_url, "
             "pubmed_url, google_scholar, personal_blog, orcid FROM gresearcherslist WHERE id = %s")
     cursor.execute(sql, (user,))
-    user_profile_info = cursor.fetchone()  # fetchone() if you expect only one row
+    user_profile_info = cursor.fetchone()
     cursor.close()
-    #print("________________")
-    #print(profile_info)
     return user_profile_info
 
 @app.route('/grantizeprofile', methods =["GET", "POST"])
@@ -475,6 +472,7 @@ def grantizeprofile():
             country = request.form.get('country')
             state = request.form.get('state')
             city = request.form.get('city')
+            citizenships = request.form.get('citizenships')
             linkedin_url = request.form.get('linkedln_url')
             pubmed_url = request.form.get('pubmed_url')
             google_scholar = request.form.get('google_scholar')
@@ -486,11 +484,11 @@ def grantizeprofile():
                 cursor = sqlconnection.cursor()
                 sql = ("UPDATE gresearcherslist SET firstname=%s, middlename=%s, lastname=%s, "
                     "mobile=%s, email_institutional=%s, email=%s, organization=%s, "
-                    "department=%s, qualification=%s, date_of_birth=%s, addressline1=%s, "
+                    "department=%s, qualification=%s, date_of_birth=%s, citizenships=%s, addressline1=%s, "
                     "addressline2=%s, postcode=%s, country=%s, state=%s, city=%s, linkedln_url=%s, "
                     "pubmed_url=%s, google_scholar=%s, personal_blog=%s, orcid=%s WHERE id=%s")
                 values = (first_name, middle_name, last_name, telephone_number, email_institutional,
-                        email_personal, organization, department, current_position, date_of_birth,
+                        email_personal, organization, department, current_position, date_of_birth, citizenships,
                         address_line_one, address_line_two, post_code, country, state, city,
                         linkedin_url, pubmed_url, google_scholar, personal_blog, orcid, user)
                 cursor.execute(sql, values)
@@ -512,6 +510,24 @@ def grantizeprofile():
                 cursor.close()
             except Exception as e:
                 print(e)
+            documents, nestedtopics = read_user_checks(user)
+            user_profile_info = read_user_profile_info(user)
+            return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
+        if "deletetopics" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                # mycursor = sqlconnection.cursor()
+                # sql = "DELETE FROM gexperience WHERE id = "+str(id_to_delete)
+                # mycursor.execute(sql)
+                # sqlconnection.commit()
+                # mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/credentials.html')
+            ## Code to Read
             documents, nestedtopics = read_user_checks(user)
             user_profile_info = read_user_profile_info(user)
             return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
@@ -1806,7 +1822,9 @@ def shorts_read_table(user):
 
 @app.route('/grantizeprofilejourshortsrep', methods =["GET", "POST"])
 def grantizeprofilejourshortsrep():
+    print("YOOOOOOOOOOOOOO")
     if session.get("loginnname"):
+        print("=-=-=-=-=-=-=-")
         user = session.get('loginid')
         if "createjourshorts" in request.form:
             print("_________________CREATE STEP 0__________________")
