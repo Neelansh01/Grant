@@ -24,7 +24,7 @@ globalorganizations = ""
 
 
 
-@app.route('/grantize')
+@app.route('/grantize', methods =["GET", "POST"])
 def grantize():
     global sqlconnection
     if "searchgrant" in request.form:
@@ -39,13 +39,10 @@ def grantize():
             print("Database Connection Not Working!!")
             return render_template('grantize/grantize.html')
     try:
-        print("=============")
         mycursor = sqlconnection.cursor(dictionary=True)
         sql = "SELECT id,title,grant_source_url,expiration_date FROM ggrants LIMIT 12"
         mycursor.execute(sql)
         result = mycursor.fetchall()
-        print(result)
-        print("-------------")
         for r in result:
             if not r["expiration_date"] or r["expiration_date"]!=None:
                 r["expiration_date"] = "Unknown"
@@ -60,7 +57,6 @@ def grantize():
         documents.append(result[:4])
         documents.append(result[4:8])
         documents.append(result[8:])
-        print(documents)
         return render_template('grantize/grantize.html', documents=documents)
     except:
         print("Database Connection Not Working!!")
@@ -5702,20 +5698,214 @@ def grantizerefreq():
 @app.route('/grantizebrowsegrants', methods =["GET", "POST"])
 def grantizebrowsegrants():
     global sqlconnection
+    dummy = "all"
     if session.get("loginnname"):
-        try:
-            mycursor = sqlconnection.cursor()
+        if "searchbytitle" in request.form:
+            clicked_button = request.form['grants_status']
+            title_query = request.form['tquery']
+            if title_query and title_query!=None and str(title_query)!="":
+                if clicked_button=="all":
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+                elif clicked_button=="open":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND application_due_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="continuous":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date < CURRENT_TIMESTAMP
+                        AND application_due_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="comingsoon":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND open_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="recentlyclosed":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="archived":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date < DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                        """
+                else:
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+            else:
+                if clicked_button=="all":
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+                elif clicked_button=="open":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE application_due_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="continuous":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date < CURRENT_TIMESTAMP
+                        AND application_due_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="comingsoon":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE open_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="recentlyclosed":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="archived":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date < DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                        """
+                else:
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+        else:
             sql = "SELECT id,title,grants_type,subjects FROM ggrants"
-            mycursor.execute(sql)
-            result = mycursor.fetchall()
-            print(result[:1])
-            return render_template('grantize/dashboard/browsegrants.html', grants=result)
-        except:
-            print("Database Connection Not Working!!")
-            documents = {"qualification":qualification,"fullname":fname+" "+lname,"email":email}
-        return render_template('grantize/dashboard/browsegrants.html', documents=documents)
     else:
-        return render_template('grantize/grantize.html')
+        if "searchbytitle" in request.form:
+            clicked_button = request.form['grants_status']
+            title_query = request.form['tquery']
+            if title_query and title_query!=None and str(title_query)!="":
+                if clicked_button=="all":
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+                elif clicked_button=="open":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND application_due_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="continuous":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date < CURRENT_TIMESTAMP
+                        AND application_due_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="comingsoon":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND open_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="recentlyclosed":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="archived":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE title LIKE '%""" + title_query + """%' 
+                        AND expiration_date < DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                        """
+                else:
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
+            else:
+                if clicked_button=="all":
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+                elif clicked_button=="open":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE application_due_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="continuous":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date < CURRENT_TIMESTAMP
+                        AND application_due_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="comingsoon":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE open_date < CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="recentlyclosed":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date > CURRENT_TIMESTAMP
+                        """
+                elif clicked_button=="archived":
+                    sql = """
+                        SELECT id, title, grants_type, subjects 
+                        FROM ggrants 
+                        WHERE expiration_date < DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                        """
+                else:
+                    sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+        elif "addquery" in request.form:
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+            query_front = request.form['query_front']
+            operators = ["AND", "OR", "NOT"]
+            conditions = {}
+            mapper_db = {"Title":"title",
+                         "Grant Status": "grant_status",
+                         "Open date": "open_date",
+                         "Sponsor": "sponsor",
+                         "Sponsor type": "sponsor_types",
+                         "Grants type": "grants_type",
+                         "Applicant type": "applicant_types",
+                         "Award min (n)": "award_min",
+                         "Award max (n)": "award_max",
+                         "CFDA": "cfda",
+                         "Earliest start date": "earliest_start_date",
+                         "Expiration date": "expiration_date",
+                         "Keywords": "keywords",
+                         "Subjects": "subjects",
+                         "Submit date": "submit_date",
+                         "Activity Code": "activity_code",
+                         "Citizenships": "citizenships",
+                         "Application due date": "application_due_date",
+                         "Intent due date": "intent_due_date",
+                         "Applicant locations": "countries",
+                         "Activity locations": "countries",
+                         "Amount per Grant (max)": "amount_per_grant_max",
+                         "Amount per Grant (min)": "amount_per_grant_min"}
+            for map_key in list(mapper_db.keys()):
+                if map_key in 
+        else:
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+    try:
+        if not clicked_button:
+            clicked_button = "all"
+        mycursor = sqlconnection.cursor(dictionary=True)
+        mycursor.execute(sql)
+        result = mycursor.fetchall()
+        mycursor.close()
+        return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy=clicked_button)
+    except:
+        print("Database Connection Not Working!!")
+        return render_template('grantize/dashboard/browsegrants.html')
     
 @app.route('/grantizeviewgrants', methods =["GET", "POST"])
 def grantizeviewgrants():
