@@ -6031,6 +6031,41 @@ def grantizebrowsegrants():
                 except:
                     print("Database Insertion Failed!!")
             return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy="all", favlist=favlist, savlist=savlist)
+        elif "sharewithothers" in request.form:
+            try:
+                # Retrieve data from form fields
+                mycursor = sqlconnection.cursor()
+                useremail = request.form.get('users', '').strip()
+                grant_id = request.form.get('grant_id', '').strip()
+                print("--------")
+                print(grant_id)
+                print(useremail)
+                print("---------")
+                flash("Activity information added successfully!", "success")
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", "error")
+                return render_template('error_template.html'), 500
+            try:
+                # Fetch the user ID where email matches 'dummy'
+                sql_select_query = """
+                    SELECT id FROM gresearcherslist WHERE email = %s
+                """
+                mycursor.execute(sql_select_query, (useremail,))
+                user_record = mycursor.fetchone()
+                print("--------")
+                print(user_record)
+                print("---------")
+                if user_record:
+                    # Insert record into gshared
+                    sql_insert_query = """
+                        INSERT INTO gshared (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user, grant_id))
+                    sqlconnection.commit()
+            except mysql.connector.Error as err:
+                print("Error:", err)
+                return jsonify({"status": "error", "message": str(err)}), 500
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants"
         else:
             sql = "SELECT id,title,grants_type,subjects FROM ggrants"
         try:
@@ -6271,6 +6306,19 @@ def grantizefavquery():
         except Exception as e:
             print("Error fetching experience profiles from database:", str(e))
             return []
+        if "_tokensearchquery" in request.form:
+            try:
+                title_query = request.form['tquery']
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gfavs s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                mycursor.close()
+                print(result[:1])
+                return render_template('grantize/dashboard/favquery.html', grants=result, favlist=favlist, savlist=savlist)
+            except:
+                print("Database Connection Not Working -- 1!!")
+                return render_template('grantize/dashboard/favquery.html')
         if "_tokensearchquery" in request.form:
             try:
                 title_query = request.form['tquery']

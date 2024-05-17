@@ -467,9 +467,9 @@
                                         <a href="javascript:void(0);" onclick="saveItem({{ gs['id'] }})" class="btn btn-sm btn-outline-primary {{ 'this_active' if gs['id'] in savlist else '' }}" id="save{{ gs['id'] }}" title="Saved" style="{{ 'background-color: blue; color: white;' if gs['id'] in savlist else '' }}">
                                             <i class="bi bi-save"></i>
                                         </a>                                        
-                                        <a href="javascript:shareItem({{ gs['id'] }})" class="btn btn-sm btn-outline-primary {{ 'this_active' if gs['id'] in sharelist else '' }}" id="share{{ gs['id'] }}" title="Share" style="{{ 'background-color: blue; color: white;' if gs['id'] in sharelist else '' }}">
+                                        <a href="javascript:void(0);" onclick="shareItem({{ gs['id'] }})" class="btn btn-sm btn-outline-primary {{ 'this_active' if gs['id'] in sharelist else '' }}" id="share{{ gs['id'] }}" title="Share" style="{{ 'background-color: blue; color: white;' if gs['id'] in sharelist else '' }}">
                                             <i class="bi bi-share"></i>
-                                        </a>
+                                        </a>                                        
                                     </div>
                                 </div>
                             </div>
@@ -549,19 +549,22 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
         </div>
         <div class="modal-body" style="">
-            <form action="https://techiefolk.com/grantize/public/researcher/grants/create_share" method="post" enctype="multipart/form-data" id="shareForm">
-                <input type="hidden" name="_token" value="JvJdLlqk7uOMLgDEb7ueqSoDIpO3bXP9zmXL2b2o" autocomplete="off">                <div class="row">							
+            <form action="{{ url_for('grantizebrowsegrants') }}" method="post" enctype="multipart/form-data" id="shareForm">
+                <input type="hidden" name="sharewithothers" value="JvJdLlqk7uOMLgDEb7ueqSoDIpO3bXP9zmXL2b2o" autocomplete="off">
+                <input type="hidden" name="grant_id" id="grant_id" value="">                
+                <div class="row">							
                     <div class="col-12">
                         <div class="form-group">
-                        <label for="authors"><b>Users</b></label>
-                        <div class="input-group">
-                            <input type="hidden" name="grant_id" id="grant_id">
-                            <select name="users[]" class="form-control users" multiple="multiple" required >
-                            </select>
-                        </div> 		
+                            <label for="authors"><b>Users</b></label>
+                            <div class="input-group">
+                                <!-- <select name="users[]" class="form-control users" multiple="multiple" required >
+                                </select> -->
+                                <input type="text" name="users" class="form-control">
+                            </div> 		
                         </div> 
                     </div>					
                 </div>	
+
             </form>		
         </div>
         <div class="modal-footer">
