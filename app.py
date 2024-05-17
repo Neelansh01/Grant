@@ -5771,33 +5771,85 @@ def toggle_share():
 @app.route('/update_favorite', methods=['POST'])
 def update_favorite():
     id = request.form['id']
+    print("-----------")
+    print("-----------")
+    print(type(id))
+    print("-----------")
+    print("-----------")
     # Database logic to update favorite status
     mycursor = sqlconnection.cursor()
-    sql = "INSERT INTO gfavs (userid, grantid) VALUES (%s, %s)"
-    val = (session.get('loginid'), id)
-    try:
-        mycursor.execute(sql, val)
-        sqlconnection.commit()
-        mycursor.close()
-        print("Database Insertion Successful....")
-    except:
-        print("Database Insertion Failed!!")
+    # SQL query to get specific columns from the grespro table
+    query = """
+    SELECT grantid
+    FROM gfavs
+    WHERE userid = %s
+    """
+    mycursor.execute(query, (session.get('loginid'),))
+    checklist = mycursor.fetchall()
+    checklist = [f[0] for f in checklist]
+    print("-----------")
+    print("-----------")
+    print(type(checklist[0]))
+    print("-----------")
+    print("-----------")
+    mycursor.close()
+    if int(id) not in checklist:
+        sql = "INSERT INTO gfavs (userid, grantid) VALUES (%s, %s)"
+        val = (session.get('loginid'), id)
+        try:
+            mycursor = sqlconnection.cursor()
+            mycursor.execute(sql, val)
+            sqlconnection.commit()
+            mycursor.close()
+            print("Database Insertion Successful....")
+        except:
+            print("Database Insertion Failed!!")
+    else:
+        try:
+            with sqlconnection.cursor() as mycursor:
+                sql = "DELETE FROM gfavs WHERE grantid = %s"
+                mycursor.execute(sql, (id,))  # Use tuple for parameters
+                sqlconnection.commit()
+            print("Database Deletion Successful....")
+        except:
+            print("Database Deletion Failed!!")
     return jsonify(status="success")
 
 @app.route('/update_save', methods=['POST'])
 def update_save():
     id = request.form['id']
-    # Database logic to update save status
+    # Database logic to update favorite status
     mycursor = sqlconnection.cursor()
-    sql = "INSERT INTO gsaved (userid, grantid) VALUES (%s, %s)"
-    val = (session.get('loginid'), id)
-    try:
-        mycursor.execute(sql, val)
-        sqlconnection.commit()
-        mycursor.close()
-        print("Database Insertion Successful....")
-    except:
-        print("Database Insertion Failed!!")
+    # SQL query to get specific columns from the grespro table
+    query = """
+    SELECT grantid
+    FROM gsaved
+    WHERE userid = %s
+    """
+    mycursor.execute(query, (session.get('loginid'),))
+    checklist = mycursor.fetchall()
+    checklist = [f[0] for f in checklist]
+    mycursor.close()
+    if int(id) not in checklist:
+        sql = "INSERT INTO gsaved (userid, grantid) VALUES (%s, %s)"
+        val = (session.get('loginid'), id)
+        try:
+            mycursor = sqlconnection.cursor()
+            mycursor.execute(sql, val)
+            sqlconnection.commit()
+            mycursor.close()
+            print("Database Insertion Successful....")
+        except:
+            print("Database Insertion Failed!!")
+    else:
+        try:
+            with sqlconnection.cursor() as mycursor:
+                sql = "DELETE FROM gsaved WHERE grantid = %s"
+                mycursor.execute(sql, (id,))  # Use tuple for parameters
+                sqlconnection.commit()
+            print("Database Deletion Successful....")
+        except:
+            print("Database Deletion Failed!!")
     return jsonify(status="success")
 
 @app.route('/grantizebrowsegrants', methods =["GET", "POST"])
@@ -5824,6 +5876,8 @@ def grantizebrowsegrants():
             mycursor.execute(query, (user,))
             savlist = mycursor.fetchall()
             mycursor.close()
+            favlist = [f[0] for f in favlist]
+            savlist = [f[0] for f in savlist]
         except Exception as e:
             print("Error fetching experience profiles from database:", str(e))
             return []
@@ -5907,6 +5961,76 @@ def grantizebrowsegrants():
                         """
                 else:
                     sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+        elif "addquery" in request.form:
+            sql_string = request.form['query_front']
+            mapper_db = {"Title":"title",
+                         "Grant Status": "grant_status",
+                         "Open date": "open_date",
+                         "Sponsor": "sponsor",
+                         "Sponsor type": "sponsor_types",
+                         "Grants type": "grants_type",
+                         "Applicant type": "applicant_types",
+                         "Award min (n)": "award_min",
+                         "Award max (n)": "award_max",
+                         "CFDA": "cfda",
+                         "Earliest start date": "earliest_start_date",
+                         "Expiration date": "expiration_date",
+                         "Keywords": "keywords",
+                         "Subjects": "subjects",
+                         "Submit date": "submit_date",
+                         "Activity Code": "activity_code",
+                         "Citizenships": "citizenships",
+                         "Application due date": "application_due_date",
+                         "Intent due date": "intent_due_date",
+                         "Applicant locations": "countries",
+                         "Activity locations": "countries",
+                         "Amount per Grant (max)": "amount_per_grant_max",
+                         "Amount per Grant (min)": "amount_per_grant_min"}
+            field_types = {
+                        "title": "varchar(255)",
+                        "grant_status": "varchar(255)",
+                        "open_date": "date",
+                        "earliest_start_date": "date",
+                        "expiration_date": "date",
+                        "sponsor": "int(11)",
+                        "sponsor_types": "text",
+                        "grants_type": "text",
+                        "applicant_types": "text",
+                        "award_min": "int(11)",
+                        "award_max": "int(11)",
+                        "cfda": "text",
+                        "keywords": "text",
+                        "subjects": "text",
+                        "submit_date": "date",
+                        "activity_code": "text",
+                        "citizenships": "text",
+                        "application_due_date": "date",
+                        "intent_due_date": "date",
+                        "countries": "text",
+                        "amount_per_grant_max": "int(11)",
+                        "amount_per_grant_min": "int(11)"
+                    }
+            operators = ["AND", "OR", "NOT"]
+            conditions = parse_and_format_sql_conditions(sql_string, operators, mapper_db, field_types)
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE " + " ".join(conditions)
+            print(sql)
+            with sqlconnection.cursor(dictionary=True) as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()  # Fetch all records matching the query
+                print(result)
+            if "submit_search_add" in request.form:
+                title_query = request.form['savetitle']
+                mycursor = sqlconnection.cursor()
+                sql = "INSERT INTO gfavs (userid, grantid) VALUES (%s, %s)"
+                val = (session.get('loginid'), id)
+                try:
+                    mycursor.execute(sql, val)
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("Database Insertion Successful....")
+                except:
+                    print("Database Insertion Failed!!")
+            return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy="all", favlist=favlist, savlist=savlist)
         else:
             sql = "SELECT id,title,grants_type,subjects FROM ggrants"
         try:
@@ -6122,37 +6246,53 @@ def grantizesearchquery():
 def grantizefavquery():
     global sqlconnection
     if session.get("loginnname"):
+        print("=-=-=-=-=-=-=-=-=")
         user = session.get('loginid')
+        try:
+            mycursor = sqlconnection.cursor()
+            # SQL query to get specific columns from the grespro table
+            query = """
+            SELECT grantid
+            FROM gfavs
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            favlist = mycursor.fetchall()
+            query = """
+            SELECT grantid
+            FROM gsaved
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            savlist = mycursor.fetchall()
+            mycursor.close()
+            favlist = [f[0] for f in favlist]
+            savlist = [f[0] for f in savlist]
+        except Exception as e:
+            print("Error fetching experience profiles from database:", str(e))
+            return []
         if "_tokensearchquery" in request.form:
             try:
                 title_query = request.form['tquery']
-                print("_-------------")
-                print(title_query)
-                print("_-------------")
-                mycursor = sqlconnection.cursor()
+                mycursor = sqlconnection.cursor(dictionary=True)
                 sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gfavs s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
-                print("_-------------")
-                print(sql)
-                print("_-------------")
                 mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/favquery.html', grants=result)
+                return render_template('grantize/dashboard/favquery.html', grants=result, favlist=favlist, savlist=savlist)
             except:
                 print("Database Connection Not Working -- 1!!")
                 return render_template('grantize/dashboard/favquery.html')
         else:
             try:
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT grantid FROM gfavs WHERE userid = %s"
-                values = (user,)
-                mycursor.execute(sql, values)
-                reqids = mycursor.fetchall()
-                format_strings = ",".join([str(r[0]) for r in reqids])
-                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gfavs s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/favquery.html', grants=result)
+                return render_template('grantize/dashboard/favquery.html', grants=result, favlist=favlist, savlist=savlist)
             except:
                 print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/favquery.html')
