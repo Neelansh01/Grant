@@ -6,6 +6,7 @@ from io import BytesIO
 from datetime import datetime
 import mimetypes
 from werkzeug.utils import secure_filename
+import re
 import os
 
 
@@ -5695,11 +5696,137 @@ def grantizeprofilereferences():
 def grantizerefreq():
     return redirect(url_for('grantizeprofilereferences'))
 
+
+def parse_and_format_sql_conditions(sql, operators, mapper, field_types):
+    # Replace all field names with their database equivalents before any splitting
+    for key, db_field in mapper.items():
+        # Regex pattern to match full field names outside of quotes
+        key_pattern = r'\b' + re.escape(key) + r'\b'
+        sql = re.sub(key_pattern, db_field, sql)
+
+    # Regex pattern to split by operators while preserving quoted text and keeping the operators
+    pattern = r'(\b(?:' + '|'.join(re.escape(op) for op in operators) + r')\b)'
+
+    # Split the string while keeping the delimiter
+    parts = re.split(pattern, sql)
+
+    # Initialize a list to collect conditions and include operators
+    conditions = []
+    for part in parts:
+        stripped_part = part.strip()
+        if stripped_part:
+            # Check if the part is an operator
+            if stripped_part in operators:
+                conditions.append(stripped_part)  # Append operator directly
+            else:
+                # Further handle the replacement and ensure values are correctly quoted
+                modified_part = stripped_part
+                for db_field, type_info in field_types.items():
+                    if type_info in ['varchar(255)', 'text']:
+                        # Add quotes around varchar and text fields if they are not already quoted
+                        modified_part = re.sub(r"(\b" + re.escape(db_field) + r"\s*=\s*)(?!')(.*?)(?=\s|$|AND|OR)",
+                                               r"\1'\2'", modified_part)
+                    elif 'date' in type_info:
+                        # Ensure dates are properly quoted
+                        modified_part = re.sub(r"(\b" + re.escape(db_field) + r"\s*=\s*)(?!')(.*?)(?=\s|$|AND|OR)",
+                                               r"\1'\2'", modified_part)
+                        # Handle BETWEEN specially
+                        modified_part = re.sub(r"(\b" + re.escape(db_field) + r"\s+BETWEEN\s+)(?!')(.*?)(\s+AND\s+)(?!')(.*?)(?=\s|$|AND|OR)",
+                                               r"\1'\2'\3'\4'", modified_part)
+                conditions.append(modified_part)
+    conditions = replace_conditions_with_db_fields(conditions, mapper)
+    return conditions
+
+def replace_conditions_with_db_fields(conditions, mapper):
+    # Iterate over each condition in the list
+    for i in range(len(conditions)):
+        # For each key in the mapper, replace it in the current condition
+        for key, db_field in mapper.items():
+            conditions[i] = conditions[i].replace(key, db_field)
+    return conditions
+
+@app.route('/toggle_favorite', methods=['POST'])
+def toggle_favorite():
+    item_id = request.form.get('id')
+    # Perform operation to toggle favorite status
+    # Here, we're just simulating the response
+    print(item_id)
+    response = {'status': 'success', 'action': 'toggle'}
+    return jsonify(response)
+
+@app.route('/toggle_save', methods=['POST'])
+def toggle_save():
+    item_id = request.form.get('id')
+    # Similar operation for saving an item
+    response = {'status': 'success', 'action': 'toggle'}
+    return jsonify(response)
+
+@app.route('/toggle_share', methods=['POST'])
+def toggle_share():
+    item_id = request.form.get('id')
+    # Similar operation for sharing an item
+    response = {'status': 'success', 'action': 'toggle'}
+    return jsonify(response)
+
+@app.route('/update_favorite', methods=['POST'])
+def update_favorite():
+    id = request.form['id']
+    # Database logic to update favorite status
+    mycursor = sqlconnection.cursor()
+    sql = "INSERT INTO gfavs (userid, grantid) VALUES (%s, %s)"
+    val = (session.get('loginid'), id)
+    try:
+        mycursor.execute(sql, val)
+        sqlconnection.commit()
+        mycursor.close()
+        print("Database Insertion Successful....")
+    except:
+        print("Database Insertion Failed!!")
+    return jsonify(status="success")
+
+@app.route('/update_save', methods=['POST'])
+def update_save():
+    id = request.form['id']
+    # Database logic to update save status
+    mycursor = sqlconnection.cursor()
+    sql = "INSERT INTO gsaved (userid, grantid) VALUES (%s, %s)"
+    val = (session.get('loginid'), id)
+    try:
+        mycursor.execute(sql, val)
+        sqlconnection.commit()
+        mycursor.close()
+        print("Database Insertion Successful....")
+    except:
+        print("Database Insertion Failed!!")
+    return jsonify(status="success")
+
 @app.route('/grantizebrowsegrants', methods =["GET", "POST"])
 def grantizebrowsegrants():
     global sqlconnection
     dummy = "all"
     if session.get("loginnname"):
+        user = session.get('loginid')
+        try:
+            mycursor = sqlconnection.cursor()
+            # SQL query to get specific columns from the grespro table
+            query = """
+            SELECT grantid
+            FROM gfavs
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            favlist = mycursor.fetchall()
+            query = """
+            SELECT grantid
+            FROM gsaved
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            savlist = mycursor.fetchall()
+            mycursor.close()
+        except Exception as e:
+            print("Error fetching experience profiles from database:", str(e))
+            return []
         if "searchbytitle" in request.form:
             clicked_button = request.form['grants_status']
             title_query = request.form['tquery']
@@ -5782,7 +5909,22 @@ def grantizebrowsegrants():
                     sql = "SELECT id,title,grants_type,subjects FROM ggrants"
         else:
             sql = "SELECT id,title,grants_type,subjects FROM ggrants"
+        try:
+            print(sql)
+            if not clicked_button:
+                clicked_button = "all"
+            mycursor = sqlconnection.cursor(dictionary=True)
+            mycursor.execute(sql)
+            result = mycursor.fetchall()
+            print(result)
+            mycursor.close()
+            return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy=clicked_button, favlist=favlist, savlist=savlist)
+        except:
+            print("Database Connection Not Working!!")
+            return render_template('grantize/dashboard/browsegrants.html')
     else:
+        favlist = []
+        savlist = []
         if "searchbytitle" in request.form:
             clicked_button = request.form['grants_status']
             title_query = request.form['tquery']
@@ -5864,10 +6006,7 @@ def grantizebrowsegrants():
                 else:
                     sql = "SELECT id,title,grants_type,subjects FROM ggrants"
         elif "addquery" in request.form:
-            sql = "SELECT id,title,grants_type,subjects FROM ggrants"
-            query_front = request.form['query_front']
-            operators = ["AND", "OR", "NOT"]
-            conditions = {}
+            sql_string = request.form['query_front']
             mapper_db = {"Title":"title",
                          "Grant Status": "grant_status",
                          "Open date": "open_date",
@@ -5891,21 +6030,53 @@ def grantizebrowsegrants():
                          "Activity locations": "countries",
                          "Amount per Grant (max)": "amount_per_grant_max",
                          "Amount per Grant (min)": "amount_per_grant_min"}
-            for map_key in list(mapper_db.keys()):
-                if map_key in 
+            field_types = {
+                        "title": "varchar(255)",
+                        "grant_status": "varchar(255)",
+                        "open_date": "date",
+                        "earliest_start_date": "date",
+                        "expiration_date": "date",
+                        "sponsor": "int(11)",
+                        "sponsor_types": "text",
+                        "grants_type": "text",
+                        "applicant_types": "text",
+                        "award_min": "int(11)",
+                        "award_max": "int(11)",
+                        "cfda": "text",
+                        "keywords": "text",
+                        "subjects": "text",
+                        "submit_date": "date",
+                        "activity_code": "text",
+                        "citizenships": "text",
+                        "application_due_date": "date",
+                        "intent_due_date": "date",
+                        "countries": "text",
+                        "amount_per_grant_max": "int(11)",
+                        "amount_per_grant_min": "int(11)"
+                    }
+            operators = ["AND", "OR", "NOT"]
+            conditions = parse_and_format_sql_conditions(sql_string, operators, mapper_db, field_types)
+            sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE " + " ".join(conditions)
+            with sqlconnection.cursor(dictionary=True) as cursor:
+                cursor.execute(sql)
+                result = cursor.fetchall()  # Fetch all records matching the query
+                print(result)
+            return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy="all")
         else:
             sql = "SELECT id,title,grants_type,subjects FROM ggrants"
-    try:
-        if not clicked_button:
-            clicked_button = "all"
-        mycursor = sqlconnection.cursor(dictionary=True)
-        mycursor.execute(sql)
-        result = mycursor.fetchall()
-        mycursor.close()
-        return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy=clicked_button)
-    except:
-        print("Database Connection Not Working!!")
-        return render_template('grantize/dashboard/browsegrants.html')
+        try:
+            print(sql)
+            if not clicked_button:
+                clicked_button = "all"
+            mycursor = sqlconnection.cursor(dictionary=True)
+            mycursor.execute(sql)
+            result = mycursor.fetchall()
+            print(result)
+            mycursor.close()
+            return render_template('grantize/dashboard/browsegrants.html', grants=result, dummy=clicked_button,  favlist=favlist, savlist=savlist)
+        except:
+            print("Database Connection Not Working!!")
+            return render_template('grantize/dashboard/browsegrants.html')
     
 @app.route('/grantizeviewgrants', methods =["GET", "POST"])
 def grantizeviewgrants():
