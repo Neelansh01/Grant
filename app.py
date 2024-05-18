@@ -6018,11 +6018,15 @@ def grantizebrowsegrants():
                 cursor.execute(sql)
                 result = cursor.fetchall()  # Fetch all records matching the query
                 print(result)
+            print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
             if "submit_search_add" in request.form:
+                print("--------------------------")
                 title_query = request.form['savetitle']
+                print(title_query)
+                print("--------------------------")
                 mycursor = sqlconnection.cursor()
-                sql = "INSERT INTO gfavs (userid, grantid) VALUES (%s, %s)"
-                val = (session.get('loginid'), id)
+                sql = "INSERT INTO gsearchquery (userid, title, query) VALUES (%s, %s, %s)"
+                val = (user, title_query, " ".join(conditions))
                 try:
                     mycursor.execute(sql, val)
                     sqlconnection.commit()
