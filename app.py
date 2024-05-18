@@ -6062,6 +6062,12 @@ def grantizebrowsegrants():
                     """
                     mycursor.execute(sql_insert_query, (user, grant_id))
                     sqlconnection.commit()
+                    # Insert record into gsharedwith
+                    sql_insert_query = """
+                        INSERT INTO gsharedwith (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user_record[0], grant_id))
+                    sqlconnection.commit()
             except mysql.connector.Error as err:
                 print("Error:", err)
                 return jsonify({"status": "error", "message": str(err)}), 500
@@ -6350,9 +6356,26 @@ def grantizefavquery():
                     """
                     mycursor.execute(sql_insert_query, (user, grant_id))
                     sqlconnection.commit()
+                    # Insert record into gsharedwith
+                    sql_insert_query = """
+                        INSERT INTO gsharedwith (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user_record[0], grant_id))
+                    sqlconnection.commit()
             except mysql.connector.Error as err:
                 print("Error:", err)
                 return jsonify({"status": "error", "message": str(err)}), 500
+            try:
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gfavs s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                mycursor.close()
+                print(result[:1])
+                return render_template('grantize/dashboard/favquery.html', grants=result, favlist=favlist, savlist=savlist)
+            except:
+                print("Database Connection Not Working -- 2!!")
+                return render_template('grantize/dashboard/favquery.html')
         else:
             try:
                 mycursor = sqlconnection.cursor(dictionary=True)
@@ -6372,31 +6395,104 @@ def grantizefavquery():
 def grantizesavedquery():
     global sqlconnection
     if session.get("loginnname"):
+        print("=-=-=-=-=-=-=-=-=")
         user = session.get('loginid')
+        try:
+            mycursor = sqlconnection.cursor()
+            # SQL query to get specific columns from the grespro table
+            query = """
+            SELECT grantid
+            FROM gfavs
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            favlist = mycursor.fetchall()
+            query = """
+            SELECT grantid
+            FROM gsaved
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            savlist = mycursor.fetchall()
+            mycursor.close()
+            favlist = [f[0] for f in favlist]
+            savlist = [f[0] for f in savlist]
+        except Exception as e:
+            print("Error fetching experience profiles from database:", str(e))
+            return []
         if "_tokensearchquery" in request.form:
             try:
                 title_query = request.form['tquery']
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsaved s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsaved s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
                 mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/savedquery.html', grants=result)
+                return render_template('grantize/dashboard/savedquery.html', grants=result, favlist=favlist, savlist=savlist)
             except:
-                print("Database Connection Not Working - 1!!")
+                print("Database Connection Not Working -- 1!!")
+                return render_template('grantize/dashboard/savedquery.html')
+        if "sharewithothers" in request.form:
+            try:
+                # Retrieve data from form fields
+                mycursor = sqlconnection.cursor()
+                useremail = request.form.get('users', '').strip()
+                grant_id = request.form.get('grant_id', '').strip()
+                print("--------")
+                print(grant_id)
+                print(useremail)
+                print("---------")
+                flash("Activity information added successfully!", "success")
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", "error")
+                return render_template('error_template.html'), 500
+            try:
+                # Fetch the user ID where email matches 'dummy'
+                sql_select_query = """
+                    SELECT id FROM gresearcherslist WHERE email = %s
+                """
+                mycursor.execute(sql_select_query, (useremail,))
+                user_record = mycursor.fetchone()
+                print("--------")
+                print(user_record)
+                print("---------")
+                if user_record:
+                    # Insert record into gshared
+                    sql_insert_query = """
+                        INSERT INTO gshared (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user, grant_id))
+                    sqlconnection.commit()
+                    # Insert record into gsharedwith
+                    sql_insert_query = """
+                        INSERT INTO gsharedwith (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user_record[0], grant_id))
+                    sqlconnection.commit()
+            except mysql.connector.Error as err:
+                print("Error:", err)
+                return jsonify({"status": "error", "message": str(err)}), 500
+            try:
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsaved s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                mycursor.close()
+                print(result[:1])
+                return render_template('grantize/dashboard/savedquery.html', grants=result, favlist=favlist, savlist=savlist)
+            except:
+                print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/savedquery.html')
         else:
             try:
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT grantid FROM gsaved WHERE userid = %s"
-                values = (user,)
-                mycursor.execute(sql, values)
-                reqids = mycursor.fetchall()
-                format_strings = ",".join([str(r[0]) for r in reqids])
-                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsaved s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/savedquery.html', grants=result)
+                return render_template('grantize/dashboard/savedquery.html', grants=result, favlist=favlist, savlist=savlist)
             except:
                 print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/savedquery.html')
@@ -6408,33 +6504,106 @@ def grantizesavedquery():
 def grantizesharedbyme():
     global sqlconnection
     if session.get("loginnname"):
+        print("=-=-=-=-=-=-=-=-=")
         user = session.get('loginid')
+        try:
+            mycursor = sqlconnection.cursor()
+            # SQL query to get specific columns from the grespro table
+            query = """
+            SELECT grantid
+            FROM gfavs
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            favlist = mycursor.fetchall()
+            query = """
+            SELECT grantid
+            FROM gsaved
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            savlist = mycursor.fetchall()
+            mycursor.close()
+            favlist = [f[0] for f in favlist]
+            savlist = [f[0] for f in savlist]
+        except Exception as e:
+            print("Error fetching experience profiles from database:", str(e))
+            return []
         if "_tokensearchquery" in request.form:
             try:
                 title_query = request.form['tquery']
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gshared s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gshared s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
                 mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/sharedbyme.html', grants=result)
+                return render_template('grantize/dashboard/sharedbyme.html', grants=result, favlist=favlist, savlist=savlist)
             except:
-                print("Database Connection Not Working!!")
+                print("Database Connection Not Working -- 1!!")
+                return render_template('grantize/dashboard/sharedbyme.html')
+        if "sharewithothers" in request.form:
+            try:
+                # Retrieve data from form fields
+                mycursor = sqlconnection.cursor()
+                useremail = request.form.get('users', '').strip()
+                grant_id = request.form.get('grant_id', '').strip()
+                print("--------")
+                print(grant_id)
+                print(useremail)
+                print("---------")
+                flash("Activity information added successfully!", "success")
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", "error")
+                return render_template('error_template.html'), 500
+            try:
+                # Fetch the user ID where email matches 'dummy'
+                sql_select_query = """
+                    SELECT id FROM gresearcherslist WHERE email = %s
+                """
+                mycursor.execute(sql_select_query, (useremail,))
+                user_record = mycursor.fetchone()
+                print("--------")
+                print(user_record)
+                print("---------")
+                if user_record:
+                    # Insert record into gshared
+                    sql_insert_query = """
+                        INSERT INTO gshared (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user, grant_id))
+                    sqlconnection.commit()
+                    # Insert record into gsharedwith
+                    sql_insert_query = """
+                        INSERT INTO gsharedwith (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user_record[0], grant_id))
+                    sqlconnection.commit()
+            except mysql.connector.Error as err:
+                print("Error:", err)
+                return jsonify({"status": "error", "message": str(err)}), 500
+            try:
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gshared s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                mycursor.close()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedbyme.html', grants=result, favlist=favlist, savlist=savlist)
+            except:
+                print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/sharedbyme.html')
         else:
             try:
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT grantid FROM gshared WHERE userid = %s"
-                values = (user,)
-                mycursor.execute(sql, values)
-                reqids = mycursor.fetchall()
-                format_strings = ",".join([str(r[0]) for r in reqids])
-                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gshared s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/sharedbyme.html', grants=result)
+                return render_template('grantize/dashboard/sharedbyme.html', grants=result, favlist=favlist, savlist=savlist)
             except:
-                print("Database Connection Not Working!!")
+                print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/sharedbyme.html')
     else:
         return render_template('grantize/grantize.html')
@@ -6443,36 +6612,106 @@ def grantizesharedbyme():
 def grantizesharedwithme():
     global sqlconnection
     if session.get("loginnname"):
+        print("=-=-=-=-=-=-=-=-=")
         user = session.get('loginid')
+        try:
+            mycursor = sqlconnection.cursor()
+            # SQL query to get specific columns from the grespro table
+            query = """
+            SELECT grantid
+            FROM gfavs
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            favlist = mycursor.fetchall()
+            query = """
+            SELECT grantid
+            FROM gsaved
+            WHERE userid = %s
+            """
+            mycursor.execute(query, (user,))
+            savlist = mycursor.fetchall()
+            mycursor.close()
+            favlist = [f[0] for f in favlist]
+            savlist = [f[0] for f in savlist]
+        except Exception as e:
+            print("Error fetching experience profiles from database:", str(e))
+            return []
         if "_tokensearchquery" in request.form:
             try:
                 title_query = request.form['tquery']
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsharedwith s ON g.id = s.grantid WHERE s.userid = "+user+" AND g.title LIKE '%"+title_query+"%'"
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsharedwith s ON g.id = s.grantid WHERE s.userid = "+str(user)+" AND g.title LIKE '%"+title_query+"%'"
                 mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/sharedwithme.html', grants=result)
+                return render_template('grantize/dashboard/sharedwithme.html', grants=result, favlist=favlist, savlist=savlist)
             except:
-                print("Database Connection Not Working!!")
+                print("Database Connection Not Working -- 1!!")
+                return render_template('grantize/dashboard/sharedwithme.html')
+        if "sharewithothers" in request.form:
+            try:
+                # Retrieve data from form fields
+                mycursor = sqlconnection.cursor()
+                useremail = request.form.get('users', '').strip()
+                grant_id = request.form.get('grant_id', '').strip()
+                print("--------")
+                print(grant_id)
+                print(useremail)
+                print("---------")
+                flash("Activity information added successfully!", "success")
+            except Exception as e:
+                flash(f"An error occurred: {str(e)}", "error")
+                return render_template('error_template.html'), 500
+            try:
+                # Fetch the user ID where email matches 'dummy'
+                sql_select_query = """
+                    SELECT id FROM gresearcherslist WHERE email = %s
+                """
+                mycursor.execute(sql_select_query, (useremail,))
+                user_record = mycursor.fetchone()
+                print("--------")
+                print(user_record)
+                print("---------")
+                if user_record:
+                    # Insert record into gshared
+                    sql_insert_query = """
+                        INSERT INTO gshared (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user, grant_id))
+                    sqlconnection.commit()
+                    # Insert record into gsharedwith
+                    sql_insert_query = """
+                        INSERT INTO gsharedwith (userid, grantid) VALUES (%s, %s)
+                    """
+                    mycursor.execute(sql_insert_query, (user_record[0], grant_id))
+                    sqlconnection.commit()
+            except mysql.connector.Error as err:
+                print("Error:", err)
+                return jsonify({"status": "error", "message": str(err)}), 500
+            try:
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsharedwith s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
+                result = mycursor.fetchall()
+                mycursor.close()
+                print(result[:1])
+                return render_template('grantize/dashboard/sharedwithme.html', grants=result, favlist=favlist, savlist=savlist)
+            except:
+                print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/sharedwithme.html')
         else:
             try:
-                mycursor = sqlconnection.cursor()
-                sql = "SELECT grantid FROM gsharedwith WHERE userid = %s"
-                values = (user,)
-                mycursor.execute(sql, values)
-                reqids = mycursor.fetchall()
-                format_strings = ",".join([str(r[0]) for r in reqids])
-                print("-------")
-                print(format_strings)
-                print("-------")
-                mycursor.execute("SELECT id,title,grants_type,subjects FROM ggrants WHERE id IN (%s)" % format_strings)
+                mycursor = sqlconnection.cursor(dictionary=True)
+                sql = "SELECT g.id,g.title,g.grants_type,g.subjects FROM ggrants g JOIN gsharedwith s ON g.id = s.grantid WHERE s.userid = "+str(user)
+                mycursor.execute(sql)
                 result = mycursor.fetchall()
+                mycursor.close()
                 print(result[:1])
-                return render_template('grantize/dashboard/sharedwithme.html', grants=result)
+                return render_template('grantize/dashboard/sharedwithme.html', grants=result, favlist=favlist, savlist=savlist)
             except:
-                print("Database Connection Not Working!!")
+                print("Database Connection Not Working -- 2!!")
                 return render_template('grantize/dashboard/sharedwithme.html')
     else:
         return render_template('grantize/grantize.html')
