@@ -35,7 +35,7 @@ def grantize():
             sql = "SELECT id,title,grants_type,subjects FROM ggrants WHERE title LIKE '%"+title_query+"%'"
             mycursor.execute(sql)
             result = mycursor.fetchall()
-            return render_template('grantize/dashboard/searchquery.html', grants=result)
+            return render_template('grantize/dashboard/browsegrants.html', grants=result)
         except:
             print("Database Connection Not Working!!")
             return render_template('grantize/grantize.html')
@@ -517,7 +517,7 @@ def grantizeprofile():
             personal_blog = request.form.get('personal_blog')
             orcid = request.form.get('orcid')
             if date_of_birth:
-                date_of_birth = datetime.strptime(date_of_birth, '%m-%d-%Y').date()
+                date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
             try:
                 cursor = sqlconnection.cursor()
                 sql = ("UPDATE gresearcherslist SET firstname=%s, middlename=%s, lastname=%s, "
@@ -572,32 +572,527 @@ def grantizeprofile():
     else:
         return render_template('grantize/grantize.html')
 
-@app.route('/grantizeprofilesummary')
+def read_summary(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the gbookchapters table
+        query = """
+        SELECT id, userid, description, keyword_description
+        FROM gsummary
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        chapters = []
+        for row in rows:
+            chapters.append(row)
+        
+        mycursor.close()
+        return chapters
+    except Exception as e:
+        print("Error fetching book chapters from database:", str(e))
+        return []
+
+@app.route('/grantizeprofilesummary', methods =["GET", "POST"])
 def grantizeprofilesummary():
     if session.get("loginnname"):
-        return render_template('grantize/profile/summary.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gsummary
+                (userid, description, keyword_description)
+                VALUES (%s, %s, %s)
+                """
+                values = [user, description, keyword_description]
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Summary chapter information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add book chapter information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_summary(user)
+            return render_template('grantize/profile/summary.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form['chapter_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'description': 'description',
+                    'keyword_description': 'keyword_description',
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gsummary SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Book chapter details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+                    return redirect(url_for('some_function_to_redirect_to'))
+            except Exception as e:
+                flash(f'Failed to update book chapter details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_summary(user)
+            return render_template('grantize/profile/summary.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gsummary WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/summary.html')
+            ## Code to Read
+            documents = read_summary(user)
+            return render_template('grantize/profile/summary.html', documents = documents)
+        else:
+            documents = read_summary(user)
+            print(documents)
+            return render_template('grantize/profile/summary.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
 
-@app.route('/grantizeprofileobjective')
+def read_objective(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the gbookchapters table
+        query = """
+        SELECT id, userid, description, keyword_description
+        FROM gobjective
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        chapters = []
+        for row in rows:
+            chapters.append(row)
+        
+        mycursor.close()
+        return chapters
+    except Exception as e:
+        print("Error fetching book chapters from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileobjective', methods =["GET", "POST"])
 def grantizeprofileobjective():
     if session.get("loginnname"):
-        return render_template('grantize/profile/objective.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gobjective
+                (userid, description, keyword_description)
+                VALUES (%s, %s, %s)
+                """
+                values = [user, description, keyword_description]
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Summary chapter information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add book chapter information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_objective(user)
+            return render_template('grantize/profile/objective.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form['chapter_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'description': 'description',
+                    'keyword_description': 'keyword_description',
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gobjective SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Book chapter details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+                    return redirect(url_for('some_function_to_redirect_to'))
+            except Exception as e:
+                flash(f'Failed to update book chapter details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_objective(user)
+            return render_template('grantize/profile/objective.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gobjective WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/objective.html')
+            ## Code to Read
+            documents = read_objective(user)
+            return render_template('grantize/profile/objective.html', documents = documents)
+        else:
+            documents = read_objective(user)
+            print(documents)
+            return render_template('grantize/profile/objective.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileresstatement')
+def read_research_statement(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the gbookchapters table
+        query = """
+        SELECT id, userid, description, keyword_description
+        FROM gresstatement
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        chapters = []
+        for row in rows:
+            chapters.append(row)
+        
+        mycursor.close()
+        return chapters
+    except Exception as e:
+        print("Error fetching book chapters from database:", str(e))
+        return []
+
+@app.route('/grantizeprofileresstatement', methods =["GET", "POST"])
 def grantizeprofileresstatement():
     if session.get("loginnname"):
-        return render_template('grantize/profile/resstatement.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gresstatement
+                (userid, description, keyword_description)
+                VALUES (%s, %s, %s)
+                """
+                values = [user, description, keyword_description]
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Summary chapter information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add book chapter information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_research_statement(user)
+            return render_template('grantize/profile/resstatement.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form['chapter_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'description': 'description',
+                    'keyword_description': 'keyword_description',
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gresstatement SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Book chapter details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+                    return redirect(url_for('some_function_to_redirect_to'))
+            except Exception as e:
+                flash(f'Failed to update book chapter details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_research_statement(user)
+            return render_template('grantize/profile/resstatement.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gresstatement WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/resstatement.html')
+            ## Code to Read
+            documents = read_research_statement(user)
+            return render_template('grantize/profile/resstatement.html', documents = documents)
+        else:
+            documents = read_research_statement(user)
+            print(documents)
+            return render_template('grantize/profile/resstatement.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
+def read_teaching_philosophy(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the gbookchapters table
+        query = """
+        SELECT id, userid, description, keyword_description
+        FROM gteachphilosophy
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        chapters = []
+        for row in rows:
+            chapters.append(row)
+        
+        mycursor.close()
+        return chapters
+    except Exception as e:
+        print("Error fetching book chapters from database:", str(e))
+        return []
 
-@app.route('/grantizeprofileteachphil')
+@app.route('/grantizeprofileteachphil', methods =["GET", "POST"])
 def grantizeprofileteachphil():
     if session.get("loginnname"):
-        return render_template('grantize/profile/teachphilosophy.html')
+        user = session.get('loginid')
+        if "createform" in request.form:
+            print("_________________CREATE STEP 0__________________")
+            try:
+                # Helper function to retrieve form data or None if the field is empty
+                def get_form_data_or_none(field_name):
+                    return request.form[field_name] if field_name in request.form and request.form[field_name].strip() else None
+
+                # Extract form data
+                description = get_form_data_or_none('description')
+                keyword_description = get_form_data_or_none('keyword_description')
+
+                print("_________________CREATE STEP 1__________________")
+                # Prepare SQL query and data
+                sql = """
+                INSERT INTO gteachphilosophy
+                (userid, description, keyword_description)
+                VALUES (%s, %s, %s)
+                """
+                values = [user, description, keyword_description]
+                # Execute the query
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, tuple(values))
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Summary chapter information added successfully!', 'success')
+                print("_________________CREATE STEP 2__________________")
+            except Exception as e:
+                flash(f'Failed to add book chapter information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_teaching_philosophy(user)
+            return render_template('grantize/profile/teachphilosophy.html', documents=documents)
+        if "editsection" in request.form:
+            print("_________________EDIT STEP 0__________________")
+            try:
+                chapter_id = request.form['chapter_id']
+                updates = []
+                values = []
+
+                # Helper function to get form data or return None if blank
+                def get_form_data_or_none(field):
+                    return request.form[field].strip() if field in request.form and request.form[field].strip() else None
+
+                # Define the mapping from form fields to database columns
+                form_to_db_map = {
+                    'description': 'description',
+                    'keyword_description': 'keyword_description',
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field)
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                print("_________________EDIT STEP 1__________________")
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    print("_________________EDIT STEP 2__________________")
+                    sql = f"UPDATE gteachphilosophy SET {update_sql} WHERE id = %s"
+                    print(sql)
+                    values.append(chapter_id)
+                    mycursor = sqlconnection.cursor()
+                    print(values)
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    print("_________________EDIT STEP 3__________________")
+                    flash('Book chapter details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+                    return redirect(url_for('some_function_to_redirect_to'))
+            except Exception as e:
+                flash(f'Failed to update book chapter details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_teaching_philosophy(user)
+            return render_template('grantize/profile/teachphilosophy.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM gteachphilosophy WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/teachphilosophy.html')
+            ## Code to Read
+            documents = read_teaching_philosophy(user)
+            return render_template('grantize/profile/teachphilosophy.html', documents = documents)
+        else:
+            documents = read_teaching_philosophy(user)
+            print(documents)
+            return render_template('grantize/profile/teachphilosophy.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
     
