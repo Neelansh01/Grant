@@ -5686,13 +5686,13 @@ $(document).ready(function(){
 			$('#editForm1').validate({
 				rules: {    
 					publication_status:{
-						required: true,     
+						required: false,     
 					},                     
 					article_type:{
 						required : function(element) {
 							var status = $("#publication_status1").val();
 							if(status == "Published" || status == "Submitted") { 
-								return true;
+								return false;
 							} else {
 								return false;
 							}
@@ -5702,7 +5702,7 @@ $(document).ready(function(){
 						required : function(element) {
 							var status = $("#publication_status1").val();
 							if(status == "Published" || status == "Submitted") { 
-								return true;
+								return false;
 							} else {
 								return false;
 							}
@@ -5712,17 +5712,17 @@ $(document).ready(function(){
 						required : function(element) {
 							var status = $("#publication_status1").val();
 							if(status == "Published" || status == "Submitted") { 
-								return true;
+								return false;
 							} else {
 								return false;
 							}
 						}       
 					},
 					title:{
-						required: true,       
+						required: false,       
 					},
 					url:{
-						url: true,       
+						url: false,       
 					},
 				},
 				messages: {                  
