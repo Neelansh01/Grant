@@ -1096,10 +1096,174 @@ def grantizeprofileteachphil():
     else:
         return render_template('grantize/grantize.html')
     
-@app.route('/grantizeprofileeducation')
+# Helper functions
+def get_form_data_or_none(field_name):
+    return request.form.get(field_name, '').strip() or None
+
+def parse_date(date_str):
+    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+
+def get_multiple_select(field_name):
+    return request.form.getlist(field_name)  # Handles multiple select options
+
+def read_education_details(user):
+    global sqlconnection
+    try:
+        mycursor = sqlconnection.cursor(dictionary=True)
+        # SQL query to get specific columns from the profile table
+        query = """
+        SELECT id, userid, organization, department, degree, gpa_type, gpa_value, start_date, end_date, 
+               disciplines, courses, subjects, majors, mentors, abstract, techniques, instruments, softwares,
+               soft_skills, key_skills_experience
+        FROM geducation
+        WHERE userid = %s
+        """
+        mycursor.execute(query, (user,))
+        rows = mycursor.fetchall()
+        
+        # Convert rows to a list of dictionaries to facilitate handling in the template
+        profiles = []
+        for row in rows:
+            # If storing multiple selections as comma-separated, convert back to list
+            for field in ['disciplines', 'courses', 'subjects', 'majors', 'mentors', 'techniques', 'instruments', 'softwares', 'soft_skills']:
+                if row[field]:
+                    row[field] = row[field].split(',')
+                else:
+                    row[field] = []
+            profiles.append(row)
+        
+        mycursor.close()
+        return profiles
+    except Exception as e:
+        print("Error fetching profile details from database:", str(e))
+        return []
+
+
+@app.route('/grantizeprofileeducation', methods =["GET", "POST"])
 def grantizeprofileeducation():
     if session.get("loginnname"):
-        return render_template('grantize/profile/education.html')
+        user = session.get('loginid')
+        if "create_profile" in request.form:
+            try:
+                organization = get_form_data_or_none('organization')
+                department = get_form_data_or_none('department')
+                degree = get_form_data_or_none('degree')
+                gpa_type = get_form_data_or_none('type')
+                gpa_value = get_form_data_or_none('name')
+                start_date = parse_date(get_form_data_or_none('start_date'))
+                end_date = parse_date(get_form_data_or_none('end_date'))
+                disciplines = get_multiple_select('discipline[]')
+                courses = get_multiple_select('courses[]')
+                subjects = get_multiple_select('subjects[]')
+                majors = get_multiple_select('major[]')
+                mentors = get_multiple_select('mentors[]')
+                abstract = get_form_data_or_none('abstract')
+                keyword_abstract = get_multiple_select('keyword_abstract[]')
+                techniques = get_multiple_select('techniques[]')
+                instruments = get_multiple_select('instruments[]')
+                softwares = get_multiple_select('softwares[]')
+                soft_skills = get_multiple_select('soft_skills[]')
+                key_skills_experience = get_form_data_or_none('description[]')
+
+                sql = """INSERT INTO geducation (userid, organization, department, degree, gpa_type, gpa_value, start_date, end_date, disciplines, courses, subjects, majors, mentors, abstract, keyword_abstract, techniques, instruments, softwares, soft_skills, key_skills_experience)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+                values = (user, organization, department, degree, gpa_type, gpa_value, start_date, end_date, ','.join(disciplines), ','.join(courses), ','.join(subjects), ','.join(majors), ','.join(mentors), abstract, ','.join(keyword_abstract), ','.join(techniques), ','.join(instruments), ','.join(softwares), ','.join(soft_skills), key_skills_experience)
+
+                mycursor = sqlconnection.cursor()
+                mycursor.execute(sql, values)
+                sqlconnection.commit()
+                mycursor.close()
+                flash('Profile information added successfully!', 'success')
+            except Exception as e:
+                flash(f'Failed to add profile information due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_education_details(user)
+            return render_template('grantize/profile/education.html', documents = documents)
+        elif "update_profile" in request.form:
+            profile_id = get_form_data_or_none('chapter_id')  # Assuming you have a hidden input for the profile ID
+            try:
+                updates = []
+                values = []
+
+                # Define a mapping from form fields to database columns
+                form_to_db_map = {
+                    'organization': 'organization',
+                    'department': 'department',
+                    'degree': 'degree',
+                    'type': 'gpa_type',
+                    'name': 'gpa_value',
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
+                    'discipline[]': 'disciplines',
+                    'courses[]': 'courses',
+                    'subjects[]': 'subjects',
+                    'major[]': 'majors',
+                    'mentors[]': 'mentors',
+                    'abstract': 'abstract',
+                    'keyword_abstract[]': 'keyword_abstract',
+                    'techniques[]': 'techniques',
+                    'instruments[]': 'instruments',
+                    'softwares[]': 'softwares',
+                    'soft_skills[]': 'soft_skills',
+                    'description[]': 'key_skills_experience'
+                }
+
+                # Loop over the fields and prepare SQL update statement
+                for form_field, db_column in form_to_db_map.items():
+                    form_data = get_form_data_or_none(form_field) if '[]' not in form_field else ','.join(get_multiple_select(form_field))
+                    if form_data is not None:
+                        updates.append(f"{db_column} = %s")
+                        values.append(form_data)
+
+                # Append date conversion for start_date and end_date
+                if 'start_date' in request.form:
+                    start_date = parse_date(get_form_data_or_none('start_date'))
+                    if start_date:
+                        values[values.index(get_form_data_or_none('start_date'))] = start_date
+
+                if 'end_date' in request.form:
+                    end_date = parse_date(get_form_data_or_none('end_date'))
+                    if end_date:
+                        values[values.index(get_form_data_or_none('end_date'))] = end_date
+
+                # Check if there are any updates to be made
+                if updates:
+                    update_sql = ", ".join(updates)
+                    sql = f"UPDATE geducation SET {update_sql} WHERE id = %s"
+                    values.append(profile_id)
+                    mycursor = sqlconnection.cursor()
+                    mycursor.execute(sql, tuple(values))
+                    sqlconnection.commit()
+                    mycursor.close()
+                    flash('Profile details updated successfully!', 'success')
+                else:
+                    flash('No changes to update.', 'info')
+            except Exception as e:
+                flash(f'Failed to update profile details due to an error: {str(e)}', 'error')
+                return render_template('error_template.html'), 500
+            documents = read_education_details(user)
+            return render_template('grantize/profile/education.html', documents=documents)
+        if "delete" in request.form:
+            try:
+                id_to_delete = request.form['id']
+                print("-------------")
+                print(id_to_delete)
+                print("--------------")
+                mycursor = sqlconnection.cursor()
+                sql = "DELETE FROM geducation WHERE id = "+str(id_to_delete)
+                mycursor.execute(sql)
+                sqlconnection.commit()
+                mycursor.close()
+            except:
+                print("REGISTER USER VARIABLES COULD NOT BE READ!!")
+                return render_template('grantize/profile/education.html')
+            ## Code to Read
+            documents = read_education_details(user)
+            return render_template('grantize/profile/education.html', documents = documents)
+        else:
+            documents = read_education_details(user)
+            print(documents)
+            return render_template('grantize/profile/education.html', documents=documents)
     else:
         return render_template('grantize/grantize.html')
 
