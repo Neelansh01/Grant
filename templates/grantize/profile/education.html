@@ -404,21 +404,25 @@
                 <div class="col-12 col-lg-12">
                     <div class="profile-organization">
                         <div class="profile-organization-info-div">
-                            <h3>{{ document.title }}</h3>
+                            <h3>{{ document.organization }}</h3>
                             <h4></h4>
                             <p>
                                 <div class="row mt-2">
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">First Author</p>
-                                        <p style="margin-left:5px;">{{ document.authors }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Department</p>
+                                        <p style="margin-left:5px;">{{ document.department }}</p>
                                     </div>
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">Co-Author</p>
-                                        <p style="margin-left:5px;">{{ document.co_authors }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Degree</p>
+                                        <p style="margin-left:5px;">{{ document.degree }}</p>
                                     </div>
                                     <div class="col-lg-6">
-                                        <p style="margin-left:0px;font-weight:bold;">Corresp. Author</p>
-                                        <p style="margin-left:5px;">{{ document.corresponding_authors }}</p>
+                                        <p style="margin-left:0px;font-weight:bold;">Gpa Type</p>
+                                        <p style="margin-left:5px;">{{ document.gpa_type }}</p>
+                                    </div>
+									<div class="col-lg-6">
+                                        <p style="margin-left:0px;font-weight:bold;">Gpa Value</p>
+                                        <p style="margin-left:5px;">{{ document.gpa_value }}</p>
                                     </div>
                                 </div>
                             </p>
@@ -427,8 +431,50 @@
                 </div>
                 <div class="col-12 col-lg-12">
                     <div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
-                        <h4>Edition</h4>
-                        <p>{{ document.edition }}</p>
+                        <h4>Disciplines</h4>
+                        <p>{{ document.disciplines }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Courses</h4>
+                        <p>{{ document.courses }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Subjects</h4>
+                        <p>{{ document.subjects }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Majors</h4>
+                        <p>{{ document.majors }}</p>
+                    </div>
+                </div>
+				<div class="col-12 col-lg-12">
+                    <div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Mentors</h4>
+                        <p>{{ document.mentors }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Abstract</h4>
+                        <p>{{ document.abstract }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Techniques</h4>
+                        <p>{{ document.techniques }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Instruments</h4>
+                        <p>{{ document.instruments }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Softwares</h4>
+                        <p>{{ document.softwares }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Soft Skills</h4>
+                        <p>{{ document.soft_skills }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Key Skills Experience</h4>
+                        <p>{{ document.key_skills_experience }}</p>
                     </div>
                 </div>
             </div>
@@ -444,33 +490,45 @@
                 <div class="col-12 col-lg-12">
                     <div class="profile-organization">
                         <div class="profile-organization-info-div">
-                            <h3>{{ document.title }}</h3>
-                            <h4><b>Chapter</b>:{{ document.chapter_number }}; <b>Page</b>:{{ document.page }}</h4>
+                            <h3>{{ document.organization }}</h3>
+                            <h4><b>Start</b>:{{ document.start_date }} - <b>End</b>:{{ document.end_date }}</h4>
                             <div class="row mt-2">
-                                <div class="col-lg-3">
-                                    <p style="margin-left:5px;font-weight:bold;">First Author</p>
-                                    <p style="margin-left:5px;">{{ document.authors }}</p>
-                                </div>
-                                <div class="col-lg-3">
-                                    <p style="margin-left:5px;font-weight:bold;">Co-Author</p>
-                                    <p style="margin-left:5px;">{{ document.co_authors }}</p>
-                                </div>
-                                <div class="col-lg-6">
-                                    <p style="margin-left:0px;font-weight:bold;">Corresp. Author</p>
-                                    <p style="margin-left:5px;">{{ document.corresponding_authors }}</p>
-                                </div>
-                            </div>
+								<div class="col-lg-3">
+									<p style="margin-left:5px;font-weight:bold;">Department</p>
+									<p style="margin-left:5px;">{{ document.department }}</p>
+								</div>
+								<div class="col-lg-3">
+									<p style="margin-left:5px;font-weight:bold;">Degree</p>
+									<p style="margin-left:5px;">{{ document.degree }}</p>
+								</div>
+								<div class="col-lg-6">
+									<p style="margin-left:0px;font-weight:bold;">Gpa Type</p>
+									<p style="margin-left:5px;">{{ document.gpa_type }}</p>
+								</div>
+								<div class="col-lg-6">
+									<p style="margin-left:0px;font-weight:bold;">Gpa Value</p>
+									<p style="margin-left:5px;">{{ document.gpa_value }}</p>
+								</div>
+							</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-12">
-                    <div class="profile-description" style="margin-top:30px;">
-                        <h4>Edition</h4>
-                        <p>{{ document.edition }}</p>
+                    <div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Disciplines</h4>
+                        <p>{{ document.disciplines }}</p>
                     </div>
-                    <div class="profile-description" style="margin-top:30px;">
-                        <h4>URL</h4>
-                        <p>{{ document.url }}</p>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Courses</h4>
+                        <p>{{ document.courses }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Subjects</h4>
+                        <p>{{ document.subjects }}</p>
+                    </div>
+					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
+                        <h4>Majors</h4>
+                        <p>{{ document.majors }}</p>
                     </div>
                 </div>
             </div>
@@ -558,7 +616,7 @@
 
 
 
-					<form action="{{ url_for('read_education_details') }}" method="post" enctype="multipart/form-data" id="addForm">
+					<form action="{{ url_for('grantizeprofileeducation') }}" method="post" enctype="multipart/form-data" id="addForm">
 						<input type="hidden" name="createform" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
 						<div class="row">
 							<div class="col-lg-7"> 
@@ -639,7 +697,7 @@
 								<div class="mb-3">
 									<label for="discipline" class="form-label">Discipline</label>
 									<div class="input-group">
-										<input type="text" name="discipline[]" class="form-select">
+										<input type="text" name="discipline" class="form-select">
 										<!-- <select name="discipline[]" id="discipline" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -649,7 +707,7 @@
 								<div class="mb-3">
 									<label for="courses" class="form-label">Courses</label>
 									<div class="input-group">
-										<input type="text" name="courses[]" class="form-select">
+										<input type="text" name="courses" class="form-select">
 										<!-- <select name="courses[]" id="courses" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -659,7 +717,7 @@
 								<div class="mb-3">
 									<label for="subjects" class="form-label">Subjects</label>
 									<div class="input-group">
-										<input type="text" name="subjects[]" class="form-select">
+										<input type="text" name="subjects" class="form-select">
 										<!-- <select name="subjects[]" id="subjects" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -669,7 +727,7 @@
 								<div class="mb-3">
 									<label for="major" class="form-label">Major</label>
 									<div class="input-group">
-										<input type="text" name="major[]" class="form-select">
+										<input type="text" name="major" class="form-select">
 										<!-- <select name="major[]" id="major" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -679,7 +737,7 @@
 								<div class="mb-3">
 									<label for="mentors" class="form-label">Name of Mentor/Supervisor</label>
 									<div class="input-group">
-										<input type="text" name="mentors[]" class="form-select">
+										<input type="text" name="mentors" class="form-select">
 										<!-- <select name="mentors[]" id="mentors" class="form-select" multiple="multiple"></select> -->
 										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Mentors">
 											<i class="bi bi-plus-lg"></i>
@@ -696,7 +754,7 @@
 									<textarea name="abstract" onkeyup="abstract_keyword(this);" rows="3" cols="50" class="form-control"></textarea>
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">Keywords</span>
-										<input type="text" name="keyword_abstract[]" class="form-select">
+										<input type="text" name="keyword_abstract" class="form-select">
 										<!-- <select name="keyword_abstract[]" id="keyword_abstract" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -721,7 +779,7 @@
 										<div class="mb-1">
 											<label for="techniques" class="form-label">Scientific/Technical Skills</label>
 											<div class="input-group">
-												<input type="text" name="techniques[]" class="form-select">
+												<input type="text" name="techniques" class="form-select">
 												<!-- <select name="techniques[]" id="techniques" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 											</div>
 										</div>
@@ -734,7 +792,7 @@
 											<div class="mb-1">
 												<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
 												<div class="input-group">
-													<input type="text" name="instruments[]" class="form-select">
+													<input type="text" name="instruments" class="form-select">
 													<!-- <select name="instruments[]" id="instruments" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -744,7 +802,7 @@
 											<div class="mb-1">
 												<label for="softwares" class="form-label">Software/Computational Skills</label>
 												<div class="input-group">
-													<input type="text" name="softwares[]" class="form-select">
+													<input type="text" name="softwares" class="form-select">
 													<!-- <select name="softwares[]" id="softwares" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -754,7 +812,7 @@
 											<div class="mb-1">
 												<label for="soft_skills" class="form-label">Soft/Employability Skills</label>
 												<div class="input-group">
-													<input type="text" name="soft_skills[]" class="form-select">
+													<input type="text" name="soft_skills" class="form-select">
 													<!-- <select name="soft_skills[]" id="soft_skills" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -770,13 +828,13 @@
 									<label for="key_skills_experience" class="form-label">Description of Key skills/experience gained</label>
 									<div class="my_div">
 										<div class="input-group">
-											<textarea name="description[]" onkeyup="description_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
+											<textarea name="description" onkeyup="description_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
 										</div>
 									</div>
 									<div id="meta-add-fields"></div>
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">Keywords</span>
-										<input type="text" name="keyword_description[]" class="form-select">
+										<input type="text" name="keyword_description" class="form-select">
 										<!-- <select name="keyword_description[]" id="keyword_description" class="form-select" multiple="multiple"></select> -->
 									</div>
 									<button type="button" class="btn btn-sm btn-primary mt-2" id="add-fields">Add Fields</button>
@@ -804,7 +862,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="{{ url_for('read_education_details') }}" method="post" enctype="multipart/form-data" id="editForm1">
+					<form action="{{ url_for('grantizeprofileeducation') }}" method="post" enctype="multipart/form-data" id="editForm1">
 						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
 						<input type="hidden" name="chapter_id" id="edit-modal-document-id" value="">
 						<div class="row">
@@ -886,7 +944,7 @@
 								<div class="mb-3">
 									<label for="discipline" class="form-label">Discipline</label>
 									<div class="input-group">
-										<input type="text" name="discipline[]" class="form-select">
+										<input type="text" name="discipline" class="form-select">
 										<!-- <select name="discipline[]" id="discipline" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -896,7 +954,7 @@
 								<div class="mb-3">
 									<label for="courses" class="form-label">Courses</label>
 									<div class="input-group">
-										<input type="text" name="courses[]" class="form-select">
+										<input type="text" name="courses" class="form-select">
 										<!-- <select name="courses[]" id="courses" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -906,7 +964,7 @@
 								<div class="mb-3">
 									<label for="subjects" class="form-label">Subjects</label>
 									<div class="input-group">
-										<input type="text" name="subjects[]" class="form-select">
+										<input type="text" name="subjects" class="form-select">
 										<!-- <select name="subjects[]" id="subjects" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -916,7 +974,7 @@
 								<div class="mb-3">
 									<label for="major" class="form-label">Major</label>
 									<div class="input-group">
-										<input type="text" name="major[]" class="form-select">
+										<input type="text" name="major" class="form-select">
 										<!-- <select name="major[]" id="major" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -926,7 +984,7 @@
 								<div class="mb-3">
 									<label for="mentors" class="form-label">Name of Mentor/Supervisor</label>
 									<div class="input-group">
-										<input type="text" name="mentors[]" class="form-select">
+										<input type="text" name="mentors" class="form-select">
 										<!-- <select name="mentors[]" id="mentors" class="form-select" multiple="multiple"></select> -->
 										<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Mentors">
 											<i class="bi bi-plus-lg"></i>
@@ -943,7 +1001,7 @@
 									<textarea name="abstract" onkeyup="abstract_keyword(this);" rows="3" cols="50" class="form-control"></textarea>
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">Keywords</span>
-										<input type="text" name="keyword_abstract[]" class="form-select">
+										<input type="text" name="keyword_abstract" class="form-select">
 										<!-- <select name="keyword_abstract[]" id="keyword_abstract" class="form-select" multiple="multiple"></select> -->
 									</div>
 								</div>
@@ -968,7 +1026,7 @@
 										<div class="mb-1">
 											<label for="techniques" class="form-label">Scientific/Technical Skills</label>
 											<div class="input-group">
-												<input type="text" name="techniques[]" class="form-select">
+												<input type="text" name="techniques" class="form-select">
 												<!-- <select name="techniques[]" id="techniques" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 											</div>
 										</div>
@@ -981,7 +1039,7 @@
 											<div class="mb-1">
 												<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
 												<div class="input-group">
-													<input type="text" name="instruments[]" class="form-select">
+													<input type="text" name="instruments" class="form-select">
 													<!-- <select name="instruments[]" id="instruments" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -991,7 +1049,7 @@
 											<div class="mb-1">
 												<label for="softwares" class="form-label">Software/Computational Skills</label>
 												<div class="input-group">
-													<input type="text" name="softwares[]" class="form-select">
+													<input type="text" name="softwares" class="form-select">
 													<!-- <select name="softwares[]" id="softwares" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -1001,7 +1059,7 @@
 											<div class="mb-1">
 												<label for="soft_skills" class="form-label">Soft/Employability Skills</label>
 												<div class="input-group">
-													<input type="text" name="soft_skills[]" class="form-select">
+													<input type="text" name="soft_skills" class="form-select">
 													<!-- <select name="soft_skills[]" id="soft_skills" class="form-select" multiple="multiple" style="width:100%;"></select> -->
 												</div>
 											</div>
@@ -1017,13 +1075,13 @@
 									<label for="key_skills_experience" class="form-label">Description of Key skills/experience gained</label>
 									<div class="my_div">
 										<div class="input-group">
-											<textarea name="description[]" onkeyup="description_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
+											<textarea name="description" onkeyup="description_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
 										</div>
 									</div>
 									<div id="meta-add-fields"></div>
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">Keywords</span>
-										<input type="text" name="keyword_description[]" class="form-select">
+										<input type="text" name="keyword_description" class="form-select">
 										<!-- <select name="keyword_description[]" id="keyword_description" class="form-select" multiple="multiple"></select> -->
 									</div>
 									<button type="button" class="btn btn-sm btn-primary mt-2" id="add-fields">Add Fields</button>
@@ -3984,7 +4042,7 @@ $(document).ready(function(){
 		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>            
 	</div>
 	<div class="modal-body">
-		<form action="{{ url_for('read_education_details') }}" method="post" enctype="multipart/form-data" id="addForm">
+		<form action="{{ url_for('grantizeprofileeducation') }}" method="post" enctype="multipart/form-data" id="addForm">
 			<input type="hidden" name="delete" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
 			<input type="hidden" name="id" id="delete-modal-id" value="">
 			<h3 class="modal-title text-center">
