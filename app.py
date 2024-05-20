@@ -4041,9 +4041,7 @@ def grantizeprofileresprotocols():
                 # Helper function to retrieve form data or None if the field is empty
                 def get_form_data_or_none(field_name):
                     return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
-
-                def parse_date(date_str):
-                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+                
                 # Extract form data
                 title = get_form_data_or_none('title')
                 authors = get_form_data_or_none('authors')
@@ -4199,9 +4197,7 @@ def grantizeprofileiacucprotocols():
                 # Helper function to retrieve form data or None if the field is empty
                 def get_form_data_or_none(field_name):
                     return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
-
-                def parse_date(date_str):
-                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+                
                 # Extract form data
                 title = get_form_data_or_none('title')
                 authors = get_form_data_or_none('authors')
@@ -4272,6 +4268,11 @@ def grantizeprofileiacucprotocols():
                 # Loop over the fields and prepare SQL update statement
                 for form_field, db_column in form_to_db_map.items():
                     form_data = get_form_data_or_none(form_field)
+                    if form_field in ['start_date','end_date']:
+                        try:
+                            form_data = parse_date(form_data)
+                        except:
+                            form_data = None
                     if form_data is not None:
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
@@ -4358,8 +4359,6 @@ def grantizeprofileclinicalprotocols():
                 def get_form_data_or_none(field_name):
                     return request.form[field_name].strip() if field_name in request.form and request.form[field_name].strip() else None
 
-                def parse_date(date_str):
-                    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
                 # Extract form data
                 title = get_form_data_or_none('title')
                 phase = get_form_data_or_none('phase')
