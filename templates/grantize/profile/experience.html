@@ -401,7 +401,31 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" 
+								class="btn btn-outline-dark float-end" 
+								data-bs-toggle="modal" 
+								data-bs-target="#editModal9" 
+								data-doc-id="{{ document.id }}" 
+								data-employer="{{ document.employer }}"
+								data-department="{{ document.department }}"
+								data-type="{{ document.type }}"
+								data-appoint="{{ document.appoint }}"
+								data-title="{{ document.title }}"
+								data-current="{{ document.current }}"
+								data-start="{{ document.start }}"
+								data-end="{{ document.end }}"
+								data-mentor="{{ document.mentor }}"
+								data-responsibilities="{{ document.responsibilities }}"
+								data-rkeywords="{{ document.rkeywords }}"
+								data-techniques="{{ document.techniques }}"
+								data-skilldesc="{{ document.skilldesc }}"
+								data-skeywords="{{ document.skeywords }}"
+								data-instruments="{{ document.instruments }}"
+								data-softwares="{{ document.softwares }}"
+								data-softskills="{{ document.softskills }}"
+								title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -424,8 +448,32 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
+                        <button type="button" 
+								class="btn btn-outline-dark float-end" 
+								data-bs-toggle="modal" 
+								data-bs-target="#editModal9" 
+								data-doc-id="{{ document.id }}" 
+								data-employer="{{ document.employer }}"
+								data-department="{{ document.department }}"
+								data-type="{{ document.type }}"
+								data-appoint="{{ document.appoint }}"
+								data-title="{{ document.title }}"
+								data-current="{{ document.current }}"
+								data-start="{{ document.start }}"
+								data-end="{{ document.end }}"
+								data-mentor="{{ document.mentor }}"
+								data-responsibilities="{{ document.responsibilities }}"
+								data-rkeywords="{{ document.rkeywords }}"
+								data-techniques="{{ document.techniques }}"
+								data-skilldesc="{{ document.skilldesc }}"
+								data-skeywords="{{ document.skeywords }}"
+								data-instruments="{{ document.instruments }}"
+								data-softwares="{{ document.softwares }}"
+								data-softskills="{{ document.softskills }}"
+								title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
+						<a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-12">
@@ -798,251 +846,145 @@
 				</div>
 				<div class="modal-body">
 					<form action="{{ url_for('grantizeprofileexperience') }}" method="post" enctype="multipart/form-data" id="editForm9">
-						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">	
-						<input type="hidden" name="document_id" id="edit-modal-document-id" value="">					
+						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
+						<input type="hidden" name="document_id" id="edit-modal-document-id">
+					
 						<div class="row">
-							<div class="col-lg-7"> 
-	<div class="mb-3">
-		<label for="organization" class="form-label">Employers’ Name</label>
-		<div class="input-group">
-
-						<!-- <select name="organization" id="organization" class="form-select">
-			</select> -->
-			<input type="text" name="organization" value="" autocomplete="off" class="form-select">
-			<a class="btn btn-outline-secondary" href="javascript:organizationModal()" title="Add Organization"><i class="bi bi-plus-lg"></i></a>
-		</div>
-	</div>
-</div>							<div class="col-lg-5"> 
-	<div class="mb-3">
-		<label for="department" class="form-label">Department</label>
-		<div class="input-group">
-
-						<!-- <select name="department" id="department" class="form-select">
-			</select> -->
-			<input type="text" name="department" value="" autocomplete="off" class="form-select">
-		</div>  
-	</div>
-</div> 						</div>
-												<div class="row">
-							<div class="col-6 col-lg-3">
+							<div class="col-lg-7">
 								<div class="mb-3">
-									<label for="job_type" class="form-label">Job Type</label>
-									<div class="input-group">
-										<select name="type" id="type" class="form-select">
-											<option value="">Select type </option>
-																						<option value="Full time">Full time</option>
-																						<option value="Part Time">Part Time</option>
-																					</select>
-									</div>
+									<label for="employer" class="form-label">Employer's Name</label>
+									<input type="text" name="employer" id="edit-modal-employer" class="form-select">
+									<a class="btn btn-outline-secondary" href="javascript:organizationModal()" title="Add Organization">
+										<i class="bi bi-plus-lg"></i>
+									</a>
 								</div>
 							</div>
-							<div class="col-6 col-lg-3">
+							<div class="col-lg-5">
 								<div class="mb-3">
-									<label for="appoint_type" class="form-label">Appoint Type</label>
-									<div class="input-group">
-										<select name="name" class="form-select">
-											<option value="">Select type </option>
-																						<option value="Primary">Primary</option>
-																						<option value="Dual">Dual</option>
-																						<option value="Joint">Joint</option>
-																						<option value="Adjunct">Adjunct</option>
-																						<option value="Endowed">Endowed</option>
-																					</select>
-									</div>
+									<label for="department" class="form-label">Department</label>
+									<input type="text" name="department" id="edit-modal-department" class="form-select">
 								</div>
 							</div>
 						</div>
-						
+					
 						<div class="row">
+							<div class="col-6 col-lg-3">
+								<div class="mb-3">
+									<label for="type" class="form-label">Job Type</label>
+									<select name="type" id="edit-modal-type" class="form-select">
+										<option value="Full time">Full time</option>
+										<option value="Part time">Part time</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-6 col-lg-3">
+								<div class="mb-3">
+									<label for="appoint" class="form-label">Appointment Type</label>
+									<select name="appoint" id="edit-modal-appoint" class="form-select">
+										<option value="Primary">Primary</option>
+										<option value="Dual">Dual</option>
+										<option value="Joint">Joint</option>
+										<option value="Adjunct">Adjunct</option>
+										<option value="Endowed">Endowed</option>
+									</select>
+								</div>
+							</div>
 							<div class="col-12 col-lg-6">
 								<div class="mb-3">
-									<label for="job_title" class="form-label">Job Title</label>
-									<input type="text" name="title" class="form-control">
+									<label for="title" class="form-label">Job Title</label>
+									<input type="text" name="title" id="edit-modal-title" class="form-control">
 								</div>
 							</div>
+						</div>
+					
+						<div class="row">
 							<div class="col-12 col-lg-2">
 								<div class="mb-3">
-									<label for="fields" class="form-label">Is this current job</label>
-									<br>
-									<input type="radio" class="is_this_current_job" name="is_this_current_job" value="0" checked="checked"> No  
-									<input type="radio" class="is_this_current_job" name="is_this_current_job" value="1"> Yes 
+									<label for="current" class="form-label">Is this current job?</label>
+									<div>
+										<input type="radio" name="current" value="Yes" id="edit-modal-current-yes"> Yes
+										<input type="radio" name="current" value="No" id="edit-modal-current-no"> No
+									</div>
 								</div>
 							</div>
-
 							<div class="col-lg-3 col-xl-2">
-	<div class="mb-3">
-		<label for="start_date" class="form-label">Start Date</label>
-
-				<div class="input-group date" id="startDate">
-			<input type="text" name="start_date" class="form-control startDate">
-			<div class="input-group-append">
-				<span class="input-group-text"><i class="bi bi-calendar"></i></span>
-			</div>
-		</div>
-		
-	</div>
-</div>
-<div class="col-lg-3 col-xl-2 end_date_div">
-	<div class="mb-3">
-		<label for="end_date" class="form-label">End Date</label>
-
-				<div class="input-group date" id="endDate">
-			<input type="text" name="end_date" class="form-control endDate">
-			<div class="input-group-append">
-				<span class="input-group-text"><i class="bi bi-calendar"></i></span>
-			</div>
-		</div>
-		
-	</div>
-</div>						</div>
-
-						<div class="row">
-							<div class="col-12 col-lg-12">
-<div class="mb-3">
-
-	<label for="mentors" class="form-label">Name of Mentor/Supervisor			</label>
-	<div class="input-group">
-				<!-- <select name="mentors[]" id="mentors" class="form-select" multiple="multiple">
-					</select> -->
-					<input type="text" name="mentors" class="form-select">
-				<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Mentors"><i class="bi bi-plus-lg"></i></a>
-	</div> 		
-
-</div>
-</div>						</div>
-
-						<div class="row">
-							<div class="col-12 mb-4">
-								<div class="mb-4">
-									<label for="main_responsibilities" class="form-label">Main responsibilities</label>
-									<div class="my_div">
-										<div class="input-group">                        
-											<textarea name="description2" onkeyup="abstract_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
-										</div>
-									</div>
-									<div id="meta-add-field">
-									</div>  
-									<div class="input-group input-group-sm">
-	<span class="input-group-text">Keywords</span>
-		<!-- <select name="keyword_abstract[]" id="keyword_abstract" class="form-select" multiple="multiple">
-	</select>	 -->
-	<input type="text" name="keyword_abstract" class="form-select">
-	</div> 
-
-
-
-
-
-
-
-									<button type="button" class="btn btn-sm btn-primary mt-2" id="add-field">Add Fields</button>
+								<div class="mb-3">
+									<label for="start_date" class="form-label">Start Date</label>
+									<input type="text" name="start" id="edit-modal-start" class="form-control startDate">
+								</div>
+							</div>
+							<div class="col-lg-3 col-xl-2">
+								<div class="mb-3">
+									<label for="end_date" class="form-label">End Date</label>
+									<input type="text" name="end" id="edit-modal-end" class="form-control endDate">
 								</div>
 							</div>
 						</div>
-
-						<!-- Techniques, instruments, softwares, Soft skill -->
-						<style>
-	.skillgained-less{display:none;}
-</style>
-<div class="row bg-light mb-2 pt-3 pb-2">           
-  	<div class="col-12"> 
-	    <div class="row"> 
-			<div class="col-lg-12">
-				<h6 class="">
-					<b>Skill Gained/Utilized</b>
-					<a class="skillgained-more btn btn-sm btn-outline-dark float-end" href="javascript:void(0)"> View all Skills <i class="bi bi-arrow-down-square"></i></a>
-					<a class="skillgained-less btn btn-sm btn-outline-dark float-end" href="javascript:void(0)"> View less Skills <i class="bi bi-arrow-up-square"></i></a>
-				</h6>
-			</div>
-		</div>
-			
-		<div class="row">
-			<div class="col-12 col-lg-12 techniques_div">
-				<div class="mb-1">
-	
-					<label for="techniques"  class="form-label">Scientific/Technical Skills											</label>
-					<div class="input-group">
-												<!-- <select name="techniques[]" id="techniques" class="form-select" multiple="multiple" style="width:100%;">
-													</select> -->
-													<input type="text" name="techniques" class="form-select">
-											</div>
-
-				</div>
-			</div>
-		</div>
-
-		<div class="skillgained-more-content">	
-			<div class="row">
-				<div class="col-12 col-lg-12 instruments_div">
-					<div class="mb-1">
-
-						<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills													</label>
-						<div class="input-group">
-														<!-- <select name="instruments[]" id="instruments" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="instruments" class="form-select">
-													</div> 		
-
-					</div>
-				</div>
-
-				<div class="col-12 col-lg-12 softwares_div">
-					<div class="mb-1">
-
-						<label for="softwares" class="form-label">Software/Computational Skills													</label>
-						<div class="input-group">
-														<!-- <select name="softwares[]" id="softwares" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="softwares" class="form-select">
-													</div> 		
-
-					</div>
-				</div>
-
-				<div class="col-12 col-lg-12 soft_skills_div">
-					<div class="mb-1">
-
-						<label for="soft_skills" class="form-label">Soft/Employability Skills													</label>
-						<div class="input-group">
-														<!-- <select name="soft_skills[]" id="soft_skills" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="soft_skills" class="form-select">
-													</div> 	
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> 
-</div>						<!-- Techniques, instruments, softwares, Soft skill -->
-						
+					
 						<div class="row">
-							<div class="col-12 mb-4">
-								<div class="mb-4">
-									<label for="key_skills_experience" class="form-label">Description of Key skills/experience gained</label>
-									<div class="my_div">
-										<div class="input-group">                        
-											<textarea name="description" onkeyup="description_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
-										</div>
-									</div>
-									<div id="meta-add-fields">
-									</div>  
-									<div class="input-group input-group-sm">
-	<span class="input-group-text">Keywords</span>
-		<!-- <select name="keyword_description[]" id="keyword_description" class="form-select" multiple="multiple">
-	</select>	 -->
-	<input type="text" name="keyword_description" class="form-select">
-	</div> 
-
-
-
-
-
-									<button type="button" class="btn btn-sm btn-primary mt-2" id="add-fields">Add Fields</button>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="mentor" class="form-label">Mentor/Supervisor</label>
+									<input type="text" name="mentor" id="edit-modal-mentor" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="responsibilities" class="form-label">Main Responsibilities</label>
+									<textarea name="responsibilities" id="edit-modal-responsibilities" class="form-control" rows="3"></textarea>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="rkeywords" class="form-label">Responsibilities Keywords</label>
+									<input type="text" name="rkeywords" id="edit-modal-rkeywords" class="form-control">
 								</div>
 							</div>
 						</div>
-					</form>
+					
+						<!-- Skill Gained/Utilized Section -->
+						<div class="row bg-light mb-2 pt-3 pb-2">
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="techniques" class="form-label">Scientific/Technical Skills</label>
+									<input type="text" name="techniques" id="edit-modal-techniques" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
+									<input type="text" name="instruments" id="edit-modal-instruments" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="softwares" class="form-label">Software/Computational Skills</label>
+									<input type="text" name="softwares" id="edit-modal-softwares" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="softskills" class="form-label">Soft/Employability Skills</label>
+									<input type="text" name="softskills" id="edit-modal-softskills" class="form-control">
+								</div>
+							</div>
+						</div>
+					
+						<div class="row">
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="skilldesc" class="form-label">Skill Description</label>
+									<textarea name="skilldesc" id="edit-modal-skilldesc" class="form-control" rows="3"></textarea>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="skeywords" class="form-label">Skills Keywords</label>
+									<input type="text" name="skeywords" id="edit-modal-skeywords" class="form-control">
+								</div>
+							</div>
+						</div>
+					</form>					
 					
 				</div>
 				<div class="modal-footer">
@@ -1054,15 +996,31 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript">
-			// Add event listener for when the modal is shown
+		<script>
 			$('#editModal9').on('show.bs.modal', function (event) {
 				var button = $(event.relatedTarget); // Button that triggered the modal
 				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
 				var modal = $(this);
-				modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+				modal.find('#edit-modal-document-id').val(docId);
+				modal.find('[name="employer"]').val(button.data('employer'));
+				modal.find('[name="department"]').val(button.data('department'));
+				modal.find('[name="type"]').val(button.data('type'));
+				modal.find('[name="appoint"]').val(button.data('appoint'));
+				modal.find('[name="title"]').val(button.data('title'));
+				modal.find('[name="current"]').val(button.data('current'));
+				modal.find('[name="start"]').val(button.data('start'));
+				modal.find('[name="end"]').val(button.data('end'));
+				modal.find('[name="mentor"]').val(button.data('mentor'));
+				modal.find('[name="responsibilities"]').val(button.data('responsibilities'));
+				modal.find('[name="rkeywords"]').val(button.data('rkeywords'));
+				modal.find('[name="techniques"]').val(button.data('techniques'));
+				modal.find('[name="skilldesc"]').val(button.data('skilldesc'));
+				modal.find('[name="skeywords"]').val(button.data('skeywords'));
+				modal.find('[name="instruments"]').val(button.data('instruments'));
+				modal.find('[name="softwares"]').val(button.data('softwares'));
+				modal.find('[name="softskills"]').val(button.data('softskills'));
 			});
-		</script>
+		</script>		
 	</div> 
 	 
 <!-- Bootstrap CSS -->

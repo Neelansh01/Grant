@@ -4360,7 +4360,10 @@ def grantizeprofileprofmembers():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -4505,7 +4508,10 @@ def grantizeprofileteachingex():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -4657,7 +4663,10 @@ def grantizeprofilesupermentor():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -4798,7 +4807,10 @@ def grantizeprofilejourreviewses():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -4938,7 +4950,10 @@ def grantizeprofilegrantreviewservices():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5082,7 +5097,10 @@ def grantizeprofilecommactivities():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5210,7 +5228,10 @@ def grantizeprofilehobbies():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5341,7 +5362,10 @@ def grantizeprofilelangprof():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5478,7 +5502,10 @@ def grantizeprofileotheractivities():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 

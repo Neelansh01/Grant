@@ -1101,7 +1101,10 @@ def get_form_data_or_none(field_name):
     return request.form.get(field_name, '').strip() or None
 
 def parse_date(date_str):
-    return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+    try:
+        return datetime.strptime(date_str, '%m-%d-%Y').date() if date_str else None
+    except:
+        return datetime.strptime(date_str, '%Y-%m-%d').date() if date_str else None
 
 def get_multiple_select(field_name):
     return request.form.getlist(field_name)  # Handles multiple select options
@@ -1403,9 +1406,9 @@ def grantizeprofilerescredentials():
                 values = []
 
                 # Check each field and add to the update statement if present
-                if 'name' in request.form and request.form['name']:
+                if 'description' in request.form and request.form['description']:
                     updates.append("description = %s")
-                    values.append(request.form['name'])
+                    values.append(request.form['description'])
 
                 if 'organization' in request.form and request.form['organization']:
                     updates.append("organization = %s")
@@ -1443,6 +1446,9 @@ def grantizeprofilerescredentials():
         if "delete" in request.form:
             try:
                 id_to_delete = request.form['document_id']
+                print("-=-=-")
+                print(id_to_delete)
+                print("-=-=-")
                 mycursor = sqlconnection.cursor()
                 sql = "DELETE FROM gcredentials WHERE id = "+str(id_to_delete)
                 mycursor.execute(sql)
@@ -1565,24 +1571,24 @@ def grantizeprofileexperience():
 
                 # Define the mapping from form fields to database columns
                 form_to_db_map = {
-                    'organization': 'employer',
+                    'employer': 'employer',
                     'department': 'department',
                     'type': 'type',
-                    'name': 'appoint',
+                    'appoint': 'appoint',
                     'title': 'title',
-                    'is_this_current_job': 'current',
+                    'current': 'current',
                     # Assuming dates are in 'MM-DD-YYYY' format, we parse them to 'YYYY-MM-DD' format for SQL
-                    'start_date': ('start', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
-                    'end_date': ('end', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'start': 'start',
+                    'end': 'end',
                     'mentors': 'mentor',
-                    'description2': 'responsibilities',
-                    'keyword_abstract': 'rkeywords',
+                    'responsibilities': 'responsibilities',
+                    'rkeywords': 'rkeywords',
                     'techniques': 'techniques',
                     'instruments': 'instruments',
                     'softwares': 'softwares',
                     'soft_skills': 'softskills',
-                    'description': 'skilldesc',
-                    'keyword_description': 'skeywords'
+                    'skilldesc': 'skilldesc',
+                    'skeywords': 'skeywords'
                 }
 
                 # Loop over the fields and prepare SQL update statement
@@ -1590,6 +1596,8 @@ def grantizeprofileexperience():
                     # db_info can be either a string or a tuple (column_name, transform_function)
                     db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
                     form_data = get_form_data_or_none(form_field)
+                    if form_field in ['start_date','end_date']:
+                        form_data = parse_date(form_data)
                     if form_data is not None:
                         updates.append(f"{db_column} = %s")
                         # Apply transformation function if provided
@@ -1601,7 +1609,7 @@ def grantizeprofileexperience():
                     values.append(experience_id)
                     print(update_sql)
                     print(experience_id)
-                    print(sql)
+                    print(values)
                     mycursor = sqlconnection.cursor()
                     mycursor.execute(sql, tuple(values))
                     sqlconnection.commit()
@@ -2073,8 +2081,8 @@ def grantizeprofilegrantscontracts():
                     'name': 'project_number',
                     'type': 'total_funding',
                     'url': 'url',
-                    'start_date': ('start_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
-                    'end_date': ('end_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
                     'authors': 'principal_investigators',
                     'co_authors': 'investigators',
                     'sponsor': 'funding_org',
@@ -2090,6 +2098,8 @@ def grantizeprofilegrantscontracts():
                 for form_field, db_info in form_to_db_map.items():
                     db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
                     form_data = get_form_data_or_none(form_field)
+                    if form_field in ['start_date','end_date']:
+                        form_data = parse_date(form_data)
                     if form_data is not None:
                         updates.append(f"{db_column} = %s")
                         # Apply transformation function if provided
@@ -4580,7 +4590,7 @@ def grantizeprofileconferences():
             documents = read_conferences(user)
             return render_template('grantize/profile/conferences.html', documents=documents)
         if "editsection" in request.form:
-            conference_id = request.form.get('chapter_id', '').strip()  # Assuming chapter_id is the record's unique identifier
+            conference_id = request.form.get('conference_id', '').strip()  # Assuming chapter_id is the record's unique identifier
             try:
                 updates = []
                 values = []
@@ -5161,7 +5171,10 @@ def grantizeprofileprofmembers():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5306,7 +5319,10 @@ def grantizeprofileteachingex():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5458,7 +5474,10 @@ def grantizeprofilesupermentor():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5599,7 +5618,10 @@ def grantizeprofilejourreviewses():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5739,7 +5761,10 @@ def grantizeprofilegrantreviewservices():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -5857,7 +5882,7 @@ def grantizeprofilecommactivities():
         if "editsection" in request.form:
             print("_________________EDIT STEP 0__________________")
             try:
-                symposia_id = request.form.get('symposia_id', '')  # ID from the hidden input in the form
+                symposia_id = request.form.get('activity_id', '')  # ID from the hidden input in the form
                 updates = []
                 values = []
 
@@ -5883,7 +5908,10 @@ def grantizeprofilecommactivities():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except: 
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -6011,7 +6039,10 @@ def grantizeprofilehobbies():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -6142,7 +6173,10 @@ def grantizeprofilelangprof():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 
@@ -6279,7 +6313,10 @@ def grantizeprofileotheractivities():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
                         if db_column in ["start_date","end_date"]:
-                            form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            try:
+                                form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
+                            except:
+                                form_data = datetime.strptime(form_data, '%Y-%m-%d').date() if form_data else None
                         updates.append(f"{db_column} = %s")
                         values.append(form_data)
 

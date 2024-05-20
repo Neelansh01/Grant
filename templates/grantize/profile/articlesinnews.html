@@ -397,7 +397,17 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" 
+								data-doc-id="{{ document.id }}" 
+								data-title="{{ document.title }}"
+								data-publisher="{{ document.publisher }}"
+								data-date="{{ document.date }}"
+								data-url="{{ document.url }}"
+								data-abstract="{{ document.abstract }}"
+								data-keyword-abstract="{{ document.keyword_abstract }}"
+								title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -437,7 +447,17 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" 
+								data-doc-id="{{ document.id }}" 
+								data-title="{{ document.title }}"
+								data-publisher="{{ document.publisher }}"
+								data-date="{{ document.date }}"
+								data-url="{{ document.url }}"
+								data-abstract="{{ document.abstract }}"
+								data-keyword-abstract="{{ document.keyword_abstract }}"
+								title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -648,23 +668,19 @@
 				<div class="modal-body">
 					<form action="{{ url_for('grantizeprofileartsinnews') }}" method="post" enctype="multipart/form-data" id="editForm1">
 						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
-						<input type="hidden" name="article_id" id="edit-modal-document-id" value="">
+						<input type="hidden" name="article_id" id="edit-modal-document-id">
 						<div class="row">
 							<div class="col-12 col-lg-12">
 								<div class="mb-3">
 									<label for="title" class="form-label"><b>Title</b></label>
-									<input type="text" name="title" class="form-control">
+									<input type="text" name="title" id="edit-modal-title" class="form-control" value="">
 								</div>
 							</div>
-						</div>
-						
-						<div class="row">
 							<div class="col-12 col-lg-8">
 								<div class="mb-3">
 									<label for="publisher" class="form-label">Publisher</label>
 									<div class="input-group">
-										<!-- <select name="publisher" id="publisher" class="form-select"></select> -->
-										<input type="text" name="publisher" class="form-select">
+										<input type="text" name="publisher" id="edit-modal-publisher" class="form-control">
 										<a class="btn btn-outline-secondary" href="javascript:organizationModal(11)" title="Add Publisher">
 											<i class="bi bi-plus-lg"></i>
 										</a>
@@ -673,41 +689,30 @@
 							</div>
 							<div class="col-12 col-lg-2">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Date</b></label>
+									<label for="date" class="form-label"><b>Date</b></label>
 									<div class="input-group date" id="date">
-										<input type="text" name="date" class="form-control startDate">
+										<input type="text" name="date" id="edit-modal-date" class="form-control startDate">
 										<div class="input-group-append">
 											<span class="input-group-text"><i class="bi bi-calendar"></i></span>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						
-						<div class="row">
 							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>URL</b></label>
-									<input type="text" name="url" class="form-control">
+									<label for="url" class="form-label"><b>URL</b></label>
+									<input type="text" name="url" id="edit-modal-url" class="form-control">
 								</div>
 							</div>
-						</div>
-						
-						<div class="row">
 							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Abstract</b></label>
+									<label for="abstract" class="form-label"><b>Abstract</b></label>
 									<div class="my_div">
-										<div class="input-group">                        
-											<textarea name="abstract" rows="4" cols="100" class="form-control"></textarea>
-										</div>
+										<textarea name="abstract" id="edit-modal-abstract" rows="4" cols="100" class="form-control"></textarea>
 									</div>
-									<!-- <textarea name="abstract" id="abstract_ck" rows="4" cols="100" class="form-control"></textarea> -->
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">Keywords</span>
-										<!-- <select name="keyword_abstract" id="keyword_abstract_ck" class="form-select" multiple="multiple">
-										</select> -->
-										<input type="text" name="keyword_abstract" class="form-select">
+										<input type="text" name="keyword_abstract" id="edit-modal-keyword-abstract" class="form-control">
 									</div>
 								</div>
 							</div>
@@ -723,12 +728,24 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			// Add event listener for when the modal is shown
 			$('#editModal9').on('show.bs.modal', function (event) {
 				var button = $(event.relatedTarget); // Button that triggered the modal
-				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
+				var docId = button.data('doc-id');
+				var title = button.data('title');
+				var publisher = button.data('publisher');
+				var date = button.data('date');
+				var url = button.data('url');
+				var abstract = button.data('abstract');
+				var keywordAbstract = button.data('keyword-abstract');
+		
 				var modal = $(this);
-				modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+				modal.find('#edit-modal-document-id').val(docId);
+				modal.find('#edit-modal-title').val(title);
+				modal.find('#edit-modal-publisher').val(publisher);
+				modal.find('#edit-modal-date').val(date);
+				modal.find('#edit-modal-url').val(url);
+				modal.find('#edit-modal-abstract').val(abstract);
+				modal.find('#edit-modal-keyword-abstract').val(keywordAbstract);
 			});
 		</script>
 	</div>
