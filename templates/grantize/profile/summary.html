@@ -397,7 +397,11 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}"
+							data-description="{{ document.description }}"
+							data-keyword-description="{{ document.keyword_description }}"
+							title="Edit"><i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -418,7 +422,11 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}"
+							data-description="{{ document.description }}"
+							data-keyword-description="{{ document.keyword_description }}"
+							title="Edit"><i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -580,14 +588,17 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			// Add event listener for when the modal is shown
 			$('#editModal9').on('show.bs.modal', function (event) {
 				var button = $(event.relatedTarget); // Button that triggered the modal
-				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
 				var modal = $(this);
-				modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+		
+				// Set the document ID and form fields with the values from the button data attributes
+				modal.find('#edit-modal-document-id').val(button.data('doc-id'));
+				modal.find('#description_ck').val(button.data('description'));
+				modal.find('#keyword_description_ck').val(button.data('keyword-description'));
 			});
 		</script>
+		
 	</div>
 <!-- Bootstrap CSS -->
 <!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/popper.min.js"></script> -->

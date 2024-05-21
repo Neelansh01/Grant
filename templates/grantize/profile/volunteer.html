@@ -280,7 +280,7 @@
 					<a href="{{ url_for('grantizeprofile') }}" class="btn btn-lg float-start float-sm-end" title="Back"><i class="bi bi-arrow-left"></i></a>
 									</div>
 		<div class="col-12 col-sm-8 col-md-9 order-lg-1">
-			<h1>Work Experience</h1>
+			<h1>Volunteer</h1>
 		</div>
 	</div>
 </div> 
@@ -401,7 +401,27 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" 
+							data-doc-id="{{ document.id }}"
+							data-employer="{{ document.employer }}"
+							data-department="{{ document.department }}"
+							data-type="{{ document.type }}"
+							data-appoint="{{ document.appoint }}"
+							data-title="{{ document.title }}"
+							data-current="{{ document.current }}"
+							data-start="{{ document.start }}"
+							data-end="{{ document.end }}"
+							data-mentor="{{ document.mentor }}"
+							data-responsibilities="{{ document.responsibilities }}"
+							data-rkeywords="{{ document.rkeywords }}"
+							data-techniques="{{ document.techniques }}"
+							data-skilldesc="{{ document.skilldesc }}"
+							data-skeywords="{{ document.skeywords }}"
+							data-instruments="{{ document.instruments }}"
+							data-softwares="{{ document.softwares }}"
+							data-softskills="{{ document.softskills }}"
+							title="Edit"><i class="bi bi-pencil-square"></i>
+						</button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -424,8 +444,28 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" 
+							data-doc-id="{{ document.id }}"
+							data-employer="{{ document.employer }}"
+							data-department="{{ document.department }}"
+							data-type="{{ document.type }}"
+							data-appoint="{{ document.appoint }}"
+							data-title="{{ document.title }}"
+							data-current="{{ document.current }}"
+							data-start="{{ document.start }}"
+							data-end="{{ document.end }}"
+							data-mentor="{{ document.mentor }}"
+							data-responsibilities="{{ document.responsibilities }}"
+							data-rkeywords="{{ document.rkeywords }}"
+							data-techniques="{{ document.techniques }}"
+							data-skilldesc="{{ document.skilldesc }}"
+							data-skeywords="{{ document.skeywords }}"
+							data-instruments="{{ document.instruments }}"
+							data-softwares="{{ document.softwares }}"
+							data-softskills="{{ document.softskills }}"
+							title="Edit"><i class="bi bi-pencil-square"></i>
+						</button>
+						<a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-12">
@@ -529,7 +569,7 @@
 		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Add Work Experience <strong class="exceedLimit"></strong></h5>
+					<h5 class="modal-title">Add Volunteer Experience <strong class="exceedLimit"></strong></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -793,7 +833,7 @@
 		<div class="modal-dialog modal-xl modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title">Edit Work Experience <strong class="exceedLimit"></strong></h5>
+					<h5 class="modal-title">Edit Volunteer Experience <strong class="exceedLimit"></strong></h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -1055,14 +1095,34 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			// Add event listener for when the modal is shown
 			$('#editModal9').on('show.bs.modal', function (event) {
 				var button = $(event.relatedTarget); // Button that triggered the modal
-				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
 				var modal = $(this);
-				modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+		
+				// Retrieve data attributes from the button and update modal
+				modal.find('#edit-modal-document-id').val(button.data('doc-id'));
+				modal.find('[name="organization"]').val(button.data('employer'));
+				modal.find('[name="department"]').val(button.data('department'));
+				modal.find('[name="type"]').val(button.data('type'));
+				modal.find('[name="appoint"]').val(button.data('appoint'));
+				modal.find('[name="title"]').val(button.data('title'));
+				modal.find('[name="current"]').val(button.data('current'));
+				modal.find('[name="start_date"]').val(button.data('start'));
+				modal.find('[name="end_date"]').val(button.data('end'));
+				modal.find('[name="mentors"]').val(button.data('mentor'));
+				modal.find('[name="description2"]').val(button.data('responsibilities'));
+				modal.find('[name="keyword_abstract"]').val(button.data('rkeywords'));
+				modal.find('[name="techniques"]').val(button.data('techniques'));
+				// modal.find('[name="skilldesc"]').val(button.data('skilldesc'));
+				// modal.find('[name="skeywords"]').val(button.data('skeywords'));
+				modal.find('[name="instruments"]').val(button.data('instruments'));
+				modal.find('[name="softwares"]').val(button.data('softwares'));
+				modal.find('[name="softskills"]').val(button.data('softskills'));
+				modal.find('[name="description"]').val(button.data('skilldesc'));
+				modal.find('[name="keyword_description"]').val(button.data('skeywords'));
 			});
 		</script>
+		
 	</div> 
 	 
 <!-- Bootstrap CSS -->

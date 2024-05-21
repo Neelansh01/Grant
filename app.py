@@ -1761,8 +1761,8 @@ def grantizeprofilevolunteer():
                     'title': 'title',
                     'is_this_current_job': 'current',
                     # Assuming dates are in 'MM-DD-YYYY' format, we parse them to 'YYYY-MM-DD' format for SQL
-                    'start_date': ('start', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
-                    'end_date': ('end', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'start_date': 'start',
+                    'end_date': 'end',
                     'mentors': 'mentor',
                     'description2': 'responsibilities',
                     'keyword_abstract': 'rkeywords',
@@ -1780,6 +1780,8 @@ def grantizeprofilevolunteer():
                     db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
+                        if form_field in ['start_date','end_date']:
+                            form_data = parse_date(form_data)
                         updates.append(f"{db_column} = %s")
                         # Apply transformation function if provided
                         values.append(transform(form_data) if transform else form_data)
@@ -5322,7 +5324,7 @@ def grantizeprofileteachingex():
                 for form_field, db_column in form_to_db_map.items():
                     form_data = get_form_data_or_none(form_field)
                     if form_data is not None:
-                        if db_column in ["start_date","end_date"]:
+                        if form_field in ["start_date","end_date"]:
                             try:
                                 form_data = datetime.strptime(form_data, '%m-%d-%Y').date() if form_data else None
                             except:
