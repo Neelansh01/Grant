@@ -2252,8 +2252,8 @@ def grantizeprofilepatents():
                     'name': 'project_number',
                     'type': 'total_funding',
                     'url': 'url',
-                    'start_date': ('start_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
-                    'end_date': ('end_date', lambda x: datetime.strptime(x, '%m-%d-%Y').strftime('%Y-%m-%d') if x else None),
+                    'start_date': 'start_date',
+                    'end_date': 'end_date',
                     'authors': 'principal_investigators',
                     'co_authors': 'investigators',
                     'sponsor': 'funding_org',
@@ -2269,6 +2269,11 @@ def grantizeprofilepatents():
                 for form_field, db_info in form_to_db_map.items():
                     db_column, transform = db_info if isinstance(db_info, tuple) else (db_info, None)
                     form_data = get_form_data_or_none(form_field)
+                    if form_field in ['start_date','end_date']:
+                        try:
+                            form_data = parse_date(form_data)
+                        except:
+                            form_data = None
                     if form_data is not None:
                         updates.append(f"{db_column} = %s")
                         # Apply transformation function if provided
@@ -3947,7 +3952,7 @@ def grantizeprofileotherpubs():
                 form_to_db_map = {
                     'title': 'title',
                     'url': 'url',
-                    'authors': 'first_author',
+                    'authors': 'authors',
                     'keywords': 'keywords',
                     'abstract': 'abstract',
                     'keyword_abstract': 'keyword_abstract'

@@ -294,7 +294,17 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9"
+                                data-doc-id="{{ document.id }}"
+                                data-title="{{ document.title }}"
+                                data-url="{{ document.url }}"
+                                data-authors="{{ document.authors }}"
+                                data-keywords="{{ document.keywords }}"
+                                data-abstract="{{ document.abstract }}"
+                                data-keyword-abstract="{{ document.keyword_abstract }}"
+                                title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -306,12 +316,12 @@
                             <p>
                                 <div class="row mt-2">
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">Publisher</p>
-                                        <p style="margin-left:5px;">{{ document.publisher }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Authors</p>
+                                        <p style="margin-left:5px;">{{ document.authors }}</p>
                                     </div>
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">Date</p>
-                                        <p style="margin-left:5px;">{{ document.date }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Abstract</p>
+                                        <p style="margin-left:5px;">{{ document.abstract }}</p>
                                     </div>
                                     <div class="col-lg-6">
                                         <p style="margin-left:0px;font-weight:bold;">Url</p>
@@ -324,8 +334,8 @@
                 </div>
                 <div class="col-12 col-lg-12">
                     <div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
-                        <h4>Abstract</h4>
-                        <p>{{ document.abstract }}</p>
+                        <h4>Keywords</h4>
+                        <p>{{ document.keywords }}</p>
                     </div>
                 </div>
             </div>
@@ -334,7 +344,17 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9"
+                                data-doc-id="{{ document.id }}"
+                                data-title="{{ document.title }}"
+                                data-url="{{ document.url }}"
+                                data-authors="{{ document.authors }}"
+                                data-keywords="{{ document.keywords }}"
+                                data-abstract="{{ document.abstract }}"
+                                data-keyword-abstract="{{ document.keyword_abstract }}"
+                                title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
                         <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
@@ -346,12 +366,12 @@
                             <p>
                                 <div class="row mt-2">
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">Publisher</p>
-                                        <p style="margin-left:5px;">{{ document.publisher }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Authors</p>
+                                        <p style="margin-left:5px;">{{ document.authors }}</p>
                                     </div>
                                     <div class="col-lg-3">
-                                        <p style="margin-left:5px;font-weight:bold;">Date</p>
-                                        <p style="margin-left:5px;">{{ document.date }}</p>
+                                        <p style="margin-left:5px;font-weight:bold;">Abstract</p>
+                                        <p style="margin-left:5px;">{{ document.abstract }}</p>
                                     </div>
                                     <div class="col-lg-6">
                                         <p style="margin-left:0px;font-weight:bold;">Url</p>
@@ -364,8 +384,8 @@
                 </div>
                 <div class="col-12 col-lg-12">
                     <div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
-                        <h4>Abstract</h4>
-                        <p>{{ document.abstract }}</p>
+                        <h4>Keywords</h4>
+                        <p>{{ document.keywords }}</p>
                     </div>
 					<div class="profile-description" style="margin-top:15px;height:75px;overflow:hidden;">
                         <h4>Keyword Abstract</h4>
@@ -611,14 +631,20 @@
                 </div>
             </div>
             <script type="text/javascript">
-                // Add event listener for when the modal is shown
                 $('#editModal9').on('show.bs.modal', function (event) {
                     var button = $(event.relatedTarget); // Button that triggered the modal
-                    var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
                     var modal = $(this);
-                    modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+            
+                    modal.find('#edit-modal-document-id').val(button.data('doc-id'));
+                    modal.find('input[name="title"]').val(button.data('title'));
+                    modal.find('input[name="url"]').val(button.data('url'));
+                    modal.find('input[name="authors"]').val(button.data('authors'));
+                    modal.find('input[name="keywords"]').val(button.data('keywords'));
+                    modal.find('textarea[name="abstract"]').val(button.data('abstract'));
+                    modal.find('input[name="keyword_abstract"]').val(button.data('keyword-abstract'));
                 });
             </script>
+            
         </div>
 	<!-- 28. Other Publications End -->
 

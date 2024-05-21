@@ -397,8 +397,19 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" 
+								data-publication-status="{{ document.publication_status }}" data-publisher001="{{ document.publisher }}"
+								data-journal001="{{ document.journal }}" data-year="{{ document.year }}" data-volume="{{ document.volume }}"
+								data-issue="{{ document.issue }}" data-page="{{ document.page }}" data-title="{{ document.title }}"
+								data-url="{{ document.url }}" data-doi="{{ document.doi }}" data-organization001="{{ document.organization }}"
+								data-department001="{{ document.department }}" data-authors001="{{ document.authors }}" data-co-authors001="{{ document.co_authors }}"
+								data-corresponding-authors001="{{ document.corresponding_authors }}" data-keywords001="{{ document.keywords }}"
+								data-abstract001="{{ document.abstract }}" data-abstract-keywords001="{{ document.abstract_keywords }}"
+								data-techniques001="{{ document.techniques }}" data-instruments001="{{ document.instruments }}"
+								data-softwares001="{{ document.softwares }}" data-soft-skills001="{{ document.soft_skills }}" title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
+						<a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-12">
@@ -441,8 +452,19 @@
                     <div class="btn-group-vertical btn-group-sm float-end" role="group" aria-label="">
                         <button type="button" class="btn btn-outline-dark info-toggle" data-key="{{ document.id }}" title="Expand"><i class="bi bi-fullscreen"></i></button>
                         <a href="javascript:permissionModal(9,'This Entry')" class="btn btn-outline-dark float-end" title="Permission"><i class="bi bi-unlock-fill"></i></a>
-                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
+                        <button type="button" class="btn btn-outline-dark float-end" data-bs-toggle="modal" data-bs-target="#editModal9" data-doc-id="{{ document.id }}" 
+								data-publication-status="{{ document.publication_status }}" data-publisher="{{ document.publisher }}"
+								data-journal="{{ document.journal }}" data-year="{{ document.year }}" data-volume="{{ document.volume }}"
+								data-issue="{{ document.issue }}" data-page="{{ document.page }}" data-title="{{ document.title }}"
+								data-url="{{ document.url }}" data-doi="{{ document.doi }}" data-organization="{{ document.organization }}"
+								data-department="{{ document.department }}" data-authors="{{ document.authors }}" data-co-authors="{{ document.co_authors }}"
+								data-corresponding-authors="{{ document.corresponding_authors }}" data-keywords="{{ document.keywords }}"
+								data-abstract="{{ document.abstract }}" data-abstract-keywords="{{ document.abstract_keywords }}"
+								data-techniques="{{ document.techniques }}" data-instruments="{{ document.instruments }}"
+								data-softwares="{{ document.softwares }}" data-soft-skills="{{ document.soft_skills }}" title="Edit">
+							<i class="bi bi-pencil-square"></i>
+						</button>
+						<a class="btn btn-outline-dark float-end" href="javascript:deleteModal({{ document.id }})" title="Delete"><i class="bi bi-trash"></i></a>
                     </div>
                 </div>
                 <div class="col-12 col-lg-12">
@@ -792,278 +814,143 @@
 				<div class="modal-body">
 					<form action="{{ url_for('grantizeprofilejourmethodologies') }}" method="post" enctype="multipart/form-data" id="editForm1">
 						<input type="hidden" name="editsection" value="0QLLWGDpQKt4igjK6vIXRqmvOh5OYcIOZQnIxQbT" autocomplete="off">
-						<input type="hidden" name="journal_id" id="edit-modal-document-id" value="">
+						<input type="hidden" name="journal_id" id="edit-modal-document-id">
 						<div class="row">
 							<div class="col-12 col-lg-3">
 								<div class="mb-3">
-									<label for="publication_status" class="form-label"><b>Publication status</b> </label>
-									<div class="input-group">
-										<select name="publication_status" id="publication_status1" class="form-select publication_status" style="width:100%">
-											<option value=""> Select ... </option>
-																						<option value="Published"
-																						>Published</option>
-																						<option value="Submitted"
-											selected											>Submitted</option>
-																						<option value="Under preperation"
-																						>Under preperation</option>
-																					</select>
-									</div> 
+									<label for="publication_status" class="form-label"><b>Publication status</b></label>
+									<select name="publication_status" id="publication_status" class="form-select">
+										<option value="Published">Published</option>
+										<option value="Submitted">Submitted</option>
+										<option value="Under preparation">Under preparation</option>
+									</select>
 								</div>
-							</div>	
-													
-							<div class="col-12 col-lg-9 no_preperation">
-<div class="mb-3">
-	
-	<label for="publisher" class="form-label">Publisher</label>
-	<div class="input-group">
-				<!-- <select class="form-select form-select-sm" name="publisher" id="publisher1">
-			<option value="1580" selected="selected"></option>
-		</select> -->
-		<input type="text" name="publisher" class="form-select form-select-sm" value="">
-				<a class="btn btn-outline-secondary" href="javascript:organizationModal(11)" title="Add Publisher"><i class="bi bi-plus-lg"></i></a>
-	</div>
-
-</div>
-</div>
-
-<div class="col-12 col-lg-7 no_preperation">
-<div class="mb-3">
-
-	<label for="journal" class="form-label">Journal</label>
-	<div class="input-group">
-				<!-- <select name="journal" id="journal1" class="form-select" style="width:93%;">
-			<option value="55">recent advances in anti-infective drug discovery.</option>
-		</select> -->
-		<input type="text" name="journal" class="form-select" value="">
-				<a class="btn btn-outline-secondary" href="javascript:journalModal()" title="Add Journal"><i class="bi bi-plus-lg"></i></a>
-	</div> 
-
-</div>
-</div>			
+							</div>
+							<div class="col-12 col-lg-9">
+								<div class="mb-3">
+									<label for="publisher" class="form-label">Publisher</label>
+									<input type="text" name="publisher" id="publisher001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12 col-lg-7">
+								<div class="mb-3">
+									<label for="journal" class="form-label">Journal</label>
+									<input type="text" name="journal" id="journal001" class="form-control">
+								</div>
+							</div>
 							<div class="col-6 col-lg-2">
 								<div class="mb-3">
 									<label for="year" class="form-label">Year</label>
-									<input readonly type="text" name="year" id="year1" value="2022" class="form-control">
+									<input type="text" name="year" id="year" class="form-control">
 								</div>
 							</div>
-
-							<div class="col-6 col-lg-1 no_submitted no_preperation">
+							<div class="col-6 col-lg-1">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Volume</b></label>
-									<input type="text" name="volume" value="1" class="form-control">
+									<label for="volume" class="form-label"><b>Volume</b></label>
+									<input type="text" name="volume" id="volume" class="form-control">
 								</div>
 							</div>
-							<div class="col-6 col-lg-1 no_submitted no_preperation">
+							<div class="col-6 col-lg-1">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Issue</b></label>
-									<input type="text" name="issue" value="2" class="form-control">
+									<label for="issue" class="form-label"><b>Issue</b></label>
+									<input type="text" name="issue" id="issue" class="form-control">
 								</div>
 							</div>
-							<div class="col-6 col-lg-1 no_submitted no_preperation">
+							<div class="col-6 col-lg-1">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Page</b></label>
-									<input type="text" name="page" value="3" class="form-control">
+									<label for="page" class="form-label"><b>Page</b></label>
+									<input type="text" name="page" id="page" class="form-control">
 								</div>
 							</div>
-
 							<div class="col-12">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>Title</b></label>
-									<input type="text" name="title" value="Add Journal Original Research" class="form-control">
-								</div>
-							</div>					
-							<div class="col-12 col-lg-6 no_submitted no_preperation">
-								<div class="mb-3">
-									<label for="degree" class="form-label"><b>URL</b></label>
-									<input type="text" name="url" value="" class="form-control">
+									<label for="title" class="form-label"><b>Title</b></label>
+									<input type="text" name="title" id="title" class="form-control">
 								</div>
 							</div>
-							<div class="col-12 col-lg-6 no_submitted no_preperation">
+							<div class="col-12 col-lg-6">
 								<div class="mb-3">
-									<label for="degree" class="form-label"><b>DOI</b></label>
-									<input type="text" name="doi" value="12345" class="form-control">
+									<label for="url" class="form-label"><b>URL</b></label>
+									<input type="text" name="url" id="url" class="form-control">
+								</div>
+							</div>
+							<div class="col-12 col-lg-6">
+								<div class="mb-3">
+									<label for="doi" class="form-label"><b>DOI</b></label>
+									<input type="text" name="doi" id="doi" class="form-control">
+								</div>
+							</div>
+							<div class="col-lg-7">
+								<div class="mb-3">
+									<label for="organization" class="form-label">Organization</label>
+									<input type="text" name="organization" id="organization001" class="form-control">
+								</div>
+							</div>
+							<div class="col-lg-5">
+								<div class="mb-3">
+									<label for="department" class="form-label">Department</label>
+									<input type="text" name="department" id="department001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="authors" class="form-label">First Author</label>
+									<input type="text" name="authors" id="authors001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="co_authors" class="form-label">Co-Author</label>
+									<input type="text" name="co_authors" id="co_authors001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="corresponding_authors" class="form-label">Corresponding Author</label>
+									<input type="text" name="corresponding_authors" id="corresponding_authors001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="keywords" class="form-label">Keywords</label>
+									<input type="text" name="keywords" id="keywords001" class="form-control">
+								</div>
+							</div>
+							<!-- Techniques, instruments, softwares, Soft skill -->
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="techniques" class="form-label">Scientific/Technical Skills</label>
+									<input type="text" name="techniques" id="techniques001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills</label>
+									<input type="text" name="instruments" id="instruments001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="softwares" class="form-label">Software/Computational Skills</label>
+									<input type="text" name="softwares" id="softwares001" class="form-control">
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="mb-1">
+									<label for="soft_skills" class="form-label">Soft/Employability Skills</label>
+									<input type="text" name="soft_skills" id="soft_skills001" class="form-control">
+								</div>
+							</div>
+							<!-- Abstract and Keywords -->
+							<div class="col-12">
+								<div class="mb-3">
+									<label for="abstract" class="form-label">Abstract</label>
+									<textarea name="abstract" id="abstract" rows="2" cols="100" class="form-control"></textarea>
+									<input type="text" name="keyword_abstract001" class="form-control" value="">
 								</div>
 							</div>
 						</div>
-
-						<div class="row">
-							<div class="col-lg-7"> 
-	<div class="mb-3">
-		<label for="organization" class="form-label">Organization</label>
-		<div class="input-group">
-
-						<!-- <select name="organization" id="organization1"  class="form-select">
-								<option value="11563" selected="selected"></option>
-							</select> -->
-							<input type="text" name="organization" class="form-select" value="">
-			<a class="btn btn-outline-secondary" href="javascript:organizationModal()" title="Add Organization"><i class="bi bi-plus-lg"></i></a>
-		</div>
-	</div>
-</div>							<div class="col-lg-5"> 
-	<div class="mb-3">
-		<label for="department" class="form-label">Department</label>
-		<div class="input-group">
-
-						<!-- <select name="department" id="department1" class="form-select">
-								<option value="388" selected="selected">school of arts & aesthetics</option>
-							</select> -->
-							<input type="text" name="department" class="form-select" value="">
-		</div>  
-	</div>
-</div> 							<div class="col-12 authors_div">
-<div class="mb-3">
-	
-	<label for="authors" class="form-label">First Author			</label>
-	<div class="input-group">
-				<!-- <select name="authors[]" id="authors1" class="form-select" multiple="multiple">
-			<option value="5" selected="selected" data-dp="" data-name="Researcher5" data-country_name="" data-organization_name="" >Researcher5</option>		</select> -->
-			<input type="text" name="authors" class="form-select" value="">
-		<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors"><i class="bi bi-plus-lg"></i></a>
-	</div> 		
-	
-</div>
-</div>							<div class="col-12 co_authors_div">
-<div class="mb-3">
-	
-	<label for="co_authors" class="form-label">Co- Author			</label>
-	<div class="input-group">
-				<!-- <select name="co_authors[]" id="co_authors1" class="form-select" multiple="multiple">
-			<option value="6" selected="selected" data-dp="" data-name="Researcher6" data-country_name="" data-organization_name="" >Researcher6</option>		</select> -->
-			<input type="text" name="co_authors" class="form-select" value="">
-		<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors"><i class="bi bi-plus-lg"></i></a>
-	</div> 
-	
-</div>
-</div>							<div class="col-12 corresponding_authors_div">
-<div class="mb-3">
-	
-	<label for="corresponding_authors" class="form-label">Corresponding Author			</label>
-	<div class="input-group">
-				<!-- <select name="corresponding_authors[]" id="corresponding_authors1" class="form-select" multiple="multiple">
-			<option value="9" selected="selected" data-dp="" data-name="Researcher9" data-country_name="" data-organization_name="" >Researcher9</option>		</select> -->
-			<input type="text" name="corresponding_authors" class="form-select" value="">
-		<a class="btn btn-outline-secondary" href="javascript:userModal()" title="Add Authors"><i class="bi bi-plus-lg"></i></a>
-	</div> 
-	
-</div>
-</div>							<div class="col-12">
-<div class="mb-3">
-
-	<div class="form-group keywords_div">
-		<label for="keywords" class="form-label">Keywords					</label>
-		<div class="input-group">
-
-						<!-- <select name="keywords[]" id="keywords1" class="form-select" multiple="multiple">
-							</select> -->
-							<input type="text" name="keywords" class="form-select" value="">
-
-		</div> 		
-	</div>
-	
-</div>
-</div>
-
-						</div>
-						<!-- Techniques, instruments, softwares, Soft skill -->
-						<style>
-	.skillgained-less{display:none;}
-</style>
-<div class="row bg-light mb-2 pt-3 pb-2">           
-  	<div class="col-12"> 
-	    <div class="row"> 
-			<div class="col-lg-12">
-				<h6 class="">
-					<b>Skill Gained/Utilized</b>
-					<a class="skillgained-more btn btn-sm btn-outline-dark float-end" href="javascript:void(0)"> View all Skills <i class="bi bi-arrow-down-square"></i></a>
-					<a class="skillgained-less btn btn-sm btn-outline-dark float-end" href="javascript:void(0)"> View less Skills <i class="bi bi-arrow-up-square"></i></a>
-				</h6>
-			</div>
-		</div>
-			
-		<div class="row">
-			<div class="col-12 col-lg-12 techniques_div">
-				<div class="mb-1">
-	
-					<label for="techniques"  class="form-label">Scientific/Technical Skills											</label>
-					<div class="input-group">
-												<!-- <select name="techniques[]" id="techniques1" class="form-select" multiple="multiple" style="width:100%;">
-							<option value="1" selected="selected">2d electrophoresis</option>						</select> -->
-							<input type="text" name="techniques" class="form-select" value="">
-											</div>
-
-				</div>
-			</div>
-		</div>
-
-		<div class="skillgained-more-content">	
-			<div class="row">
-				<div class="col-12 col-lg-12 instruments_div">
-					<div class="mb-1">
-
-						<label for="instruments" class="form-label">Tools/Kits/Instrumental Skills													</label>
-						<div class="input-group">
-														<!-- <select name="instruments[]" id="instruments1" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="instruments" class="form-select" value="">
-													</div> 		
-
-					</div>
-				</div>
-
-				<div class="col-12 col-lg-12 softwares_div">
-					<div class="mb-1">
-
-						<label for="softwares" class="form-label">Software/Computational Skills													</label>
-						<div class="input-group">
-														<!-- <select name="softwares[]" id="softwares1" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="softwares" class="form-select" value="">
-													</div> 		
-
-					</div>
-				</div>
-
-				<div class="col-12 col-lg-12 soft_skills_div">
-					<div class="mb-1">
-
-						<label for="soft_skills" class="form-label">Soft/Employability Skills													</label>
-						<div class="input-group">
-														<!-- <select name="soft_skills[]" id="soft_skills1" class="form-select" multiple="multiple" style="width:100%;">
-															</select> -->
-															<input type="text" name="soft_skills" class="form-select" value="">
-													</div> 	
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> 
-</div>						<!-- Techniques, instruments, softwares, Soft skill -->
-
-						<div class="row no_preperation">
-							<div class="col-12">
-								<div class="mb-3">
-									<label for="abstract"><b>Abstract</b></label>
-									<div class="my_div">
-										<div class="input-group">                        
-											<textarea name="abstract" onkeyup="abstract_keyword(this);" rows="2" cols="100" class="form-control"></textarea>
-										</div>
-									</div>
-									<div class="input-group input-group-sm">
-	<span class="input-group-text">Keywords</span>
-		<!-- <select name="keyword_abstract[]" id="keyword_abstract_ck1" class="form-select" multiple="multiple">
-			</select>	 -->
-			<input type="text" name="keyword_abstract" class="form-select" value="">
-</div> 
-
-
-
-
-								</div>
-							</div>
-						</div>	
-						
-					</form>
+					</form>					
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -1075,14 +962,37 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			// Add event listener for when the modal is shown
 			$('#editModal9').on('show.bs.modal', function (event) {
 				var button = $(event.relatedTarget); // Button that triggered the modal
-				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
 				var modal = $(this);
+				var docId = button.data('doc-id'); // Extract the document ID from the data-* attribute
 				modal.find('#edit-modal-document-id').val(docId); // Set the document ID in the hidden input field
+		
+				// Set other values as extracted from the button data attributes
+				modal.find('#publication_status').val(button.data('publication_status'));
+				modal.find('#publisher001').val(button.data('publisher001'));
+				modal.find('#journal001').val(button.data('journal001'));
+				modal.find('#year').val(button.data('year'));
+				modal.find('#volume').val(button.data('volume'));
+				modal.find('#issue').val(button.data('issue'));
+				modal.find('#page').val(button.data('page'));
+				modal.find('#title').val(button.data('title'));
+				modal.find('#url').val(button.data('url'));
+				modal.find('#doi').val(button.data('doi'));
+				modal.find('#organization001').val(button.data('organization001'));
+				modal.find('#department001').val(button.data('department001'));
+				modal.find('#authors001').val(button.data('authors001'));
+				modal.find('#co_authors').val(button.data('co_authors'));
+				modal.find('#corresponding_authors001').val(button.data('corresponding_authors001'));
+				modal.find('#keywords001').val(button.data('keywords001'));
+				modal.find('#abstract001').val(button.data('abstract001'));
+				modal.find('#keyword_abstract001').val(button.data('abstract_keywords001'));
+				modal.find('#techniques001').val(button.data('techniques001'));
+				modal.find('#instruments').val(button.data('instruments001'));
+				modal.find('#softwares001').val(button.data('softwares001'));
+				modal.find('#soft_skills001').val(button.data('soft_skills001'));
 			});
-		</script>
+		</script>		
 	</div>
 <!-- Bootstrap CSS -->
 <!-- <script src="https://techiefolk.com/grantize/public/assets/thirdparty/bootstrap/popper.min.js"></script> -->
