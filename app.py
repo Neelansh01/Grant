@@ -137,6 +137,15 @@ def registerresgrantize():
         try:
             mycursor.execute(sql, val)
             sqlconnection.commit()
+            sql = "SELECT id FROM gresearcherslist WHERE username = %s AND password = %s"
+            values = (username, password)
+            mycursor.execute(sql, values)
+            result = mycursor.fetchall()
+            userid = result[0][0]
+            sql = "INSERT INTO gprofilechecks (userid, sections, topics) VALUES (%s, %s, %s)"
+            values = (userid, "1,-#-,2,-#-,3,-#-,4,-#-,5,-#-,6,-#-,7,-#-,8,-#-,9,-#-,10", "21,-#-,22,-#-,23,-#-,24,-#-,25,-#-,26,-#-,27,-#-,28,-#-,29,-#-,30,-#-,31,-#-,32,-#-,33,-#-,34,-#-,35,-#-,36,-#-,37,-#-,38,-#-,39,-#-,40,-#-,41,-#-,42,-#-,43,-#-,44,-#-,45,-#-,46,-#-,47,-#-,48,-#-,49,-#-,50,-#-,51,-#-,52,-#-,53,-#-,54,-#-,55,-#-,56,-#-,57,-#-,58,-#-,59")
+            mycursor.execute(sql, values)
+            sqlconnection.commit()
             mycursor.close()
             print("Database Insertion Successful....")
         except:
@@ -243,6 +252,8 @@ def grantizelogout():
 
 def read_user_checks(user, id_to_delete=100):
     global sqlconnection
+    print("=-=-=-=-=-=-=-=-=")
+    print("=-=-=-=-=-=-=-=-=")
     try:
         mycursor = sqlconnection.cursor(dictionary=True)
         # SQL query to get all columns except 'id' and 'userid'
@@ -565,6 +576,9 @@ def grantizeprofile():
             user_profile_info = read_user_profile_info(user)
             return render_template('grantize/dashboard/profile.html', documents=documents, nestedtopics=nestedtopics, profileinfo=profileinfo, globalcountries=globalcountries, globalorganizations=globalorganizations, user_profile_info=user_profile_info)
         else:
+            print("__________")
+            print(user)
+            print("__________")
             documents, nestedtopics = read_user_checks(user)
             user_profile_info = read_user_profile_info(user)
             print(documents)
